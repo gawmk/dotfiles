@@ -266,9 +266,6 @@ or go back to just one window (by deleting all but the selected window)."
 (setq tab-bar-new-tab-choice "*Welcome*")
 (setq tab-bar-close-button-show nil
       tab-bar-new-button-show nil)
-
-;; hook to rename automatically
-(add-hook 'tab-bar-tab-post-open-functions (lambda (&rest _) (call-interactively #'tab-bar-rename-tab)))
 ;; window navi
 
 (define-key window-map "h" 'evil-window-left)
@@ -282,6 +279,7 @@ or go back to just one window (by deleting all but the selected window)."
 
 ;; misc
 (define-key window-map "c" 'evil-window-delete)
+(define-key window-map "x" 'tab-bar-close-tab)
 (define-key window-map "=" 'balance-windows)
 
 ;; swapping windows
