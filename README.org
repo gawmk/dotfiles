@@ -1,0 +1,2 @@
+* dotfiles
+Config files management using Org Mode and GNU Stow.
