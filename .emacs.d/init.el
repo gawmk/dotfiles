@@ -130,28 +130,6 @@
     (local-set-key (kbd "q") 'kill-this-buffer)))
 (mik/show-welcome-buffer)
 
-(defvar my-mode-map (make-sparse-keymap)
-  "Keymap for `my-mode'.")
-
-;;;###autoload
-(define-minor-mode my-mode
-  "A minor mode so that my key settings override annoying major modes."
-  ;; If init-value is not set to t, this mode does not get enabled in
-  ;; `fundamental-mode' buffers even after doing \"(global-my-mode 1)\".
-  ;; More info: http://emacs.stackexchange.com/q/16693/115
-  :init-value t
-  :lighter " my-mode"
-  :keymap my-mode-map)
-
-;;;###autoload
-(define-globalized-minor-mode global-my-mode my-mode my-mode)
-
-;; https://github.com/jwiegley/use-package/blob/master/bind-key.el
-;; The keymaps in `emulation-mode-map-alists' take precedence over
-;; `minor-mode-map-alist'
-(add-to-list 'emulation-mode-map-alists `((my-mode . ,my-mode-map)))
-
-(provide 'my-mode)
 (defun keyboard-escape-quit ()
   "Exit the current \"mode\" (in a generalized sense of the word).
 This command can exit an interactive command such as `query-replace',
@@ -173,7 +151,7 @@ or go back to just one window (by deleting all but the selected window)."
      (funcall buffer-quit-function))
     ((string-match "^ \\*" (buffer-name (current-buffer)))
      (bury-buffer)))))
-(keymap-set my-mode-map "C-c" 'keyboard-escape-quit)  ;C-c as escape
+(bind-key* "C-c" 'keyboard-escape-quit)  ;C-c as escape
 
 (use-package general
   :ensure t
@@ -283,8 +261,28 @@ or go back to just one window (by deleting all but the selected window)."
 (use-package tab-bar)
 (tab-bar-mode 1)
 
-(define-key evil-motion-state-map "C-w" nil)
-(define-key evil-window-map "C-w" nil)
+(define-prefix-command 'window-map)
+(bind-key* "C-w" 'window-map)
+
+;; window navi
+(define-key window-map "h" 'evil-window-left)
+(define-key window-map "l" 'evil-window-right)
+(define-key window-map "j" 'evil-window-down)
+(define-key window-map "k" 'evil-window-up)
+
+;; splits
+(define-key window-map "v" 'evil-window-vsplit)
+(define-key window-map "s" 'evil-window-split)
+
+;; misc
+(define-key window-map "c" 'evil-window-delete)
+(define-key window-map "=" 'balance-windows)
+
+;; swapping windows
+(define-key window-map "H" 'evil-window-move-far-left)
+(define-key window-map "L" 'evil-window-move-far-right)
+(define-key window-map "J" 'evil-window-move-very-bottom)
+(define-key window-map "K" 'evil-window-move-very-top)
 
 (defun mik/org-mode-setup ()
   (org-indent-mode)
@@ -345,10 +343,13 @@ or go back to just one window (by deleting all but the selected window)."
   (with-eval-after-load 'evil
     (evil-set-initial-state 'vterm-mode 'insert))
   (setq vterm-timer-delay 0.01)
-  (keymap-set vterm-mode-map "C-x C-c" 'vterm--self-insert))
+  (keymap-set vterm-mode-map "<insert-state> C-c" 'vterm--self-insert))
+  (keymap-set vterm-mode-map "<insert-state> C-w" 'window-map)
 
 (defun launch-vterm (buffer-name)
   "Start a terminal and rename buffer."
   (interactive "sbuffer name: ")
   (vterm)
   (rename-buffer buffer-name t))
+
+;;(use-package magit)
