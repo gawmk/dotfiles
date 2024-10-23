@@ -162,7 +162,7 @@ or go back to just one window (by deleting all but the selected window)."
   (interactive)
   (cond ((eq last-command 'mode-exited) nil)
     ((> (minibuffer-depth) 0)
-     (abort-recursive-edit))
+     (abort-recursive-edit)
     (current-prefix-arg
      nil)
     ((and transient-mark-mode mark-active)
@@ -172,7 +172,7 @@ or go back to just one window (by deleting all but the selected window)."
     (buffer-quit-function
      (funcall buffer-quit-function))
     ((string-match "^ \\*" (buffer-name (current-buffer)))
-     (bury-buffer))))
+     (bury-buffer)))))
 (keymap-set my-mode-map "C-c" 'keyboard-escape-quit)  ;C-c as escape
 
 (use-package general
@@ -196,37 +196,43 @@ or go back to just one window (by deleting all but the selected window)."
     :global-prefix "C-SPC")
 
   (mik/leader-key
-    "p"  '(projectile-command-map :which-key "project management")
+    "p"  '(project-prefix-map :which-key "project management")
     "tt" '(launch-vterm :which-key "launch and rename vterm")
     "ff" '(counsel-find-file :which-key "find file")
     "hf" '(counsel-describe-function :which-key "describe function")
     "hv" '(counsel-describe-variable :which-key "describe variable")))
 
 (use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  :config
-  (evil-set-undo-system 'undo-redo)
-  (evil-mode 1)
-  (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
-  (define-key evil-normal-state-map (kbd "C-v") 'evil-visual-line)
-  (define-key evil-normal-state-map (kbd "C-a") 'evil-append-line)
-  (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
-  (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
-  ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+    :init
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-C-i-jump nil)
+    :config
+    (evil-set-undo-system 'undo-redo)
+    (evil-mode 1)
+    (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
+    (define-key evil-normal-state-map (kbd "C-v") 'evil-visual-line)
+    (define-key evil-normal-state-map (kbd "C-a") 'evil-append-line)
+    (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
+    (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
+    ;; Use visual line motions even outside of visual-line-mode buffers
+    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)) 
+    (evil-set-initial-state 'messages-buffer-mode 'normal))
 
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+
+(eval-after-load "evil-maps"
+  (dolist (map '(evil-motion-state-map
+                 evil-insert-state-map
+                 evil-emacs-state-map))
+    (define-key (eval map) "\C-w" nil)))
+(define-key global-map "\C-w" nil)
 
 (use-package hydra)
 (defhydra hydra-text-scale (:timeout 3)
@@ -272,18 +278,13 @@ or go back to just one window (by deleting all but the selected window)."
 (mik/leader-key
   "st" '(tab-switcher :which-key "switch tab"))
 
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/projects")
-    (setq projectile-project-search-path '("~/projects")))
-  (setq projectile-switch-project-action #'projectile-dired))
+(use-package project)
 
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
+(use-package tab-bar)
+(tab-bar-mode 1)
+
+(define-key evil-motion-state-map "C-w" nil)
+(define-key evil-window-map "C-w" nil)
 
 (defun mik/org-mode-setup ()
   (org-indent-mode)
@@ -329,16 +330,14 @@ or go back to just one window (by deleting all but the selected window)."
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 
 ;; tangle on save
-(defun org-babel-tangle-config ()
+(defun mik/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
                       (expand-file-name "~/.dotfiles/.emacs.d/config.org"))
-    (let ((org-config-babel-evaluate nil))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (add-hook 'after-save-hook #'org-babel-tangle-config)))
-heya
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mik/org-babel-tangle-config)))
 
 (use-package vterm
   :ensure t
