@@ -260,11 +260,17 @@ or go back to just one window (by deleting all but the selected window)."
 
 (use-package tab-bar)
 (tab-bar-mode 1)
-
 (define-prefix-command 'window-map)
 (bind-key* "C-w" 'window-map)
 
+(setq tab-bar-new-tab-choice "*Welcome*")
+(setq tab-bar-close-button-show nil
+      tab-bar-new-button-show nil)
+
+;; hook to rename automatically
+(add-hook 'tab-bar-tab-post-open-functions (lambda (&rest _) (call-interactively #'tab-bar-rename-tab)))
 ;; window navi
+
 (define-key window-map "h" 'evil-window-left)
 (define-key window-map "l" 'evil-window-right)
 (define-key window-map "j" 'evil-window-down)
@@ -283,6 +289,11 @@ or go back to just one window (by deleting all but the selected window)."
 (define-key window-map "L" 'evil-window-move-far-right)
 (define-key window-map "J" 'evil-window-move-very-bottom)
 (define-key window-map "K" 'evil-window-move-very-top)
+
+;; tab bar
+(define-key window-map "t"  'tab-bar-new-tab)
+(define-key window-map "rn" 'tab-bar-rename-tab)
+(define-key window-map "p"  'tab-bar-switch-to-recent-tab)
 
 (defun mik/org-mode-setup ()
   (org-indent-mode)
@@ -345,6 +356,7 @@ or go back to just one window (by deleting all but the selected window)."
   (setq vterm-timer-delay 0.01)
   (keymap-set vterm-mode-map "<insert-state> C-c" 'vterm--self-insert))
   (keymap-set vterm-mode-map "<insert-state> C-w" 'window-map)
+
 
 (defun launch-vterm (buffer-name)
   "Start a terminal and rename buffer."
