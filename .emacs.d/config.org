@@ -15,7 +15,7 @@
   - [[Hydra]]
 - [[Navigation]]
   - [[Ivy]]
-  - [[Projectile]]
+  - [[Project]]
   - [[Tab Bar and Window Management]]
 - [[Dired]]
 - [[Org]]
@@ -235,7 +235,7 @@ or go back to just one window (by deleting all but the selected window)."
       :global-prefix "C-SPC")
 
     (mik/leader-key
-      "p"  '(project-prefix-map :which-key "project management")
+      "pf" '(project-find-file :which-key "project management")
       "tt" '(launch-vterm :which-key "launch and rename vterm")
       "ff" '(counsel-find-file :which-key "find file")
       "rf" '(counsel-recentf :which-key "open recent file")
@@ -385,6 +385,7 @@ or go back to just one window (by deleting all but the selected window)."
 
   (mik/leader-key 
     "dd" '(dired :which-key "open dired")
+    "dp" '(project-dired :which-key "open dired project")
     "dj" '(dired-jump :which-key "dired jump"))
 #+end_src
 * Org

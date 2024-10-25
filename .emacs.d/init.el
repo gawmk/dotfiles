@@ -181,7 +181,7 @@ or go back to just one window (by deleting all but the selected window)."
     :global-prefix "C-SPC")
 
   (mik/leader-key
-    "p"  '(project-prefix-map :which-key "project management")
+    "pf" '(project-find-file :which-key "project management")
     "tt" '(launch-vterm :which-key "launch and rename vterm")
     "ff" '(counsel-find-file :which-key "find file")
     "rf" '(counsel-recentf :which-key "open recent file")
@@ -301,6 +301,18 @@ or go back to just one window (by deleting all but the selected window)."
 (define-key window-map "t"  'tab-bar-new-tab)
 (define-key window-map "rn" 'tab-bar-rename-tab)
 (define-key window-map "p"  'tab-bar-switch-to-recent-tab)
+
+(use-package dired
+  :ensure nil
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-up-directory
+    "l" 'dired-find-file))
+
+(mik/leader-key 
+  "dd" '(dired :which-key "open dired")
+  "dp" '(project-dired :which-key "open dired project")
+  "dj" '(dired-jump :which-key "dired jump"))
 
 (defun mik/org-mode-setup ()
   (org-indent-mode)
