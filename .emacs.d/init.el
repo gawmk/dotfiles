@@ -6,7 +6,7 @@
  '(custom-safe-themes
    '("48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
  '(package-selected-packages
-   '(visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
+   '(dired-hide-dotfiles dired-open visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -304,11 +304,27 @@ or go back to just one window (by deleting all but the selected window)."
 
 (use-package dired
   :ensure nil
+  :custom ((dired-listing-switches "-aGho --group-directories-first"))
   :config
+  (setf dired-kill-when-opening-new-dired-buffer t)
   (evil-collection-define-key 'normal 'dired-mode-map
     "h" 'dired-up-directory
     "l" 'dired-find-file))
 
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-open
+  :config
+  (setq dired-open-extensions '(("png" . "imv-wayland")
+                                ("mp4" . "mpv")
+                                ("jpeg" . "imv-wayland")
+                                ("jpg" . "imv-wayland"))))
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
 (mik/leader-key 
   "dd" '(dired :which-key "open dired")
   "dp" '(project-dired :which-key "open dired project")

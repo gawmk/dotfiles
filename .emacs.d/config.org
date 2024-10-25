@@ -378,11 +378,27 @@ or go back to just one window (by deleting all but the selected window)."
 #+begin_src emacs-lisp
   (use-package dired
     :ensure nil
+    :custom ((dired-listing-switches "-aGho --group-directories-first"))
     :config
+    (setf dired-kill-when-opening-new-dired-buffer t)
     (evil-collection-define-key 'normal 'dired-mode-map
       "h" 'dired-up-directory
       "l" 'dired-find-file))
 
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
+
+  (use-package dired-open
+    :config
+    (setq dired-open-extensions '(("png" . "imv-wayland")
+                                  ("mp4" . "mpv")
+                                  ("jpeg" . "imv-wayland")
+                                  ("jpg" . "imv-wayland"))))
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
   (mik/leader-key 
     "dd" '(dired :which-key "open dired")
     "dp" '(project-dired :which-key "open dired project")
