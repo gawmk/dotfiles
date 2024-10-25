@@ -17,6 +17,7 @@
   - [[Ivy]]
   - [[Projectile]]
   - [[Tab Bar and Window Management]]
+- [[Dired]]
 - [[Org]]
   - [[Babel]]
 - [[Terminal]]
@@ -102,7 +103,8 @@ Where to store backups and some helpful packages.
     ([remap describe-variable] . counsel-describe-variable)
     ([remap describe-key] . helpful-key))
 
-  #+end_src
+#+end_src
+
 * Basic UI config
 -----
 Disabling startup clutter, transparency etc.
@@ -371,6 +373,19 @@ or go back to just one window (by deleting all but the selected window)."
   (define-key window-map "p"  'tab-bar-switch-to-recent-tab)
 
 
+#+end_src
+* Dired
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-up-directory
+      "l" 'dired-find-file))
+
+  (mik/leader-key 
+    "dd" '(dired :which-key "open dired")
+    "dj" '(dired-jump :which-key "dired jump"))
 #+end_src
 * Org
 #+begin_src emacs-lisp
