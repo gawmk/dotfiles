@@ -186,6 +186,7 @@ or go back to just one window (by deleting all but the selected window)."
     "ff" '(counsel-find-file :which-key "find file")
     "rf" '(counsel-recentf :which-key "open recent file")
     "hf" '(counsel-describe-function :which-key "describe function")
+    "hb" '(describe-bindings :which-key "describe bindings")
     "hv" '(counsel-describe-variable :which-key "describe variable")))
 
 (use-package evil
@@ -371,3 +372,6 @@ or go back to just one window (by deleting all but the selected window)."
   (rename-buffer buffer-name t))
 
 (use-package magit)
+
+(mik/leader-key
+  "mg" '(magit-status :which-key "magit status pane"))
