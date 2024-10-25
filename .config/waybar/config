@@ -11,7 +11,7 @@
 
         "modules-left": ["sway/workspaces", "sway/window"],
         "modules-center": ["clock"],
-        "modules-right": ["pulseaudio", "battery", "network", "memory", "backlight", "tray"],
+        "modules-right": ["pulseaudio", "battery", "network", "memory", "backlight", "tray", "custom/power"],
 
         // Modules configuration
         "sway/workspaces": {
@@ -20,17 +20,17 @@
             "all-outputs": false,
             "persistent-workspaces": {
                 "1": [],
-                "2": [],
-                "3": [],
-                "4": [],
-                "5": []
+                "2": []
+                // "3": [],
+                // "4": [],
+                //"5": []
             },
             "format": "<span font='18'>{icon}</span>",
             "format-icons": {
                 "1": "",
                 "2": "",
-                "3": "",
-                "4": "",
+                "3": "󰎬",
+                "4": "󰎮",
                 "5": "󰎰",
                 "6": "6",
                 "7": "7",
@@ -101,6 +101,7 @@
         "backlight": {
             // "device": "acpi_video1",
             "format": "{percent}% <span font='14'>{icon}</span>",
+	    "tooltip": false,
             "format-icons": ["", "", "", "", "", "", "", "", ""]
         },
         "battery": {
@@ -150,9 +151,16 @@
             "on-click": "pavucontrol"
         },
         "custom/power": {
-            "format": "{icon}",
-            "format-icons": "",// 󰣇
-            "exec-on-event": "true",
-            "on-click": "~/scripts/sessionMenu.sh",
+            "format": "<span font='18'>{icon}</span>",
+            "format-icons": " ",
+	    "tooltip": false,
+		"menu": "on-click",
+		"menu-file": "~/.config/waybar/power_menu.xml",
+		"menu-actions": {
+			"lock": "swaylock",
+			"shutdown": "sudo shutdown now",
+			"reboot": "sudo reboot",
+			"suspend": "systemctl suspend && swaylock",
+		},
         }
 }

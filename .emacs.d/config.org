@@ -71,6 +71,13 @@ Where to store backups and some helpful packages.
         kept-old-versions      5) ; and how many of the old
   (setq create-lockfiles nil)
 
+  (setq use-dialog-box nil)
+
+  (setq global-auto-revert-non-file-buffers 1)
+  (global-auto-revert-mode 1)
+
+  (recentf-mode 1)
+
   (use-package which-key
     :init (which-key-mode)
     :diminish which-key-mode
@@ -229,6 +236,7 @@ or go back to just one window (by deleting all but the selected window)."
       "p"  '(project-prefix-map :which-key "project management")
       "tt" '(launch-vterm :which-key "launch and rename vterm")
       "ff" '(counsel-find-file :which-key "find file")
+      "rf" '(counsel-recentf :which-key "open recent file")
       "hf" '(counsel-describe-function :which-key "describe function")
       "hv" '(counsel-describe-variable :which-key "describe variable")))
 
@@ -447,6 +455,6 @@ or go back to just one window (by deleting all but the selected window)."
 * Magit
 
 #+begin_src emacs-lisp
-;;(use-package magit)
+  (use-package magit)
 #+end_src
 
