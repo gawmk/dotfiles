@@ -434,25 +434,36 @@ or go back to just one window (by deleting all but the selected window)."
     (setq org-log-done 'time)
     (setq org-log-into-drawer t))
 
-    (gawmk/leader-key
-     "oa" '(org-agenda :which-key "org agenda")
-     "oid" '(org-deadline :which-key "insert a deadline on a TODO")
-     "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
-     "od" '(org-todo :which-key "cycle through TODO states")
-     "ot" '(counsel-org-tag :which-key "insert a tag on a headline")
-     "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
+  ;; refile
+  (setq org-refile-targets
+        '(("Archive.org" :maxlevel . 1)
+          ("Tasks.org" :maxlevel . 1)))
 
-    (use-package org-bullets
-      :after org
-      :hook (org-mode . org-bullets-mode))
+  ;; Save Org buffers after refiling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
-    (defun gawmk/org-mode-visual-fill ()
-      (setq visual-fill-column-width 100
-            visual-fill-column-center-text t)
-      (visual-fill-column-mode 1))
+  
+  (gawmk/leader-key
+    "oa" '(org-agenda :which-key "org agenda")
+    "oid" '(org-deadline :which-key "insert a deadline on a TODO")
+    "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
+    "od" '(org-todo :which-key "cycle through TODO states")
+    "ot" '(counsel-org-tag :which-key "insert a tag on a headline")
+    "or" '(org-refile :which-key "move an org heading to a diff file")
+    "osp" '(org-set-property :which-key "choose a property to set for an item")
+    "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
-    (use-package visual-fill-column
-      :hook (org-mode . gawmk/org-mode-visual-fill))
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode))
+
+  (defun gawmk/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook (org-mode . gawmk/org-mode-visual-fill))
 
 #+end_src
 ** Org Agenda
@@ -461,11 +472,17 @@ or go back to just one window (by deleting all but the selected window)."
   (setq org-agenda-files '("~/org"))
   (setq org-agenda-restore-windows-after-quit t)
 
-  
+
   ;; custom agenda commands
   (setq org-agenda-custom-commands
         '(
-          ("W" "Work tasks" tags-todo "+work")))
+          ("W" "Work tasks" tags-todo "+work")
+
+          ;; low effort tasks 
+          ("e" "Low effort tasks" tags-todo "+TODO=\"TODO\"+Effort<15&+Effort>0"
+           ((org-agenda-overriding-header "Low Effort Tasks")
+            (org-agenda-max-todos 20)
+            (org-agenda-files org-agenda-files)))))
 
   ;; agenda keybinds
   (eval-after-load 'org-agenda
@@ -559,6 +576,7 @@ or go back to just one window (by deleting all but the selected window)."
   (use-package magit)
 
   (gawmk/leader-key
-    "mg" '(magit-status :which-key "magit status pane"))
+    "mg" '(magit-status :which-key "magit status pane")
+    "cmg" '(magit-clone :which-key "clone a repository"))
 #+end_src
 
