@@ -109,7 +109,7 @@
   :init (doom-modeline-mode 1))
 (use-package all-the-icons)
 
-(defun mik/show-welcome-buffer ()
+(defun gawmk/show-welcome-buffer ()
   "Show *Welcome* buffer."
   (with-current-buffer (get-buffer-create "*Welcome*")
     (setq truncate-lines t)
@@ -135,7 +135,7 @@
     (read-only-mode +1)
     (switch-to-buffer (current-buffer))
     (local-set-key (kbd "q") 'kill-this-buffer)))
-(mik/show-welcome-buffer)
+(gawmk/show-welcome-buffer)
 
 (defun keyboard-escape-quit ()
   "Exit the current \"mode\" (in a generalized sense of the word).
@@ -174,13 +174,13 @@ or go back to just one window (by deleting all but the selected window)."
   (general-auto-unbind-keys)
 
 
-  (general-create-definer mik/leader-key
+  (general-create-definer gawmk/leader-key
     :states '(normal visual insert emacs)
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (mik/leader-key
+  (gawmk/leader-key
     "pf" '(project-find-file :which-key "project management")
     "tt" '(launch-vterm :which-key "launch and rename vterm")
     "ff" '(counsel-find-file :which-key "find file")
@@ -236,7 +236,7 @@ or go back to just one window (by deleting all but the selected window)."
   ("j" evil-window-decrease-height "decrease height")
   ("d" nil "done" :exit t))
 
-(mik/leader-key
+(gawmk/leader-key
   "ts" '(hydra-text-scale/body :which-key "scale text")
   "rw" '(hydra-resize-windows/body :which-key "resize windows"))
 
@@ -262,7 +262,7 @@ or go back to just one window (by deleting all but the selected window)."
   :init
   (ivy-rich-mode 1))
 
-(mik/leader-key
+(gawmk/leader-key
   "st" '(tab-switcher :which-key "switch tab"))
 
 (use-package project)
@@ -325,16 +325,16 @@ or go back to just one window (by deleting all but the selected window)."
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
-(mik/leader-key 
+(gawmk/leader-key 
   "dd" '(dired :which-key "open dired")
   "dp" '(project-dired :which-key "open dired project")
   "dj" '(dired-jump :which-key "dired jump"))
 
-(defun mik/org-mode-setup ()
+(defun gawmk/org-mode-setup ()
   (org-indent-mode)
   (visual-line-mode 1))
 (use-package org
-  :hook (org-mode . mik/org-mode-setup)
+  :hook (org-mode . gawmk/org-mode-setup)
   :config
   (dolist (face '((org-level-1 . 1.3)
                   (org-level-2 . 1.12)
@@ -346,38 +346,83 @@ or go back to just one window (by deleting all but the selected window)."
                   (org-level-8 . 1.1)))
     (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
   (keymap-set org-mode-map "C-c" nil)
-  (setq org-agenda-files '("~/org"))
+
+  ;; visual stuff
   (setq org-ellipsis " ▾")
   (setq org-hide-emphasis-markers t)
   (setq org-pretty-entities t)
 
-  ;; custom time
-  (setq org-display-custom-times t)
-  (setq org-time-stamp-custom-formats '("<%a %d-%m-%Y>" . "<%a %d-%m-%Y %H:%M>"))
-
+  ;; log mode
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
-  (setq org-agenda-restore-windows-after-quit t)
-  (setq org-log-into-drawer t))
+  (setq org-log-into-drawer t)
 
-(mik/leader-key
-  "oa" '(org-agenda :which-key "org agenda")
-  "oid" '(org-deadline :which-key "insert a deadline on a TODO")
-  "oit" '(org-time-stamp :which-key "insert a deadline on a TODO")
-  "od" '(org-todo :which-key "cycle through TODO states")
-  "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
+  ;; agenda settings
+  (setq org-agenda-files '("~/org"))
+  (setq org-agenda-restore-windows-after-quit t)
+  (eval-after-load 'org-agenda
+    '(progn
+       (evil-set-initial-state 'org-agenda-mode 'normal)
+       (evil-define-key 'normal org-agenda-mode-map
+         (kbd "<RET>") 'org-agenda-switch-to
+         (kbd "\t") 'org-agenda-goto
+
+         "q" 'org-agenda-quit
+         "C-r" 'org-agenda-redo
+         "S" 'org-save-all-org-buffers
+         "+" 'org-agenda-priority-up
+         "," 'org-agenda-priority
+         "-" 'org-agenda-priority-down
+         "d" 'org-agenda-todo
+         ":" 'org-agenda-set-tags
+         ";" 'org-timer-set-timer
+         "j"  'org-agenda-next-line
+         "k"  'org-agenda-previous-line)))
+
+
+  ;; evil calendar
+  (defmacro my-org-in-calendar (command)
+    (let ((name (intern (format "my-org-in-calendar-%s" command))))
+      `(progn
+         (defun ,name ()
+           (interactive)
+           (org-eval-in-calendar '(call-interactively #',command)))
+         #',name)))
+
+  (general-def org-read-date-minibuffer-local-map
+    "C-h" (my-org-in-calendar calendar-backward-day)
+    "C-l" (my-org-in-calendar calendar-forward-day)
+    "C-k" (my-org-in-calendar calendar-backward-week)
+    "C-j" (my-org-in-calendar calendar-forward-week)
+    "C-S-h" (my-org-in-calendar calendar-backward-month)
+    "C-S-l" (my-org-in-calendar calendar-forward-month)
+    "C-S-k" (my-org-in-calendar calendar-backward-year)
+    "C-S-j" (my-org-in-calendar calendar-forward-year))
+
+  ;; custom agenda commands
+  (setq org-agenda-custom-commands
+        '(
+          ("W" "Work tasks" tags-todo "+work"))))
+
+(gawmk/leader-key
+ "oa" '(org-agenda :which-key "org agenda")
+ "oid" '(org-deadline :which-key "insert a deadline on a TODO")
+ "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
+ "od" '(org-todo :which-key "cycle through TODO states")
+ "ot" '(counsel-org-tag :which-key "insert a tag on a headline")
+ "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode))
 
-(defun mik/org-mode-visual-fill ()
+(defun gawmk/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
-  :hook (org-mode . mik/org-mode-visual-fill))
+  :hook (org-mode . gawmk/org-mode-visual-fill))
 
 (setq org-babel-python-command "python3")
 (setq org-confirm-babel-evaluate nil)
@@ -390,14 +435,14 @@ or go back to just one window (by deleting all but the selected window)."
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 
 ;; tangle on save
-(defun mik/org-babel-tangle-config ()
+(defun gawmk/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
                       (expand-file-name "~/dotfiles/.emacs.d/config.org"))
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
 
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mik/org-babel-tangle-config)))
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
 
 (use-package vterm
   :ensure t
@@ -417,5 +462,5 @@ or go back to just one window (by deleting all but the selected window)."
 
 (use-package magit)
 
-(mik/leader-key
+(gawmk/leader-key
   "mg" '(magit-status :which-key "magit status pane"))
