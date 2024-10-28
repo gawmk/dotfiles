@@ -406,38 +406,54 @@ or go back to just one window (by deleting all but the selected window)."
 #+end_src
 * Org
 #+begin_src emacs-lisp
-(defun mik/org-mode-setup ()
-  (org-indent-mode)
-  (visual-line-mode 1))
+  (defun mik/org-mode-setup ()
+    (org-indent-mode)
+    (visual-line-mode 1))
+  (use-package org
+    :hook (org-mode . mik/org-mode-setup)
+    :config
+    (dolist (face '((org-level-1 . 1.3)
+                    (org-level-2 . 1.12)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
+    (keymap-set org-mode-map "C-c" nil)
+    (setq org-agenda-files '("~/org"))
+    (setq org-ellipsis " ▾")
+    (setq org-hide-emphasis-markers t)
+    (setq org-pretty-entities t)
 
-(use-package org
-  :hook (org-mode . mik/org-mode-setup)
-  :config
-  (dolist (face '((org-level-1 . 1.3)
-		  (org-level-2 . 1.12)
-		  (org-level-3 . 1.05)
-		  (org-level-4 . 1.0)
-		  (org-level-5 . 1.1)
-		  (org-level-6 . 1.1)
-		  (org-level-7 . 1.1)
-		  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
-  (keymap-set org-mode-map "C-c" nil)
-  (setq org-ellipsis " ▾")
-  (setq org-hide-emphasis-markers t)
-  (setq org-pretty-entities t))
+    ;; custom time
+    (setq org-display-custom-times t)
+    (setq org-time-stamp-custom-formats '("<%a %d-%m-%Y>" . "<%a %d-%m-%Y %H:%M>"))
 
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode))
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-log-done 'time)
+    (setq org-agenda-restore-windows-after-quit t)
+    (setq org-log-into-drawer t))
 
-(defun mik/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
+  (mik/leader-key
+    "oa" '(org-agenda :which-key "org agenda")
+    "oid" '(org-deadline :which-key "insert a deadline on a TODO")
+    "oit" '(org-time-stamp :which-key "insert a deadline on a TODO")
+    "od" '(org-todo :which-key "cycle through TODO states")
+    "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
-(use-package visual-fill-column
-  :hook (org-mode . mik/org-mode-visual-fill))
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode))
+
+  (defun mik/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook (org-mode . mik/org-mode-visual-fill))
 
 #+end_src
 
@@ -456,7 +472,7 @@ or go back to just one window (by deleting all but the selected window)."
     ;; tangle on save
     (defun mik/org-babel-tangle-config ()
       (when (string-equal (buffer-file-name)
-                          (expand-file-name "~/.dotfiles/.emacs.d/config.org"))
+                          (expand-file-name "~/dotfiles/.emacs.d/config.org"))
         ;; Dynamic scoping to the rescue
         (let ((org-confirm-babel-evaluate nil))
           (org-babel-tangle))))

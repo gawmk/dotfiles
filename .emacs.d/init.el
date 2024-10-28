@@ -6,7 +6,7 @@
  '(custom-safe-themes
    '("48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
  '(package-selected-packages
-   '(dired-hide-dotfiles dired-open visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
+   '(visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -333,23 +333,39 @@ or go back to just one window (by deleting all but the selected window)."
 (defun mik/org-mode-setup ()
   (org-indent-mode)
   (visual-line-mode 1))
-
 (use-package org
   :hook (org-mode . mik/org-mode-setup)
   :config
   (dolist (face '((org-level-1 . 1.3)
-		  (org-level-2 . 1.12)
-		  (org-level-3 . 1.05)
-		  (org-level-4 . 1.0)
-		  (org-level-5 . 1.1)
-		  (org-level-6 . 1.1)
-		  (org-level-7 . 1.1)
-		  (org-level-8 . 1.1)))
+                  (org-level-2 . 1.12)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
     (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
   (keymap-set org-mode-map "C-c" nil)
+  (setq org-agenda-files '("~/org"))
   (setq org-ellipsis " ▾")
   (setq org-hide-emphasis-markers t)
-  (setq org-pretty-entities t))
+  (setq org-pretty-entities t)
+
+  ;; custom time
+  (setq org-display-custom-times t)
+  (setq org-time-stamp-custom-formats '("<%a %d-%m-%Y>" . "<%a %d-%m-%Y %H:%M>"))
+
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-log-into-drawer t))
+
+(mik/leader-key
+  "oa" '(org-agenda :which-key "org agenda")
+  "oid" '(org-deadline :which-key "insert a deadline on a TODO")
+  "oit" '(org-time-stamp :which-key "insert a deadline on a TODO")
+  "od" '(org-todo :which-key "cycle through TODO states")
+  "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
 (use-package org-bullets
   :after org
@@ -376,7 +392,7 @@ or go back to just one window (by deleting all but the selected window)."
 ;; tangle on save
 (defun mik/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/.dotfiles/.emacs.d/config.org"))
+                      (expand-file-name "~/dotfiles/.emacs.d/config.org"))
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
