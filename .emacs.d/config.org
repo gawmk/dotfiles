@@ -587,7 +587,7 @@ or go back to just one window (by deleting all but the selected window)."
   (use-package pdf-tools
     :defer t
     :commands (pdf-loader-install)
-    :mode "\\.pdf\\"
+    ;;:mode "\\.pdf\\"
     :bind (:map pdf-view-mode-map
                 ("j" . pdf-view-next-line-or-next-page)
                 ("k" . pdf-view-previous-line-or-next-page)
@@ -596,6 +596,6 @@ or go back to just one window (by deleting all but the selected window)."
     :init (pdf-loader-install)
     :config (add-to-list 'revert-without-query ".pdf"))
 
-  (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1)))
+  (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1) (blink-cursor-mode -1) (line-number-mode -1)))
 #+end_src
 
