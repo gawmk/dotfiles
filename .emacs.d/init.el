@@ -198,6 +198,7 @@ or go back to just one window (by deleting all but the selected window)."
     :config
     (evil-set-undo-system 'undo-redo)
     (evil-mode 1)
+    (define-key evil-motion-state-map (kbd "RET") nil)
     (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
     (define-key evil-normal-state-map (kbd "C-v") 'evil-visual-line)
     (define-key evil-normal-state-map (kbd "C-a") 'evil-append-line)
@@ -340,6 +341,10 @@ or go back to just one window (by deleting all but the selected window)."
   (define-key org-mode-map (kbd "C-M-l") 'org-do-demote)
   (define-key org-mode-map (kbd "C-M-k") 'org-move-subtree-up)
   (define-key org-mode-map (kbd "C-M-j") 'org-move-subtree-down)
+
+  (define-key org-mode-map (kbd "C-M-p") 'org-priority-down)
+  (define-key org-mode-map (kbd "C-M-S-p") 'org-priority-up)
+
   (dolist (face '((org-level-1 . 1.3)
                   (org-level-2 . 1.12)
                   (org-level-3 . 1.05)
@@ -355,6 +360,9 @@ or go back to just one window (by deleting all but the selected window)."
   (setq org-ellipsis " ▾")
   (setq org-hide-emphasis-markers t)
   (setq org-pretty-entities t)
+
+  ;; Follow the links
+  (setq org-return-follows-link  t)
 
   ;; log mode
   (setq org-agenda-start-with-log-mode t)
@@ -382,10 +390,40 @@ or go back to just one window (by deleting all but the selected window)."
   "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
 (setq org-capture-templates
-      `(("i" "Inbox" entry  (file "inbox.org")
-         ,(concat "* TODO %?\n"
-                  "/Entered on/ %U"))))
+      `(("t" "Task" entry  (file+headline "~/org/inbox.org" "Tasks")
+         ,(concat "* TODO [#B] %?\n"
+                  "/Entered on/ %U"))
+        ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
+         "** %?"
+         :empty-lines 0)
+        ("c" "Code To-Do"
+         entry (file+headline "~/org/inbox.org" "Code Related Tasks")
+         "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: "
+         :empty-lines 0)
+        ))
 
+;; TODO states
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i)" "|" "DONE(d)")
+        ))
+
+;; auto insert mode when capturing
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
+
+;; TODO colors
+(setq org-todo-keyword-faces
+      '(
+        ("TODO" . (:foreground "#d6523e" :weight bold))
+        ("PLANNING" . (:foreground "DeepPink" :weight bold))
+        ("IN-PROGRESS" . (:foreground "GoldenRod" :weight bold))
+        ("DONE" . (:foreground "LimeGreen" :weight bold))
+        ))
+
+(setq org-priority-faces
+      '(
+        (?A . (:foreground "Grey"))
+        (?B . (:foreground "Grey"))
+        (?C . (:foreground "Grey"))))
 
 (use-package org-bullets
   :after org
@@ -400,61 +438,95 @@ or go back to just one window (by deleting all but the selected window)."
   :hook (org-mode . gawmk/org-mode-visual-fill))
 
 ;; agenda settings
-(setq org-agenda-files '("~/org"))
-(setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-files '("~/org"))
+  (setq org-agenda-restore-windows-after-quit t)
 
+  ;; custom agenda commands
 
-;; custom agenda commands
+;; Agenda View "d"
+(defun air-org-skip-subtree-if-priority (priority)
+  "Skip an agenda subtree if it has a priority of PRIORITY.
+
+  PRIORITY may be one of the characters ?A, ?B, or ?C."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+        (pri-value (* 1000 (- org-lowest-priority priority)))
+        (pri-current (org-get-priority (thing-at-point 'line t))))
+    (if (= pri-value pri-current)
+        subtree-end
+      nil)))
+
+(setq org-agenda-skip-deadline-if-done t)
+
 (setq org-agenda-custom-commands
       '(
-        ("W" "Work tasks" tags-todo "+work")
+        ;; Daily Agenda & TODOs
+        ("d" "Daily agenda and all TODOs"
 
-        ;; low effort tasks 
-        ("e" "Low effort tasks" tags-todo "+TODO=\"TODO\"+Effort<15&+Effort>0"
-         ((org-agenda-overriding-header "Low Effort Tasks")
-          (org-agenda-max-todos 20)
-          (org-agenda-files org-agenda-files)))))
+         ;; Display items with priority A
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
 
-;; agenda keybinds
-(eval-after-load 'org-agenda
-  '(progn
-     (evil-set-initial-state 'org-agenda-mode 'normal)
-     (evil-define-key 'normal org-agenda-mode-map
-       (kbd "<RET>") 'org-agenda-switch-to
-       (kbd "\t") 'org-agenda-goto
+          ;; View 7 days in the calendar view
+          (agenda "" ((org-agenda-span 7)))
 
-       "q" 'org-agenda-quit
-       "r" 'org-agenda-refile
-       "C-r" 'org-agenda-redo
-       "S" 'org-save-all-org-buffers
-       "+" 'org-agenda-priority-up
-       "," 'org-agenda-priority
-       "-" 'org-agenda-priority-down
-       "d" 'org-agenda-todo
-       ":" 'org-agenda-set-tags
-       ";" 'org-timer-set-timer
-       "j"  'org-agenda-next-line
-       "k"  'org-agenda-previous-line)))
+          ;; Display items with priority B (really it is view all items minus A & C)
+          (tags "PRIORITY=\"A\""
+                   ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)
+                                                   (air-org-skip-subtree-if-priority ?C)
+                                                   (org-agenda-skip-if nil '(scheduled deadline))))
+                    (org-agenda-overriding-header "ALL normal priority tasks:")))
+
+          ;; Display items with pirority C
+          (tags "PRIORITY=\"C\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Low-priority Unfinished tasks:")))
+          )
+
+         ;; Don't compress things (change to suite your tastes)
+         ((org-agenda-compact-blocks nil)))
+        ))
+
+  ;; agenda keybinds
+  (eval-after-load 'org-agenda
+    '(progn
+       (evil-set-initial-state 'org-agenda-mode 'normal)
+       (evil-define-key 'normal org-agenda-mode-map
+         (kbd "<RET>") 'org-agenda-switch-to
+         (kbd "\t") 'org-agenda-goto
+
+         "q" 'org-agenda-quit
+         "r" 'org-agenda-refile
+         "C-r" 'org-agenda-redo
+         "S" 'org-save-all-org-buffers
+         "+" 'org-agenda-priority-up
+         "," 'org-agenda-priority
+         "-" 'org-agenda-priority-down
+         "d" 'org-agenda-todo
+         ":" 'org-agenda-set-tags
+         ";" 'org-timer-set-timer
+         "j"  'org-agenda-next-line
+         "k"  'org-agenda-previous-line)))
 
 
-;; evil calendar
-(defmacro my-org-in-calendar (command)
-  (let ((name (intern (format "my-org-in-calendar-%s" command))))
-    `(progn
-       (defun ,name ()
-         (interactive)
-         (org-eval-in-calendar '(call-interactively #',command)))
-       #',name)))
+  ;; evil calendar
+  (defmacro my-org-in-calendar (command)
+    (let ((name (intern (format "my-org-in-calendar-%s" command))))
+      `(progn
+         (defun ,name ()
+           (interactive)
+           (org-eval-in-calendar '(call-interactively #',command)))
+         #',name)))
 
-(general-def org-read-date-minibuffer-local-map
-  "C-h" (my-org-in-calendar calendar-backward-day)
-  "C-l" (my-org-in-calendar calendar-forward-day)
-  "C-k" (my-org-in-calendar calendar-backward-week)
-  "C-j" (my-org-in-calendar calendar-forward-week)
-  "C-S-h" (my-org-in-calendar calendar-backward-month)
-  "C-S-l" (my-org-in-calendar calendar-forward-month)
-  "C-S-k" (my-org-in-calendar calendar-backward-year)
-  "C-S-j" (my-org-in-calendar calendar-forward-year))
+  (general-def org-read-date-minibuffer-local-map
+    "C-h" (my-org-in-calendar calendar-backward-day)
+    "C-l" (my-org-in-calendar calendar-forward-day)
+    "C-k" (my-org-in-calendar calendar-backward-week)
+    "C-j" (my-org-in-calendar calendar-forward-week)
+    "C-S-h" (my-org-in-calendar calendar-backward-month)
+    "C-S-l" (my-org-in-calendar calendar-forward-month)
+    "C-S-k" (my-org-in-calendar calendar-backward-year)
+    "C-S-j" (my-org-in-calendar calendar-forward-year))
 
 (setq org-babel-python-command "python3")
 (setq org-confirm-babel-evaluate nil)
