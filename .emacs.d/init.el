@@ -425,6 +425,18 @@ or go back to just one window (by deleting all but the selected window)."
         (?B . (:foreground "Grey"))
         (?C . (:foreground "Grey"))))
 
+;; DONE todo strikethrough
+(defun my/modify-org-done-face ()
+  (setq org-fontify-done-headline t)
+  (set-face-attribute 'org-done nil :strike-through t)
+  (set-face-attribute 'org-headline-done nil
+                      :strike-through t
+                      :foreground "Grey"))
+
+(eval-after-load "org"
+  (add-hook 'org-add-hook 'my/modify-org-done-face))
+
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode))
