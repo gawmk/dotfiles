@@ -335,7 +335,11 @@ or go back to just one window (by deleting all but the selected window)."
   (visual-line-mode 1))
 (use-package org
   :hook (org-mode . gawmk/org-mode-setup)
-  :config 
+  :config
+  (define-key org-mode-map (kbd "C-M-h") 'org-do-promote)
+  (define-key org-mode-map (kbd "C-M-l") 'org-do-demote)
+  (define-key org-mode-map (kbd "C-M-k") 'org-move-subtree-up)
+  (define-key org-mode-map (kbd "C-M-j") 'org-move-subtree-down)
   (dolist (face '((org-level-1 . 1.3)
                   (org-level-2 . 1.12)
                   (org-level-3 . 1.05)
@@ -359,8 +363,8 @@ or go back to just one window (by deleting all but the selected window)."
 
 ;; refile
 (setq org-refile-targets
-      '(("Archive.org" :maxlevel . 1)
-        ("Tasks.org" :maxlevel . 1)))
+      '(("~/org/archive.org" :maxlevel . 1)
+        ("~/org/tasks.org" :maxlevel . 1)))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -368,6 +372,7 @@ or go back to just one window (by deleting all but the selected window)."
 
 (gawmk/leader-key
   "oa" '(org-agenda :which-key "org agenda")
+  "oc" '(org-capture :which-key "org agenda")
   "oid" '(org-deadline :which-key "insert a deadline on a TODO")
   "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
   "od" '(org-todo :which-key "cycle through TODO states")
@@ -375,6 +380,12 @@ or go back to just one window (by deleting all but the selected window)."
   "or" '(org-refile :which-key "move an org heading to a diff file")
   "osp" '(org-set-property :which-key "choose a property to set for an item")
   "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
+
+(setq org-capture-templates
+      `(("i" "Inbox" entry  (file "inbox.org")
+         ,(concat "* TODO %?\n"
+                  "/Entered on/ %U"))))
+
 
 (use-package org-bullets
   :after org
@@ -413,6 +424,7 @@ or go back to just one window (by deleting all but the selected window)."
        (kbd "\t") 'org-agenda-goto
 
        "q" 'org-agenda-quit
+       "r" 'org-agenda-refile
        "C-r" 'org-agenda-redo
        "S" 'org-save-all-org-buffers
        "+" 'org-agenda-priority-up
@@ -499,3 +511,12 @@ or go back to just one window (by deleting all but the selected window)."
   :config (add-to-list 'revert-without-query ".pdf"))
 
 (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1) (blink-cursor-mode -1) (line-number-mode -1)))
+
+(use-package eglot
+  :config
+  (fset #'jsonrpc--log-event #'ignore)
+  (add-hook 'c-mode-hook #'eglot-ensure))
+
+;; (use-package eglot-booster
+;;      :after eglot
+;;      :config (eglot-booster-mode))
