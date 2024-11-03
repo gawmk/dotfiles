@@ -462,6 +462,7 @@ or go back to just one window (by deleting all but the selected window)."
 ;; agenda settings
   (setq org-agenda-files '("~/org"))
   (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-window-setup 'only-window)
 
   ;; custom agenda commands
 
