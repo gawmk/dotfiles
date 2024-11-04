@@ -160,7 +160,7 @@
 			"lock": "swaylock",
 			"shutdown": "sudo shutdown now",
 			"reboot": "sudo reboot",
-			"suspend": "systemctl suspend && swaylock",
+			"suspend": "systemctl suspend",
 		},
         }
 }

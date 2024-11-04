@@ -55,8 +55,8 @@ input "type:keyboard" {
     xkb_options ctrl:nocaps
 }
 
-# clamshell-mode
-# exec_always ~/sway-clamshell.sh
+# idle
+exec swayidle -w before-sleep 'swaylock -f'
 
 ### OUTPUT CONFIG ###
 
