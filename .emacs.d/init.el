@@ -264,7 +264,9 @@ or go back to just one window (by deleting all but the selected window)."
   (ivy-rich-mode 1))
 
 (gawmk/leader-key
-  "st" '(tab-switcher :which-key "switch tab"))
+  "st" '(tab-switcher :which-key "switch tab")
+  "kb" '(kill-buffer :which-key "kill buffer")
+  "sb" '(counsel-switch-buffer :which-key "switch buffer"))
 
 (use-package project)
 
@@ -384,7 +386,7 @@ or go back to just one window (by deleting all but the selected window)."
   "oid" '(org-deadline :which-key "insert a deadline on a TODO")
   "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
   "od" '(org-todo :which-key "cycle through TODO states")
-  "ot" '(counsel-org-tag :which-key "insert a tag on a headline")
+  "ot" '(org-set-tags-command :which-key "insert a tag on a headline")
   "or" '(org-refile :which-key "move an org heading to a diff file")
   "osp" '(org-set-property :which-key "choose a property to set for an item")
   "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
@@ -441,9 +443,14 @@ or go back to just one window (by deleting all but the selected window)."
                       ;; Places
                       ("@home" . ?h)
                       ("@work" . ?w)
+                      ("@uni" . ?u)
 
-                      ("@errands" . ?e)
+                      ;; dev
+                      ("@computer" . ?c)
+                      ("@phone" . ?p)
 
+                      ("@errand" . ?e)
+                      ("@meeting" . ?m)
                       ))
 
 
@@ -519,14 +526,15 @@ or go back to just one window (by deleting all but the selected window)."
          (kbd "\t") 'org-agenda-goto
 
          "q" 'org-agenda-quit
+         "m" 'org-tags-view
          "r" 'org-agenda-refile
          "C-r" 'org-agenda-redo
          "S" 'org-save-all-org-buffers
-         "+" 'org-agenda-priority-up
+         "P" 'org-agenda-priority-up
          "," 'org-agenda-priority
-         "-" 'org-agenda-priority-down
+         "p" 'org-agenda-priority-down
          "d" 'org-agenda-todo
-         ":" 'org-agenda-set-tags
+         "t" 'org-agenda-set-tags
          ";" 'org-timer-set-timer
          "j"  'org-agenda-next-line
          "k"  'org-agenda-previous-line)))
