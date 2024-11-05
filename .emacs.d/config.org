@@ -465,6 +465,7 @@ or go back to just one window (by deleting all but the selected window)."
     "oc" '(org-capture :which-key "org agenda")
     "oid" '(org-deadline :which-key "insert a deadline on a TODO")
     "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
+    "oil" '(org-insert-link :which-key "insert a link to a resource")
     "od" '(org-todo :which-key "cycle through TODO states")
     "ot" '(org-set-tags-command :which-key "insert a tag on a headline")
     "or" '(org-refile :which-key "move an org heading to a diff file")
@@ -476,12 +477,15 @@ or go back to just one window (by deleting all but the selected window)."
            ,(concat "* TODO [#B] %?\n"
                     "/Entered on/ %U"))
           ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
-           "** %?"
-           :empty-lines 0)
+           "** %?")
+
           ("c" "Code To-Do"
            entry (file+headline "~/org/inbox.org" "Code Related Tasks")
-           "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: "
-           :empty-lines 0)
+           "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: ")
+          
+          ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
+           ,(concat "* %? :meeting:\n"
+                    "/Entered on/ %U"))
           ))
 
   ;; TODO states
@@ -529,8 +533,8 @@ or go back to just one window (by deleting all but the selected window)."
                         ("@computer" . ?c)
                         ("@phone" . ?p)
 
-                        ("@errand" . ?e)
-                        ("@meeting" . ?m)
+                        ("errand" . ?e)
+                        ("meeting" . ?m)
                         ))
 
 
@@ -549,12 +553,12 @@ or go back to just one window (by deleting all but the selected window)."
 #+end_src
 **  Org Agenda
 #+begin_src emacs-lisp
-    ;; agenda settings
-    (setq org-agenda-files '("~/org"))
-    (setq org-agenda-restore-windows-after-quit t)
-    (setq org-agenda-window-setup 'only-window)
+  ;; agenda settings
+  (setq org-agenda-files '("~/org"))
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-window-setup 'only-window)
 
-    ;; custom agenda commands
+  ;; custom agenda commands
 
   ;; Agenda View "d"
   (defun air-org-skip-subtree-if-priority (priority)
@@ -584,63 +588,63 @@ or go back to just one window (by deleting all but the selected window)."
             (agenda "" ((org-agenda-span 7)))
 
             ;; Display items with priority B (really it is view all items minus A & C)
-            (tags "PRIORITY=\"A\""
+            (tags-todo "PRIORITY=\"B\""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)
                                                      (air-org-skip-subtree-if-priority ?C)
-                                                     (org-agenda-skip-if nil '(scheduled deadline))))
+                                                     ))
                       (org-agenda-overriding-header "ALL normal priority tasks:")))
-
             ;; Display items with pirority C
             (tags "PRIORITY=\"C\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "Low-priority Unfinished tasks:")))
+                   (org-agenda-overriding-header "Low-priority unfinished tasks:")))
             )
 
            ;; Don't compress things (change to suite your tastes)
            ((org-agenda-compact-blocks nil)))
           ))
 
-    ;; agenda keybinds
-    (eval-after-load 'org-agenda
-      '(progn
-         (evil-set-initial-state 'org-agenda-mode 'normal)
-         (evil-define-key 'normal org-agenda-mode-map
-           (kbd "<RET>") 'org-agenda-switch-to
-           (kbd "\t") 'org-agenda-goto
+  ;; agenda keybinds
+  (eval-after-load 'org-agenda
+    '(progn
+       (evil-set-initial-state 'org-agenda-mode 'normal)
+       (evil-define-key 'normal org-agenda-mode-map
+         (kbd "<RET>") 'org-agenda-switch-to
+         (kbd "M-<RET>") 'org-agenda-show
+         (kbd "\t") 'org-agenda-goto
 
-           "q" 'org-agenda-quit
-           "m" 'org-tags-view
-           "r" 'org-agenda-refile
-           "C-r" 'org-agenda-redo
-           "S" 'org-save-all-org-buffers
-           "P" 'org-agenda-priority-up
-           "," 'org-agenda-priority
-           "p" 'org-agenda-priority-down
-           "d" 'org-agenda-todo
-           "t" 'org-agenda-set-tags
-           ";" 'org-timer-set-timer
-           "j"  'org-agenda-next-line
-           "k"  'org-agenda-previous-line)))
+         "q" 'org-agenda-quit
+         "m" 'org-tags-view
+         "r" 'org-agenda-refile
+         "C-r" 'org-agenda-redo
+         "S" 'org-save-all-org-buffers
+         "P" 'org-agenda-priority-up
+         "," 'org-agenda-priority
+         "p" 'org-agenda-priority-down
+         "d" 'org-agenda-todo
+         "t" 'org-agenda-set-tags
+         ";" 'org-timer-set-timer
+         "j"  'org-agenda-next-line
+         "k"  'org-agenda-previous-line)))
 
 
-    ;; evil calendar
-    (defmacro my-org-in-calendar (command)
-      (let ((name (intern (format "my-org-in-calendar-%s" command))))
-        `(progn
-           (defun ,name ()
-             (interactive)
-             (org-eval-in-calendar '(call-interactively #',command)))
-           #',name)))
+  ;; evil calendar
+  (defmacro my-org-in-calendar (command)
+    (let ((name (intern (format "my-org-in-calendar-%s" command))))
+      `(progn
+         (defun ,name ()
+           (interactive)
+           (org-eval-in-calendar '(call-interactively #',command)))
+         #',name)))
 
-    (general-def org-read-date-minibuffer-local-map
-      "C-h" (my-org-in-calendar calendar-backward-day)
-      "C-l" (my-org-in-calendar calendar-forward-day)
-      "C-k" (my-org-in-calendar calendar-backward-week)
-      "C-j" (my-org-in-calendar calendar-forward-week)
-      "C-S-h" (my-org-in-calendar calendar-backward-month)
-      "C-S-l" (my-org-in-calendar calendar-forward-month)
-      "C-S-k" (my-org-in-calendar calendar-backward-year)
-      "C-S-j" (my-org-in-calendar calendar-forward-year))
+  (general-def org-read-date-minibuffer-local-map
+    "C-h" (my-org-in-calendar calendar-backward-day)
+    "C-l" (my-org-in-calendar calendar-forward-day)
+    "C-k" (my-org-in-calendar calendar-backward-week)
+    "C-j" (my-org-in-calendar calendar-forward-week)
+    "C-S-h" (my-org-in-calendar calendar-backward-month)
+    "C-S-l" (my-org-in-calendar calendar-forward-month)
+    "C-S-k" (my-org-in-calendar calendar-backward-year)
+    "C-S-j" (my-org-in-calendar calendar-forward-year))
 
 #+end_src
 
