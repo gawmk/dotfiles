@@ -461,8 +461,8 @@ or go back to just one window (by deleting all but the selected window)."
   ;; refile
   (setq org-refile-targets
         '(("~/org/archive.org" :maxlevel . 1)
-          ("~/org/projects.org" :maxlevel . 3)
-          ("~/org/agenda.org" :maxlevel . 3)
+          ("~/org/projects.org" :maxlevel . 2)
+          ("~/org/agenda.org" :maxlevel . 2)
           ("~/org/tasks.org" :maxlevel . 1)))
 
   ;; Save Org buffers after refiling!
@@ -508,10 +508,10 @@ or go back to just one window (by deleting all but the selected window)."
   ;; TODO colors
   (setq org-todo-keyword-faces
         '(
-          ("TODO" . (:foreground "#d6523e" :weight bold))
-          ("PLANNING" . (:foreground "DeepPink" :weight bold))
-          ("IN-PROGRESS" . (:foreground "GoldenRod" :weight bold))
-          ("DONE" . (:foreground "LimeGreen" :weight bold))
+          ("TODO" . (:foreground "#d65d0e" :weight bold))
+          ("PLANNING" . (:foreground "#d4679c" :weight bold))
+          ("IN-PROGRESS" . (:foreground "#eebd35" :weight bold))
+          ("DONE" . (:foreground "#689d6a" :weight bold))
           ))
 
   (setq org-priority-faces
