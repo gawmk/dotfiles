@@ -40,6 +40,8 @@
 
 (setq use-dialog-box nil)
 
+(add-to-list 'exec-path "~/.local/bin/")
+
 (setq global-auto-revert-non-file-buffers 1)
 (global-auto-revert-mode 1)
 
@@ -577,9 +579,9 @@ or go back to just one window (by deleting all but the selected window)."
    (python . t)))
 
 (require 'org-tempo)
-(add-to-list 'org-structure-template-alist '(
-                                             ("el" . "src emacs-lisp")
-                                             ("py" . "python3")))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+
 
 ;; tangle on save
 (defun gawmk/org-babel-tangle-config ()
@@ -588,6 +590,9 @@ or go back to just one window (by deleting all but the selected window)."
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
+
+(gawmk/leader-key
+  "xb" '(org-babel-execute-src-block :which-key "execute a code block"))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
 
@@ -632,6 +637,34 @@ or go back to just one window (by deleting all but the selected window)."
   (fset #'jsonrpc--log-event #'ignore)
   (add-hook 'c-mode-hook #'eglot-ensure))
 
-;; (use-package eglot-booster
-;;      :after eglot
-;;      :config (eglot-booster-mode))
+(with-eval-after-load 'eglot
+  (setq completion-category-defaults nil)
+  (add-to-list 'eglot-server-programs
+               '(c-mode . ("clangd"))))
+
+
+(use-package eglot-booster
+  :after eglot
+  :config (eglot-booster-mode))
+
+(use-package corfu
+   :init
+   (global-corfu-mode)
+
+   :custom
+   (corfu-cycle t)
+   (corfu-auto t)
+   (corfu-auto-prefix 2)
+   (corfu-auto-delay 0.0)
+   (corfu-echo-documentation 0.25)
+
+   :bind (:map corfu-map
+               ("RET" . nil)
+               ("C-j" . corfu-next)
+               ("C-k" . corfu-previous)
+               ("C-<return>" . corfu-insert)))
+
+(use-package cape
+  :init
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block))
