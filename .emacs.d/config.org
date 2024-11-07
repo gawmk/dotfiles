@@ -238,8 +238,12 @@ or go back to just one window (by deleting all but the selected window)."
       :prefix "SPC"
       :global-prefix "C-SPC")
 
+    (define-key minibuffer-mode-map (kbd "C-j") 'previous-history-element)
+    (define-key minibuffer-mode-map (kbd "C-k") 'next-history-element)
+
     (gawmk/leader-key
       "pf" '(project-find-file :which-key "project management")
+      "mc" '(compile :which-key "compile")
       "tt" '(launch-vterm :which-key "launch and rename vterm")
       "ff" '(counsel-find-file :which-key "find file")
       "rf" '(counsel-recentf :which-key "open recent file")
@@ -454,6 +458,8 @@ or go back to just one window (by deleting all but the selected window)."
   ;; refile
   (setq org-refile-targets
         '(("~/org/archive.org" :maxlevel . 1)
+          ("~/org/projects.org" :maxlevel . 3)
+          ("~/org/agenda.org" :maxlevel . 3)
           ("~/org/tasks.org" :maxlevel . 1)))
 
   ;; Save Org buffers after refiling!
@@ -490,7 +496,7 @@ or go back to just one window (by deleting all but the selected window)."
 
   ;; TODO states
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i)" "|" "DONE(d)")
+        '((sequence "TODO(t!)" "NEXT(n!)" "PLANNING(p!)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
           ))
 
   ;; auto insert mode when capturing
@@ -650,26 +656,28 @@ or go back to just one window (by deleting all but the selected window)."
 
 **  Babel
 #+begin_src emacs-lisp
-    (setq org-babel-python-command "python3")
-    (setq org-confirm-babel-evaluate nil)
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (python . t)))
+  (setq org-babel-python-command "python3")
+  (setq org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
 
-    (require 'org-tempo)
-    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '(
+                                               ("el" . "src emacs-lisp")
+                                               ("py" . "python3")))
 
-    ;; tangle on save
-    (defun gawmk/org-babel-tangle-config ()
-      (when (string-equal (buffer-file-name)
-                          (expand-file-name "~/dotfiles/.emacs.d/config.org"))
-        ;; Dynamic scoping to the rescue
-        (let ((org-confirm-babel-evaluate nil))
-          (org-babel-tangle))))
+  ;; tangle on save
+  (defun gawmk/org-babel-tangle-config ()
+    (when (string-equal (buffer-file-name)
+                        (expand-file-name "~/dotfiles/.emacs.d/config.org"))
+      ;; Dynamic scoping to the rescue
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
 
-    (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
-  
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
+
 #+END_SRC
 * Terminal
 #+begin_src emacs-lisp

@@ -180,8 +180,12 @@ or go back to just one window (by deleting all but the selected window)."
     :prefix "SPC"
     :global-prefix "C-SPC")
 
+  (define-key minibuffer-mode-map (kbd "C-j") 'previous-history-element)
+  (define-key minibuffer-mode-map (kbd "C-k") 'next-history-element)
+
   (gawmk/leader-key
     "pf" '(project-find-file :which-key "project management")
+    "mc" '(compile :which-key "compile")
     "tt" '(launch-vterm :which-key "launch and rename vterm")
     "ff" '(counsel-find-file :which-key "find file")
     "rf" '(counsel-recentf :which-key "open recent file")
@@ -374,6 +378,8 @@ or go back to just one window (by deleting all but the selected window)."
 ;; refile
 (setq org-refile-targets
       '(("~/org/archive.org" :maxlevel . 1)
+        ("~/org/projects.org" :maxlevel . 3)
+        ("~/org/agenda.org" :maxlevel . 3)
         ("~/org/tasks.org" :maxlevel . 1)))
 
 ;; Save Org buffers after refiling!
@@ -410,7 +416,7 @@ or go back to just one window (by deleting all but the selected window)."
 
 ;; TODO states
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i)" "|" "DONE(d)")
+      '((sequence "TODO(t!)" "NEXT(n!)" "PLANNING(p!)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
         ))
 
 ;; auto insert mode when capturing
@@ -571,7 +577,9 @@ or go back to just one window (by deleting all but the selected window)."
    (python . t)))
 
 (require 'org-tempo)
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '(
+                                             ("el" . "src emacs-lisp")
+                                             ("py" . "python3")))
 
 ;; tangle on save
 (defun gawmk/org-babel-tangle-config ()
