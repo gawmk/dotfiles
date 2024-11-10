@@ -270,6 +270,7 @@ or go back to just one window (by deleting all but the selected window)."
       (define-key evil-motion-state-map (kbd "RET") nil)
       (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
       (define-key evil-normal-state-map (kbd "C-v") 'evil-visual-line)
+      (define-key evil-normal-state-map (kbd "S-v") 'evil-visual-block)
       (define-key evil-normal-state-map (kbd "C-a") 'evil-append-line)
       (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
       (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
@@ -448,7 +449,7 @@ or go back to just one window (by deleting all but the selected window)."
     ;; visual stuff
     (setq org-ellipsis " ▾")
     (setq org-hide-emphasis-markers t)
-    (setq org-pretty-entities t)
+    (setq org-pretty-entities nil)
 
     ;; Follow the links
     (setq org-return-follows-link  t)
@@ -567,6 +568,8 @@ or go back to just one window (by deleting all but the selected window)."
   (setq org-agenda-restore-windows-after-quit t)
   (setq org-agenda-window-setup 'only-window)
 
+  (setq org-agenda-skip-timestamp-if-done t)
+
   ;; custom agenda commands
 
   ;; Agenda View "d"
@@ -665,6 +668,7 @@ or go back to just one window (by deleting all but the selected window)."
    'org-babel-load-languages
    '((emacs-lisp . t)
      (python . t)))
+
 
   (require 'org-tempo)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
