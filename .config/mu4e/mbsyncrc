@@ -1,0 +1,27 @@
+# Account info
+IMAPAccount gawmk-gmail
+Host imap.gmail.com
+User mikolaj.gawrys@gmail.com
+PassCmd "cat ~/.google-app-pass"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+
+# Remote storage
+IMAPStore gawmk-gmail-remote
+Account gawmk-gmail
+
+
+# Local storage
+MaildirStore gawmk-gmail-local
+Subfolders Verbatim
+Path ~/mail/gawmk-gmail/ 
+Inbox ~/mail/gawmk-gmail/Inbox
+
+
+Channel gawmk-gmail
+Near :gawmk-gmail-local:
+Far :gawmk-gmail-remote:
+Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail" "[Gmail]/Bin"
+Create Both
+SyncState *

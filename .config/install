@@ -2,12 +2,15 @@
 
 if [ -f "/etc/debian_version" ]; then
 
-  apt install sway waybar adduser cmake wl-clipboard\
+  apt install stow wget sway waybar adduser cmake wl-clipboard\
       cmatrix cowsay fd-find firefox-esr flatpak fonts-font-awesome fzf \
-      grep grim hostname htop imv kitty git \
+      grep grim hostname htop imv kitty git texlive-full maildir-utils\
       neofetch neovim network-manager pipewire rfkill python3 \
-      ripgrep rubber sed slurp sudo swaybg swayidle swaylock syncthing tar \
-      thunar tmux unzip wlsunset xwayland zathura zip 
+      ripgrep sed slurp sudo swaybg swayidle swaylock syncthing tar \
+      tmux unzip wlsunset xwayland zathura zip gnupg2
+
+  # gnu stow
+  stow .
   
   # setting wlsunset up
   wlsunset -l 50.8 -L 5.6
@@ -19,6 +22,5 @@ if [ -f "/etc/debian_version" ]; then
   # config firefox (export all settings)
   # intellij idea ultimate
   # change keyboard mappings
-  # transfer files from legion to thinkpad
 
 fi
