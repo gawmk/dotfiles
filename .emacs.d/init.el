@@ -104,7 +104,8 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(set-face-attribute 'default nil :font "CaskaydiaMono Nerd Font Mono" :height 140 :weight 'normal)
+(set-face-attribute 'default nil :font "Iosevka Comfy Motion" :height 160 :weight 'semibold)
+
 (load-theme 'doom-gruvbox)
 (use-package doom-modeline
   :ensure t
