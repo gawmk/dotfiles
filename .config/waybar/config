@@ -72,7 +72,7 @@
         },
         "clock": {
             "interval": 60,
-            "format": "  {:%a %b %d %H:%M}", // %b %d %Y  --Date formatting
+            "format": "  {:%a %b %d %H:%M}", // %b %d %Y  --Date formatting
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
             "format-alt": "{:%Y-%m-%d}"
         },
@@ -92,7 +92,7 @@
         },
         "memory": {
             "interval": 2,
-            "format": "{}% "
+            "format": "{}% "
         },
         "disk": {
             "interval": 20,
@@ -110,9 +110,9 @@
                 "warning": 30,
                 "critical": 18
             },
-            "format": "{capacity}% <span font='14'>{icon}</span>",
-            "format-charging": "{capacity}% ",
-            "format-plugged": "{capacity}% ",
+            "format": "{capacity}% <span font='14'>󰁹</span>",
+            "format-charging": "{capacity}% 󰢝",
+            "format-plugged": "{capacity}% 󰂅",
             "format-alt": "{capacity} {icon}",
             // "format-good": "", // An empty format will hide the module
             // "format-full": "",
@@ -123,9 +123,9 @@
         },
         "network": {
             // "interface": "wlp2*", // (Optional) To force the use of this interface
-            "format-wifi": "<span font='14'></span> :{ipaddr}", //({essid} {signalStrength}%)
+            "format-wifi": "<span font='14'>󰖩</span> :{ipaddr}", //({essid} {signalStrength}%)
             "format-ethernet": "{ipaddr}/{cidr} ",
-            "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
+            "tooltip-format-wifi": "{essid} ({signalStrength}%)󰖩",
             "tooltip-format": "{ifname} via {gwaddr} ",
             "format-linked": "{ifname} (No IP) ",
             "format-disconnected": "Disconnected ⚠",
@@ -136,9 +136,9 @@
             "format": "{volume}% <span font='14'>{icon}</span>", //{format_source}",
             "format-bluetooth": "{volume}% {icon} 󰂯", //{format_source}",
             "format-bluetooth-muted": "󰖁 {icon} 󰂯", //{format_source}",
-            "format-muted": "󰖁 {format_source}",
+            "format-muted": "󰖁",
             "format-source": "{volume}% ",
-            "format-source-muted": "",
+            "format-source-muted": "",
             "format-icons": {
                 "headphone": "󰋋",
                 "hands-free": "󱡒",
@@ -146,13 +146,13 @@
                 "phone": "",
                 "portable": "",
                 "car": "",
-                "default": ["", "", ""]
+                "default": ["󰕿", "󰖀", "󰕾"]
             },
             "on-click": "pavucontrol"
         },
         "custom/power": {
             "format": "<span font='18'>{icon}</span>",
-            "format-icons": " ",
+            "format-icons": "󰐥 ",
 	    "tooltip": false,
 		"menu": "on-click",
 		"menu-file": "~/.config/waybar/power_menu.xml",
