@@ -104,7 +104,7 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(set-face-attribute 'default nil :font "Iosevka Comfy Motion" :height 160 :weight 'semibold)
+(set-face-attribute 'default nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 
 (load-theme 'doom-gruvbox)
 (use-package doom-modeline
@@ -149,18 +149,18 @@ cancel the use of the current buffer (for special-purpose buffers),
 or go back to just one window (by deleting all but the selected window)."
   (interactive)
   (cond ((eq last-command 'mode-exited) nil)
-    ((> (minibuffer-depth) 0)
-     (abort-recursive-edit)
-    (current-prefix-arg
-     nil)
-    ((and transient-mark-mode mark-active)
-     (deactivate-mark))
-    ((> (recursion-depth) 0)
-     (exit-recursive-edit))
-    (buffer-quit-function
-     (funcall buffer-quit-function))
-    ((string-match "^ \\*" (buffer-name (current-buffer)))
-     (bury-buffer)))))
+        ((> (minibuffer-depth) 0)
+         (abort-recursive-edit)
+         (current-prefix-arg
+          nil)
+         ((and transient-mark-mode mark-active)
+          (deactivate-mark))
+         ((> (recursion-depth) 0)
+          (exit-recursive-edit))
+         (buffer-quit-function
+          (funcall buffer-quit-function))
+         ((string-match "^ \\*" (buffer-name (current-buffer)))
+          (bury-buffer)))))
 (bind-key* "C-c" 'keyboard-escape-quit)  ;C-c as escape
 
 (use-package general
@@ -207,11 +207,14 @@ or go back to just one window (by deleting all but the selected window)."
     (evil-mode 1)
     (define-key evil-motion-state-map (kbd "RET") nil)
     (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
+    (define-key evil-insert-state-map (kbd "C-p") 'nil)
+    (define-key evil-normal-state-map (kbd "C-p") 'nil)
     (define-key evil-normal-state-map (kbd "C-v") 'evil-visual-line)
     (define-key evil-normal-state-map (kbd "S-v") 'evil-visual-block)
     (define-key evil-normal-state-map (kbd "C-a") 'evil-append-line)
     (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
     (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
+    (define-key evil-normal-state-map (kbd "&") 'async-shell-command)
     ;; Use visual line motions even outside of visual-line-mode buffers
     (evil-global-set-key 'motion "j" 'evil-next-visual-line)
     (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
@@ -312,6 +315,30 @@ or go back to just one window (by deleting all but the selected window)."
 (define-key window-map "t"  'tab-bar-new-tab)
 (define-key window-map "rn" 'tab-bar-rename-tab)
 (define-key window-map "p"  'tab-bar-switch-to-recent-tab)
+
+(use-package popper
+    :ensure t ; or :straight t
+    :init
+    (bind-key* "C-p" 'popper-toggle)
+    (bind-key* "M-p" 'popper-cycle)
+    (bind-key* "C-M-p" 'popper-toggle-type)
+
+    (evil-collection-define-key 'normal 'shell-mode-map "C-p" nil)
+    (evil-collection-define-key 'normal 'comint-mode-map (kbd "C-p") nil)
+    (define-key comint-mode-map "C-p" nil)
+
+    (setq popper-group-function #'popper-group-by-project) ; project.el projects
+    (setq popper-group-function #'popper-group-by-directory) ; group by project.el
+
+    (setq popper-reference-buffers
+          '("\\*Messages\\*"
+            "Output\\*$"
+            "\\*Async Shell Command\\*"
+            helpful-mode
+            help-mode
+            compilation-mode)))
+(popper-mode 1)
+(popper-echo-mode 1)
 
 (use-package dired
   :ensure nil

@@ -17,6 +17,7 @@
   - [[Ivy]]
   - [[Project]]
   - [[Tab Bar and Window Management]]
+  - [[Popper]]
 - [[Dired]]
 - [[Org]]
   - [[Org Agenda]]
@@ -153,7 +154,7 @@ Disabling startup clutter, transparency etc.
     ;; Corrects (and improves) org-mode's native fontification.
     (doom-themes-org-config))
 
-  (set-face-attribute 'default nil :font "Iosevka Comfy Motion" :height 160 :weight 'semibold)
+  (set-face-attribute 'default nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
   
   (load-theme 'doom-gruvbox)
   (use-package doom-modeline
@@ -197,28 +198,28 @@ Disabling startup clutter, transparency etc.
 -----
 First and foremost - modify kb esc so that it does not kill the current buffer.
 #+begin_src emacs-lisp
-(defun keyboard-escape-quit ()
-  "Exit the current \"mode\" (in a generalized sense of the word).
-This command can exit an interactive command such as `query-replace',
-can clear out a prefix argument or a region,
-can get out of the minibuffer or other recursive edit,
-cancel the use of the current buffer (for special-purpose buffers),
-or go back to just one window (by deleting all but the selected window)."
-  (interactive)
-  (cond ((eq last-command 'mode-exited) nil)
-    ((> (minibuffer-depth) 0)
-     (abort-recursive-edit)
-    (current-prefix-arg
-     nil)
-    ((and transient-mark-mode mark-active)
-     (deactivate-mark))
-    ((> (recursion-depth) 0)
-     (exit-recursive-edit))
-    (buffer-quit-function
-     (funcall buffer-quit-function))
-    ((string-match "^ \\*" (buffer-name (current-buffer)))
-     (bury-buffer)))))
-(bind-key* "C-c" 'keyboard-escape-quit)  ;C-c as escape
+  (defun keyboard-escape-quit ()
+    "Exit the current \"mode\" (in a generalized sense of the word).
+  This command can exit an interactive command such as `query-replace',
+  can clear out a prefix argument or a region,
+  can get out of the minibuffer or other recursive edit,
+  cancel the use of the current buffer (for special-purpose buffers),
+  or go back to just one window (by deleting all but the selected window)."
+    (interactive)
+    (cond ((eq last-command 'mode-exited) nil)
+          ((> (minibuffer-depth) 0)
+           (abort-recursive-edit)
+           (current-prefix-arg
+            nil)
+           ((and transient-mark-mode mark-active)
+            (deactivate-mark))
+           ((> (recursion-depth) 0)
+            (exit-recursive-edit))
+           (buffer-quit-function
+            (funcall buffer-quit-function))
+           ((string-match "^ \\*" (buffer-name (current-buffer)))
+            (bury-buffer)))))
+  (bind-key* "C-c" 'keyboard-escape-quit)  ;C-c as escape
 #+end_src
 
 ** General.el
@@ -271,11 +272,14 @@ or go back to just one window (by deleting all but the selected window)."
       (evil-mode 1)
       (define-key evil-motion-state-map (kbd "RET") nil)
       (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
+      (define-key evil-insert-state-map (kbd "C-p") 'nil)
+      (define-key evil-normal-state-map (kbd "C-p") 'nil)
       (define-key evil-normal-state-map (kbd "C-v") 'evil-visual-line)
       (define-key evil-normal-state-map (kbd "S-v") 'evil-visual-block)
       (define-key evil-normal-state-map (kbd "C-a") 'evil-append-line)
       (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
       (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
+      (define-key evil-normal-state-map (kbd "&") 'async-shell-command)
       ;; Use visual line motions even outside of visual-line-mode buffers
       (evil-global-set-key 'motion "j" 'evil-next-visual-line)
       (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
@@ -391,6 +395,32 @@ or go back to just one window (by deleting all but the selected window)."
 
 
 #+end_src
+** Popper
+#+begin_src emacs-lisp
+    (use-package popper
+      :ensure t ; or :straight t
+      :init
+      (bind-key* "C-p" 'popper-toggle)
+      (bind-key* "M-p" 'popper-cycle)
+      (bind-key* "C-M-p" 'popper-toggle-type)
+
+      (evil-collection-define-key 'normal 'shell-mode-map "C-p" nil)
+      (evil-collection-define-key 'normal 'comint-mode-map (kbd "C-p") nil)
+      (define-key comint-mode-map "C-p" nil)
+
+      (setq popper-group-function #'popper-group-by-project) ; project.el projects
+      (setq popper-group-function #'popper-group-by-directory) ; group by project.el
+
+      (setq popper-reference-buffers
+            '("\\*Messages\\*"
+              "Output\\*$"
+              "\\*Async Shell Command\\*"
+              helpful-mode
+              help-mode
+              compilation-mode)))
+  (popper-mode 1)
+  (popper-echo-mode 1)
+    #+end_src
 * Dired
 #+begin_src emacs-lisp
   (use-package dired
@@ -816,3 +846,4 @@ or go back to just one window (by deleting all but the selected window)."
       (:maildir "/[Gmail]/All Mail"  :key ?a))))
 
 #+end_src
+
