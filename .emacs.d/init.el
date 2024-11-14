@@ -317,28 +317,52 @@ or go back to just one window (by deleting all but the selected window)."
 (define-key window-map "p"  'tab-bar-switch-to-recent-tab)
 
 (use-package popper
-    :ensure t ; or :straight t
-    :init
-    (bind-key* "C-p" 'popper-toggle)
-    (bind-key* "M-p" 'popper-cycle)
-    (bind-key* "C-M-p" 'popper-toggle-type)
+  :ensure t ; or :straight t
+  :init
+  (bind-key* "C-p" 'popper-toggle)
+  (bind-key* "M-p" 'popper-cycle)
+  (bind-key* "C-M-p" 'popper-toggle-type)
+  (bind-key* "C-M-x" 'popper-kill-latest-popup)
 
-    (evil-collection-define-key 'normal 'shell-mode-map "C-p" nil)
-    (evil-collection-define-key 'normal 'comint-mode-map (kbd "C-p") nil)
-    (define-key comint-mode-map "C-p" nil)
+  (evil-collection-define-key 'normal 'shell-mode-map "C-p" nil)
+  (evil-collection-define-key 'normal 'comint-mode-map (kbd "C-p") nil)
+  (define-key comint-mode-map "C-p" nil)
 
-    (setq popper-group-function #'popper-group-by-project) ; project.el projects
-    (setq popper-group-function #'popper-group-by-directory) ; group by project.el
+  (setq popper-group-function #'popper-group-by-project) ; project.el projects
+  (setq popper-group-function #'popper-group-by-directory) ; group by project.el
 
-    (setq popper-reference-buffers
-          '("\\*Messages\\*"
-            "Output\\*$"
-            "\\*Async Shell Command\\*"
-            helpful-mode
-            help-mode
-            compilation-mode)))
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          helpful-mode
+          help-mode
+          compilation-mode)))
+
+;; Match eshell, shell, term and/or vterm buffers
+(setq popper-reference-buffers
+      (append popper-reference-buffers
+              '("^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
+                "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
+                "^\\*term.*\\*$"   term-mode   ;term as a popup
+                "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+                )))
+
 (popper-mode 1)
 (popper-echo-mode 1)
+(defun popper-display-popup-right (buffer &optional alist)
+  "Display popup-buffer BUFFER at the right side of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (display-buffer-in-side-window
+   buffer
+   (append alist
+           `((window-height . ,popper-window-height)
+             (side . right)
+             (slot . 1)))))
+(setq popper-display-control t)
+(setq popper-display-function #'popper-display-popup-right)
 
 (use-package dired
   :ensure nil
@@ -635,6 +659,8 @@ or go back to just one window (by deleting all but the selected window)."
     (evil-set-initial-state 'vterm-mode 'insert))
   (setq vterm-timer-delay 0.01)
   (keymap-set vterm-mode-map "<insert-state> C-c" 'vterm--self-insert))
+  (keymap-set vterm-mode-map "<insert-state> C-p" 'nil)
+  (keymap-set vterm-mode-map "C-p" 'nil)
   (keymap-set vterm-mode-map "<insert-state> C-w" 'window-map)
 
 
@@ -645,7 +671,7 @@ or go back to just one window (by deleting all but the selected window)."
   (rename-buffer buffer-name t))
 
 (use-package magit)
-
+(setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 (gawmk/leader-key
   "mg" '(magit-status :which-key "magit status pane")
   "cmg" '(magit-clone :which-key "clone a repository"))

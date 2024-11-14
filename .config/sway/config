@@ -16,9 +16,8 @@ set $right l
 # Your preferred terminal emulator
 set $term kitty 
 
-# APP LAUNCHER and grim config#
-set $menu 'albert toggle'
-exec albert
+# App Launcher
+set $menu tofi-run | xargs swaymsg exec --
 include /etc/sway/config-vars.d/*
 
 ### Output configuration
