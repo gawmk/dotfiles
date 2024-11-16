@@ -250,6 +250,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     (gawmk/leader-key
       "pf" '(project-find-file :which-key "project management")
       "mc" '(compile :which-key "compile")
+      "mu" '(mu4e :which-key "mail")
       "tt" '(launch-vterm :which-key "launch and rename vterm")
       "ff" '(counsel-find-file :which-key "find file")
       "rf" '(counsel-recentf :which-key "open recent file")
@@ -838,6 +839,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   (use-package cape
     :init
     (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-tex)
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 
@@ -850,26 +852,26 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     :load-path "/usr/share/emacs/site-lisp/mu4e/"
     :config
     (setq mail-user-agent 'mu4e-user-agent)
+    (setq message-kill-buffer-on-exit t)
     ;; This is set to 't' to avoid mail syncing issues when using mbsync
     (setq mu4e-change-filenames-when-moving t)
+    (setq mu4e-sent-messages-behavior 'delete)
 
     ;; Refresh mail using isync every 10 minutes
     (setq mu4e-update-interval (* 10 60))
     (setq mu4e-get-mail-command "mbsync -a -c ~/.config/mu4e/mbsyncrc")
     (setq mu4e-maildir "~/mail")
 
-    (setq mu4e-drafts-folder "gawmk-gmail/[Gmail]/Drafts")
-    (setq mu4e-sent-folder   "gawmk-gmail/[Gmail]/Sent Mail")
-    (setq mu4e-refile-folder "gawmk-gmail/[Gmail]/All Mail")
-    (setq mu4e-trash-folder  "gawmk-gmail/[Gmail]/Bin")
+    (setq mu4e-refile-folder "/gmail/[Gmail]/All Mail")
+    (setq mu4e-drafts-folder "/gmail/[Gmail]/Drafts")
+    (setq mu4e-sent-folder   "/gmail/[Gmail]/Sent Mail")
+    (setq mu4e-trash-folder  "/gmail/[Gmail]/Bin")
 
-
-(setq mu4e-maildir-shortcuts
-    '((:maildir "/Inbox"    :key ?i)
-      (:maildir "/[Gmail]/Sent Mail" :key ?s)
-      (:maildir "/[Gmail]/Bin"     :key ?b)
-      (:maildir "/[Gmail]/Drafts"    :key ?d)
-      (:maildir "/[Gmail]/All Mail"  :key ?a))))
+    (setq mu4e-maildir-shortcuts
+          '( (:maildir "/gmail/Inbox"              :key ?i)
+             (:maildir "/gmail/[Gmail]/Sent Mail"  :key ?s)
+             (:maildir "/gmail/[Gmail]/Bin"      :key ?t)
+             (:maildir "/gmail/[Gmail]/All Mail"   :key ?a))))
 
 #+end_src
 

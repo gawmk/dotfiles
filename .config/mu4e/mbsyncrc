@@ -1,5 +1,5 @@
 # Account info
-IMAPAccount gawmk-gmail
+IMAPAccount gmail
 Host imap.gmail.com
 User mikolaj.gawrys@gmail.com
 PassCmd "cat ~/.google-app-pass"
@@ -8,20 +8,20 @@ CertificateFile /etc/ssl/certs/ca-certificates.crt
 
 
 # Remote storage
-IMAPStore gawmk-gmail-remote
-Account gawmk-gmail
+IMAPStore gmail-remote
+Account gmail
 
 
 # Local storage
-MaildirStore gawmk-gmail-local
+MaildirStore gmail-local
 Subfolders Verbatim
-Path ~/mail/gawmk-gmail/ 
-Inbox ~/mail/gawmk-gmail/Inbox
+Path ~/mail/gmail/ 
+Inbox ~/mail/gmail/Inbox
 
 
-Channel gawmk-gmail
-Near :gawmk-gmail-local:
-Far :gawmk-gmail-remote:
+Channel gmail
+Near :gmail-local:
+Far :gmail-remote:
 Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail" "[Gmail]/Bin"
 Create Both
 SyncState *
