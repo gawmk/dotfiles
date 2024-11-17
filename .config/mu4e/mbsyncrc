@@ -2,7 +2,7 @@
 IMAPAccount gmail
 Host imap.gmail.com
 User mikolaj.gawrys@gmail.com
-PassCmd "cat ~/.google-app-pass"
+PassCmd "gpg --pinentry-mode loopback -d ~/.authinfo.gpg"
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 

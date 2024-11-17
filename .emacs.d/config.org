@@ -7,6 +7,7 @@
 - [[Custom]]
 - [[Packages]]
 - [[General]]
+  - [[Auth]]
 - [[Basic UI config]]
   - [[Theme and Font]]
   - [[Dashboard]]
@@ -70,50 +71,64 @@
 -----
 Where to store backups and some helpful packages. 
 #+begin_src emacs-lisp
-    ;; Write backups to ~/.emacs.d/backup/
-    (setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
-          backup-by-copying      t  ; Don't de-link hard links
-          version-control        t  ; Use version numbers on backups
-          delete-old-versions    t  ; Automatically delete excess backups:
-          kept-new-versions      20 ; how many of the newest versions to keep
-          kept-old-versions      5) ; and how many of the old
-    (setq create-lockfiles nil)
+  ;; Write backups to ~/.emacs.d/backup/
+  (setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
+        backup-by-copying      t  ; Don't de-link hard links
+        version-control        t  ; Use version numbers on backups
+        delete-old-versions    t  ; Automatically delete excess backups:
+        kept-new-versions      20 ; how many of the newest versions to keep
+        kept-old-versions      5) ; and how many of the old
+  (setq create-lockfiles nil)
 
-    (setq use-dialog-box nil)
 
-    (add-to-list 'exec-path "~/.local/bin/")
+  (setq use-dialog-box nil)
 
-    (setq global-auto-revert-non-file-buffers 1)
-    (global-auto-revert-mode 1)
+  (add-to-list 'exec-path "~/.local/bin/")
 
-    (recentf-mode 1)
+  (setq global-auto-revert-non-file-buffers 1)
+  (global-auto-revert-mode 1)
 
-    (use-package which-key
-      :init (which-key-mode)
-      :diminish which-key-mode
-      :config
-      (setq which-key-idle-delay 0.3))
+  (recentf-mode 1)
 
-    (use-package counsel
-      :bind (("M-x" . counsel-M-x)
-             ("C-x b" . counsel-ibuffer)
-             ("C-x C-f" . counsel-find-file)
-             :map minibuffer-local-map
-             ("C-r" . 'counsel-minibuffer-history)))
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 0.3))
 
-    (counsel-mode 1)
-    (use-package helpful
-      :custom
-      (counsel-describe-function-function #'helpful-callable)
-      (counsel-describe-variable-function #'helpful-variable)
-      :bind
-      ([remap describe-function] . counsel-describe-function)
-      ([remap describe-command] . helpful-command)
-      ([remap describe-variable] . counsel-describe-variable)
-      ([remap describe-key] . helpful-key))
+  (use-package counsel
+    :bind (("M-x" . counsel-M-x)
+           ("C-x b" . counsel-ibuffer)
+           ("C-x C-f" . counsel-find-file)
+           :map minibuffer-local-map
+           ("C-r" . 'counsel-minibuffer-history)))
+
+  (counsel-mode 1)
+  (use-package helpful
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
 
 #+end_src
+** Auth
+#+begin_src emacs-lisp
+  ;; daemon
+  (server-start)
+  ;; ask for pass without a window
+  (setq epg-pinentry-mode 'loopback)
 
+  ;; access passwords outside of emacs
+  (defun gawmk/lookup-password (&rest keys)
+    (let ((result (apply #'auth-source-search keys)))
+      (if result
+          (funcall (plist-get (car result) :secret))
+        nil)))
+#+end_src
 * Basic UI config
 -----
 Disabling startup clutter, transparency etc.
@@ -155,7 +170,8 @@ Disabling startup clutter, transparency etc.
     (doom-themes-org-config))
 
   (set-face-attribute 'default nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
-  
+  (set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Motion Duo" :height 160 :weight 'semibold)
+
   (load-theme 'doom-gruvbox)
   (use-package doom-modeline
     :ensure t
@@ -856,16 +872,31 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     ;; This is set to 't' to avoid mail syncing issues when using mbsync
     (setq mu4e-change-filenames-when-moving t)
     (setq mu4e-sent-messages-behavior 'delete)
-
+    (setq message-send-mail-function 'smtpmail-send-it)
+    
     ;; Refresh mail using isync every 10 minutes
     (setq mu4e-update-interval (* 10 60))
     (setq mu4e-get-mail-command "mbsync -a -c ~/.config/mu4e/mbsyncrc")
     (setq mu4e-maildir "~/mail")
 
-    (setq mu4e-refile-folder "/gmail/[Gmail]/All Mail")
-    (setq mu4e-drafts-folder "/gmail/[Gmail]/Drafts")
-    (setq mu4e-sent-folder   "/gmail/[Gmail]/Sent Mail")
-    (setq mu4e-trash-folder  "/gmail/[Gmail]/Bin")
+    (setq mu4e-contexts
+          (list
+           ;; Work account
+           (make-mu4e-context
+            :name "Gmail"
+            :match-func
+            (lambda (msg)
+              (when msg
+                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "mikolaj.gawrys@gmail.com")
+                    (user-full-name    . "Mikołaj Gawryś")
+                    (smtpmail-stream-type . starttls)
+                    (smtpmail-smtp-server . "smtp.gmail.com")
+                    (smtpmail-smtp-service . 587)
+                    (mu4e-drafts-folder  . "/gmail/[Gmail]/Drafts")
+                    (mu4e-sent-folder  . "/gmail/[Gmail]/Sent Mail")
+                    (mu4e-refile-folder  . "/gmail/[Gmail]/All Mail")
+                    (mu4e-trash-folder  . "/gmail/[Gmail]/Bin")))))
 
     (setq mu4e-maildir-shortcuts
           '( (:maildir "/gmail/Inbox"              :key ?i)

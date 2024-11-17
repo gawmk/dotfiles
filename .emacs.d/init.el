@@ -38,6 +38,7 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
+
 (setq use-dialog-box nil)
 
 (add-to-list 'exec-path "~/.local/bin/")
@@ -70,6 +71,18 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
+
+;; daemon
+(server-start)
+;; ask for pass without a window
+(setq epg-pinentry-mode 'loopback)
+
+;; access passwords outside of emacs
+(defun gawmk/lookup-password (&rest keys)
+  (let ((result (apply #'auth-source-search keys)))
+    (if result
+        (funcall (plist-get (car result) :secret))
+      nil)))
 
 (setq initial-scratch-message nil)
 (setq inhibit-startup-screen t)
@@ -105,6 +118,7 @@
   (doom-themes-org-config))
 
 (set-face-attribute 'default nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
+(set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Motion Duo" :height 160 :weight 'semibold)
 
 (load-theme 'doom-gruvbox)
 (use-package doom-modeline
@@ -738,16 +752,31 @@ such alists."
   ;; This is set to 't' to avoid mail syncing issues when using mbsync
   (setq mu4e-change-filenames-when-moving t)
   (setq mu4e-sent-messages-behavior 'delete)
+  (setq message-send-mail-function 'smtpmail-send-it)
 
   ;; Refresh mail using isync every 10 minutes
   (setq mu4e-update-interval (* 10 60))
   (setq mu4e-get-mail-command "mbsync -a -c ~/.config/mu4e/mbsyncrc")
   (setq mu4e-maildir "~/mail")
 
-  (setq mu4e-refile-folder "/gmail/[Gmail]/All Mail")
-  (setq mu4e-drafts-folder "/gmail/[Gmail]/Drafts")
-  (setq mu4e-sent-folder   "/gmail/[Gmail]/Sent Mail")
-  (setq mu4e-trash-folder  "/gmail/[Gmail]/Bin")
+  (setq mu4e-contexts
+        (list
+         ;; Work account
+         (make-mu4e-context
+          :name "Gmail"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "mikolaj.gawrys@gmail.com")
+                  (user-full-name    . "Mikołaj Gawryś")
+                  (smtpmail-stream-type . starttls)
+                  (smtpmail-smtp-server . "smtp.gmail.com")
+                  (smtpmail-smtp-service . 587)
+                  (mu4e-drafts-folder  . "/gmail/[Gmail]/Drafts")
+                  (mu4e-sent-folder  . "/gmail/[Gmail]/Sent Mail")
+                  (mu4e-refile-folder  . "/gmail/[Gmail]/All Mail")
+                  (mu4e-trash-folder  . "/gmail/[Gmail]/Bin")))))
 
   (setq mu4e-maildir-shortcuts
         '( (:maildir "/gmail/Inbox"              :key ?i)
