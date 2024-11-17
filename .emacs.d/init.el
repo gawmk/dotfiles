@@ -118,7 +118,7 @@
   (doom-themes-org-config))
 
 (set-face-attribute 'default nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
-(set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Motion Duo" :height 160 :weight 'semibold)
+(set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 160 :weight 'semibold)
 (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 
 (with-eval-after-load 'org
@@ -409,6 +409,7 @@ such alists."
     "H" 'dired-hide-dotfiles-mode))
 (gawmk/leader-key 
   "dd" '(dired :which-key "open dired")
+  "di" '(image-dired :which-key "view images in dired (thumbnails)")
   "dp" '(project-dired :which-key "open dired project")
   "dj" '(dired-jump :which-key "dired jump"))
 
