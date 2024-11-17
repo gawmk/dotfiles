@@ -119,6 +119,11 @@
 
 (set-face-attribute 'default nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 (set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Motion Duo" :height 160 :weight 'semibold)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
+
+(with-eval-after-load 'org
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil :inherit 'fixed-pitch))
 
 (load-theme 'doom-gruvbox)
 (use-package doom-modeline
