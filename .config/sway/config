@@ -25,6 +25,12 @@ include /etc/sway/config-vars.d/*
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 output * bg ~/pics/wallpapers/triss.jpeg fill
 
+set $gnome-schema org.gnome.desktop.interface
+exec_always {
+    gsettings set $gnome-schema cursor-theme 'BreezeX-Dark'
+    gsettings set $gnome-schema cursor-size '40'
+}
+seat seat0 xcursor_theme Adwaita 40
 ### INPUT CONFIG ### 
 input "2:7:SynPS/2_Synaptics_TouchPad" {
     dwt enabled
