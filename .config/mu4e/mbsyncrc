@@ -2,7 +2,7 @@
 IMAPAccount gmail
 Host imap.gmail.com
 User mikolaj.gawrys@gmail.com
-PassCmd "gpg --pinentry-mode loopback -d ~/.authinfo.gpg"
+PassCmd "emacsclient -e \"(gawmk/lookup-password :host \\\"imap.gmail.com\\\" :user \\\"mikolaj.gawrys@gmail.com\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
