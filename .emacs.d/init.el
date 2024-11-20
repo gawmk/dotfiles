@@ -121,6 +121,8 @@
 (set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 160 :weight 'semibold)
 (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 
+(add-hook 'org-mode-hook #'variable-pitch-mode)
+
 (with-eval-after-load 'org
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-block nil :inherit 'fixed-pitch))
@@ -793,11 +795,11 @@ such alists."
            (:maildir "/gmail/[Gmail]/Bin"      :key ?t)
            (:maildir "/gmail/[Gmail]/All Mail"   :key ?a))))
 
-(use-package smudge
+(use-package smudge)
   :config
+  (setq smudge-oauth2-client-id "e5e96a9e79504489baeb2062ed716462")
+  (setq smudge-oauth2-client-secret (gawmk/lookup-password :host "smudge-spotify" :user "nil"))
   (global-smudge-remote-mode)
-  (setq smudge-oauth2-client-secret (gawmk/lookup-password :host "smudge-spotify" :user "nil")
-        smudge-oauth2-client-id "87528223b0f54f4ba3f2c7151a46e9da"))
 
 ;; A hydra for controlling spotify.
 (defhydra hydra-spotify (:hint nil)
