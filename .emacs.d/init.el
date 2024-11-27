@@ -339,7 +339,8 @@ or go back to just one window (by deleting all but the selected window)."
 (define-key window-map "p"  'tab-bar-switch-to-recent-tab)
 
 (use-package popper
-  :ensure t ; or :straight t
+  :defer t
+  :ensure t 
   :init
   (bind-key* "C-p" 'popper-toggle)
   (bind-key* "M-p" 'popper-cycle)
@@ -676,6 +677,7 @@ such alists."
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
 
 (use-package vterm
+  :defer t
   :ensure t
   :config
   (with-eval-after-load 'evil
@@ -839,3 +841,12 @@ such alists."
 (add-hook 'kill-emacs-hook
           (lambda ()
             (call-process-shell-command "pkill spotifyd")))
+
+(use-package ledger-mode
+  :defer t
+  :mode ("\\.ledger.gpg\\'"
+         "\\.ledger\\'")
+  :custom (ledger-clear-whole-transactions t))
+
+(use-package ein
+  :defer t)

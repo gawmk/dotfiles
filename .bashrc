@@ -124,6 +124,7 @@ alias bt='bluetoothctl power on && bluetoothctl'
 alias imv='imv-wayland'
 alias cpustat='auto-cpufreq --stats'
 alias sysuspend='systemctl suspend && lock'
+alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 
 
 # vars
@@ -139,3 +140,7 @@ eval "$(starship init bash)"
 
 # Created by `pipx` on 2024-03-17 22:46:58
 export PATH="$PATH:/home/mikimasta/.local/bin"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
