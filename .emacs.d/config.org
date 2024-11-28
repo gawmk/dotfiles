@@ -746,37 +746,70 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 
 **  Babel
 #+begin_src emacs-lisp
-  (setq org-babel-python-command "python3")
-  (setq org-confirm-babel-evaluate nil)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (python . t)))
+    (setq org-babel-python-command "python3")
+    (setq org-confirm-babel-evaluate nil)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (python . t)
+       (C . t)))
 
 
-  (require 'org-tempo)
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+    (require 'org-tempo)
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
 
-  ;; tangle on save
-  (defun gawmk/org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/dotfiles/.emacs.d/config.org"))
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
+    ;; tangle on save
+    (defun gawmk/org-babel-tangle-config ()
+      (when (string-equal (buffer-file-name)
+                          (expand-file-name "~/dotfiles/.emacs.d/config.org"))
+        ;; Dynamic scoping to the rescue
+        (let ((org-confirm-babel-evaluate nil))
+          (org-babel-tangle))))
 
-  (gawmk/leader-key
-    "xb" '(org-babel-execute-src-block :which-key "execute a code block"))
+    (gawmk/leader-key
+      "xb" '(org-babel-execute-src-block :which-key "execute a code block"))
 
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
+    (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
 
 #+END_SRC
+
+The following function, taken from https://github.com/joaotavora/eglot/issues/216, allows for editing an org code block with eglot support
+
+#+begin_src emacs-lisp
+  (defun mik/org-babel-edit ()
+    "Edit python src block with lsp support by tangling the block and
+  then setting the org-edit-special buffer-file-name to the
+  absolute path. Finally load eglot."
+    (interactive)
+
+  ;; org-babel-get-src-block-info returns lang, code_src, and header
+  ;; params; Use nth 2 to get the params and then retrieve the :tangle
+  ;; to get the filename
+    (setq mb/tangled-file-name (expand-file-name (assoc-default :tangle (nth 2 (org-babel-get-src-block-info)))))
+
+    ;; tangle the src block at point 
+    (org-babel-tangle '(4))
+    (org-edit-special)
+
+    ;; Now we should be in the special edit buffer with python-mode. Set
+    ;; the buffer-file-name to the tangled file so that pylsp and
+    ;; plugins can see an actual file.
+    (setq-local buffer-file-name mb/tangled-file-name)
+    (eglot-ensure)
+    )
+
+  ; and some keybindings for this
+  (gawmk/leader-key
+    "oe" '(mik/org-babel-edit :which-key "edit a source code block with lsp support"))
+  (evil-define-key 'normal org-src-mode-map (kbd "ZZ") 'org-edit-src-exit)
+  (evil-define-key 'normal org-src-mode-map (kbd "ZQ") 'org-edit-src-abort)
+
+#+end_src
 * Terminal
 #+begin_src emacs-lisp
   (use-package vterm
-    :defer t
     :ensure t
     :config
     (with-eval-after-load 'evil
@@ -835,7 +868,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   (with-eval-after-load 'eglot
     (setq completion-category-defaults nil)
     (add-to-list 'eglot-server-programs
-                 '(c-mode . ("clangd"))))
+                 '(c-mode . ("ccls"))))
 
 
   (use-package eglot-booster
@@ -971,15 +1004,13 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 
 * Ledger-mode
 #+begin_src emacs-lisp
-  (use-package ledger-mode
-    :defer t
-    :mode ("\\.ledger.gpg\\'"
-           "\\.ledger\\'")
-    :custom (ledger-clear-whole-transactions t))
-#+end_src
+    (use-package ledger-mode
+      :defer t
+      :mode ("\\.ledger.gpg\\'"
+             "\\.ledger\\'")
+      :custom (ledger-clear-whole-transactions t))
 
-* Python ipynb
-#+begin_src emacs-lisp
-  (use-package ein
-    :defer t)
+    (gawmk/leader-key
+      "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+      "lr" '(ledger-report :which-key "generate a ledger report"))
 #+end_src

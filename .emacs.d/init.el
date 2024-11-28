@@ -655,7 +655,8 @@ such alists."
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
-   (python . t)))
+   (python . t)
+   (C . t)))
 
 
 (require 'org-tempo)
@@ -676,8 +677,35 @@ such alists."
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
 
+(defun mik/org-babel-edit ()
+  "Edit python src block with lsp support by tangling the block and
+then setting the org-edit-special buffer-file-name to the
+absolute path. Finally load eglot."
+  (interactive)
+
+;; org-babel-get-src-block-info returns lang, code_src, and header
+;; params; Use nth 2 to get the params and then retrieve the :tangle
+;; to get the filename
+  (setq mb/tangled-file-name (expand-file-name (assoc-default :tangle (nth 2 (org-babel-get-src-block-info)))))
+
+  ;; tangle the src block at point 
+  (org-babel-tangle '(4))
+  (org-edit-special)
+
+  ;; Now we should be in the special edit buffer with python-mode. Set
+  ;; the buffer-file-name to the tangled file so that pylsp and
+  ;; plugins can see an actual file.
+  (setq-local buffer-file-name mb/tangled-file-name)
+  (eglot-ensure)
+  )
+
+; and some keybindings for this
+(gawmk/leader-key
+  "oe" '(mik/org-babel-edit :which-key "edit a source code block with lsp support"))
+(evil-define-key 'normal org-src-mode-map (kbd "ZZ") 'org-edit-src-exit)
+(evil-define-key 'normal org-src-mode-map (kbd "ZQ") 'org-edit-src-abort)
+
 (use-package vterm
-  :defer t
   :ensure t
   :config
   (with-eval-after-load 'evil
@@ -723,7 +751,7 @@ such alists."
 (with-eval-after-load 'eglot
   (setq completion-category-defaults nil)
   (add-to-list 'eglot-server-programs
-               '(c-mode . ("clangd"))))
+               '(c-mode . ("ccls"))))
 
 
 (use-package eglot-booster
@@ -848,5 +876,6 @@ such alists."
          "\\.ledger\\'")
   :custom (ledger-clear-whole-transactions t))
 
-(use-package ein
-  :defer t)
+(gawmk/leader-key
+  "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+  "lr" '(ledger-report :which-key "generate a ledger report"))

@@ -133,7 +133,9 @@ export SHELL="/bin/bash"
 export EDITOR="emacs"
 
 # starship
-eval "$(starship init bash)"
+if ! [ $TERM = 'dumb' ]; then
+    eval "$(starship init bash)"
+fi
 
 # rust
 . "$HOME/.cargo/env"
