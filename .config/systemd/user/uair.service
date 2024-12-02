@@ -1,0 +1,9 @@
+[Unit]
+Description=Uair, pomodoro client-server daemon
+After=default.target
+
+[Service]
+ExecStart=/home/mikimasta/.cargo/bin/uair
+
+[Install]
+WantedBy=default.target

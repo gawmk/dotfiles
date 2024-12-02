@@ -38,6 +38,7 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
+(setq shell-command-switch "-ic")
 
 (setq use-dialog-box nil)
 
@@ -732,12 +733,9 @@ absolute path. Finally load eglot."
 (use-package pdf-tools
   :defer t
   :commands (pdf-loader-install)
-  ;;:mode "\\.pdf\\"
   :bind (:map pdf-view-mode-map
-              ("j" . pdf-view-next-line-or-next-page)
-              ("k" . pdf-view-previous-line-or-next-page)
-              ("C-+" . pdf-view-enlarge)
-              ("C--" . pdf-view-shrink))
+              ("C-S-j" . pdf-view-goto-page))
+  ;;:mode "\\.pdf\\"
   :init (pdf-loader-install)
   :config (add-to-list 'revert-without-query ".pdf"))
 
@@ -825,56 +823,60 @@ absolute path. Finally load eglot."
            (:maildir "/gmail/[Gmail]/Bin"      :key ?t)
            (:maildir "/gmail/[Gmail]/All Mail"   :key ?a))))
 
-(use-package smudge)
-  :config
-  (setq smudge-oauth2-client-id "e5e96a9e79504489baeb2062ed716462")
-  (setq smudge-oauth2-client-secret (gawmk/lookup-password :host "smudge-spotify" :user "nil"))
-  (global-smudge-remote-mode)
-
-;; A hydra for controlling spotify.
-(defhydra hydra-spotify (:hint nil)
-  "
-  ^Search^                  ^Control^               ^Manage^
-  ^^^^^^^^-----------------------------------------------------------------
-  _t_: Track               _SPC_: Play/Pause        _+_: Volume up
-  _m_: My Playlists        _n_  : Next Track        _-_: Volume down
-  _f_: Featured Playlists  _p_  : Previous Track    _x_: Mute
-  _u_: User Playlists      _r_  : Repeat            _d_: Device
-  ^^                       _s_  : Shuffle         
-  "
-  ("t" smudge-track-search :exit t)
-  ("m" smudge-my-playlists :exit t)
-  ("f" smudge-featured-playlists :exit t)
-  ("u" smudge-user-playlists :exit t)
-  ("SPC" smudge-controller-toggle-play :exit nil)
-  ("n" smudge-controller-next-track :exit nil)
-  ("p" smudge-controller-previous-track :exit nil)
-  ("r" smudge-controller-toggle-repeat :exit nil)
-  ("s" smudge-controller-toggle-shuffle :exit nil)
-  ("+" smudge-controller-volume-up :exit nil)
-  ("-" smudge-controller-volume-down :exit nil)
-  ("x" smudge-controller-volume-mute-unmute :exit nil)
-  ("d" smudge-select-device :exit nil))
-
-(gawmk/leader-key
-  "sp" '(hydra-spotify/body :which-key "spotify controls"))
-
-; start spotifyd on emacs startup
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq shell-command-switch "-ic")
-            (call-process-shell-command "spotifyd &")))
-
-; kill spotifyd on emacs kill
-(add-hook 'kill-emacs-hook
-          (lambda ()
-            (call-process-shell-command "pkill spotifyd")))
+;  (use-package smudge)
+;    :config
+;    (setq smudge-oauth2-client-id "e5e96a9e79504489baeb2062ed716462")
+;    (setq smudge-oauth2-client-secret (gawmk/lookup-password :host "smudge-spotify" :user "nil"))
+;    (global-smudge-remote-mode)
+;
+;  ;; A hydra for controlling spotify.
+;  (defhydra hydra-spotify (:hint nil)
+;    "
+;    ^Search^                  ^Control^               ^Manage^
+;    ^^^^^^^^-----------------------------------------------------------------
+;    _t_: Track               _SPC_: Play/Pause        _+_: Volume up
+;    _m_: My Playlists        _n_  : Next Track        _-_: Volume down
+;    _f_: Featured Playlists  _p_  : Previous Track    _x_: Mute
+;    _u_: User Playlists      _r_  : Repeat            _d_: Device
+;    ^^                       _s_  : Shuffle         
+;    "
+;    ("t" smudge-track-search :exit t)
+;    ("m" smudge-my-playlists :exit t)
+;    ("f" smudge-featured-playlists :exit t)
+;    ("u" smudge-user-playlists :exit t)
+;    ("SPC" smudge-controller-toggle-play :exit nil)
+;    ("n" smudge-controller-next-track :exit nil)
+;    ("p" smudge-controller-previous-track :exit nil)
+;    ("r" smudge-controller-toggle-repeat :exit nil)
+;    ("s" smudge-controller-toggle-shuffle :exit nil)
+;    ("+" smudge-controller-volume-up :exit nil)
+;    ("-" smudge-controller-volume-down :exit nil)
+;    ("x" smudge-controller-volume-mute-unmute :exit nil)
+;    ("d" smudge-select-device :exit nil))
+;
+;  (gawmk/leader-key
+;    "sp" '(hydra-spotify/body :which-key "spotify controls"))
+;
+;  ; start spotifyd on emacs startup
+;  (add-hook 'emacs-startup-hook
+;            (lambda ()
+;              (call-process-shell-command "spotifyd &")))
+;
+;  ; kill spotifyd on emacs kill
+;  (add-hook 'kill-emacs-hook
+;            (lambda ()
+;              (call-process-shell-command "pkill spotifyd")))
 
 (use-package ledger-mode
   :defer t
   :mode ("\\.ledger.gpg\\'"
          "\\.ledger\\'")
-  :custom (ledger-clear-whole-transactions t))
+  :custom
+  (ledger-clear-whole-transactions t)
+  (ledger-report-use-native-highlighting t)
+  (ledger-reports-add "net" "ledger -f ledger.ledger bal ^assets ^liabilities")
+  (ledger-report-use-header-line t))
+
 
 (gawmk/leader-key
   "la" '(ledger-add-transaction :which-key "add a ledger transaction")

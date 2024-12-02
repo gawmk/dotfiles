@@ -9,9 +9,9 @@
 
         // Choose the order of the modules
 
-        "modules-left": ["sway/workspaces", "sway/window"],
-        "modules-center": ["clock"],
-        "modules-right": ["pulseaudio", "battery", "network", "memory", "backlight", "tray", "custom/power"],
+        "modules-left": ["sway/workspaces", "custom/pomo"],
+        "modules-center": ["clock", "tray"],
+        "modules-right": ["pulseaudio", "battery", "network", "memory", "backlight", "custom/power"],
 
         // Modules configuration
         "sway/workspaces": {
@@ -162,5 +162,28 @@
 			"reboot": "sudo reboot",
 			"suspend": "systemctl suspend",
 		},
-        }
+        },
+	"custom/pomo": {
+	    "format": "{icon} {}",
+  	    "format-icons": [
+	    "",
+	    "",
+	    "",
+	    "",
+	    "",
+	    "",
+	    "",
+	    "",
+	    "",
+	    ""
+  	    ],
+  	    "tooltip": false,
+  	    "return-type": "json",
+	    "interval": 5,
+	    "on-click": "~/.cargo/bin/uairctl toggle",
+  	    "on-click-middle": "~/.cargo/bin/uairctl prev",
+  	    "on-click-right": "~/.cargo/bin/uairctl next",
+  	    "exec": "~/.cargo/bin/uairctl fetch '{\"text\":\"{name} {time}\",\"class\":\"{state}\",\"percentage\":{percent}}'"
+	}
+
 }

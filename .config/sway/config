@@ -12,6 +12,9 @@ set $term kitty
 set $menu tofi-run | xargs swaymsg exec --
 include /etc/sway/config-vars.d/*
 
+# Notifications
+exec mako
+
 ### Output configuration
 output * bg ~/pics/wallpapers/triss.jpg fill
 
