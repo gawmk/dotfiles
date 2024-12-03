@@ -4,6 +4,20 @@ paused_state_text = "paused"
 resumed_state_text = "resumed"
 
 [[sessions]]
+id = "short-work"
+name = "Short Work"
+duration = "25m"
+time_format = "%M:%S"
+command = "notify-send 'Work Done!'"
+
+[[sessions]]
+id = "short-rest"
+name = "Rest"
+duration = "5m"
+time_format = "%M:%S"
+command = "notify-send 'Rest Done!'"
+
+[[sessions]]
 id = "work"
 name = "Work"
 duration = "52m"

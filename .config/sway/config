@@ -115,7 +115,7 @@ workspace 10 output $laptop
     bindsym $mod+Shift+p exec grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | wl-copy
 
     # Screenshot
-    bindsym $mod+Shift+c exec grim -g "$(slurp -d)" - | wl-copy 
+    bindsym $mod+Shift+c exec grim -g "$(slurp -d)" ~/pics/screenshots/ss_$(date +'%Y-%m-%d_%H%M%S') && wl-copy < ~/pics/screenshots/ss_$(date +'%Y-%m-%d_%H%M%S')
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.

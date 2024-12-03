@@ -402,10 +402,8 @@ such alists."
 
 (use-package dired-open
   :config
-  (setq dired-open-extensions '(("png" . "imv-wayland")
-                                ("mp4" . "mpv")
-                                ("jpeg" . "imv-wayland")
-                                ("jpg" . "imv-wayland"))))
+  (setq dired-open-extensions '(
+                                ("mp4" . "mpv"))))
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
@@ -881,7 +879,7 @@ absolute path. Finally load eglot."
        ("bal" "%(binary) -f %(ledger-file) bal")
        ("reg" "%(binary) -f %(ledger-file) reg")
        ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-       ("account" "%(binary) -f %(ledger-file) reg %(account)")))
+       ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
 
 
 (gawmk/leader-key
