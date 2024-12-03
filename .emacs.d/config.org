@@ -1001,18 +1001,24 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
 * Ledger-mode
 #+begin_src emacs-lisp
-       (use-package ledger-mode
-         :defer t
-         :mode ("\\.ledger.gpg\\'"
-                "\\.ledger\\'")
-         :custom
-         (ledger-clear-whole-transactions t)
-         (ledger-report-use-native-highlighting t)
-         (ledger-reports-add "net" "ledger -f ledger.ledger bal ^assets ^liabilities")
-         (ledger-report-use-header-line t))
+  (use-package ledger-mode
+    :defer t
+    :mode ("\\.ledger.gpg\\'"
+           "\\.ledger\\'")
+    :custom
+    (ledger-clear-whole-transactions t)
+    (ledger-report-use-native-highlighting t)
+    (ledger-report-use-header-line t)
+    :config
+    (setq ledger-reports
+        '(("net" "ledger -f ledger.ledger bal ^assets ^liabilities")
+         ("bal" "%(binary) -f %(ledger-file) bal")
+         ("reg" "%(binary) -f %(ledger-file) reg")
+         ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+         ("account" "%(binary) -f %(ledger-file) reg %(account)")))
 
 
-       (gawmk/leader-key
-         "la" '(ledger-add-transaction :which-key "add a ledger transaction")
-         "lr" '(ledger-report :which-key "generate a ledger report"))
+  (gawmk/leader-key
+    "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+    "lr" '(ledger-report :which-key "generate a ledger report"))
 #+end_src

@@ -874,8 +874,14 @@ absolute path. Finally load eglot."
   :custom
   (ledger-clear-whole-transactions t)
   (ledger-report-use-native-highlighting t)
-  (ledger-reports-add "net" "ledger -f ledger.ledger bal ^assets ^liabilities")
-  (ledger-report-use-header-line t))
+  (ledger-report-use-header-line t)
+  :config
+  (setq ledger-reports
+      '(("net" "ledger -f ledger.ledger bal ^assets ^liabilities")
+       ("bal" "%(binary) -f %(ledger-file) bal")
+       ("reg" "%(binary) -f %(ledger-file) reg")
+       ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+       ("account" "%(binary) -f %(ledger-file) reg %(account)")))
 
 
 (gawmk/leader-key
