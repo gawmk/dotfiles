@@ -369,7 +369,7 @@ or go back to just one window (by deleting all but the selected window)."
               '("^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
                 "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
                 "^\\*term.*\\*$"   term-mode   ;term as a popup
-                "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+                ; "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
                 )))
 
 (popper-mode 1)

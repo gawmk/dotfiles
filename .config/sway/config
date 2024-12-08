@@ -1,5 +1,6 @@
 # Logo key. Use Mod1 for Alt.
 set $mod Mod1
+set $super Super_L
 # Home row direction keys, like vim
 set $left h
 set $down j
@@ -104,6 +105,9 @@ workspace 10 output $laptop
 #
     # Start a terminal
     bindsym $mod+Shift+Return exec $term
+
+    # Screen lock
+    bindsym $mod+l+o exec swaylock
 
     # Kill focused window
     bindsym $mod+Shift+q kill
