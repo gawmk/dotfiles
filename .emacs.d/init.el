@@ -298,7 +298,7 @@ or go back to just one window (by deleting all but the selected window)."
   (ivy-rich-mode 1))
 
 (gawmk/leader-key
-  "st" '(tab-switcher :which-key "switch tab")
+  "st" '(tab-switch :which-key "switch tab")
   "kb" '(kill-buffer :which-key "kill buffer")
   "sb" '(counsel-switch-buffer :which-key "switch buffer"))
 
@@ -494,7 +494,7 @@ such alists."
 
 ;; TODO states
 (setq org-todo-keywords
-      '((sequence "TODO(t!)" "NEXT(n!)" "PLANNING(p!)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
+      '((sequence "TODO(t!)" "NEXT(n!)" "PLANNING(p!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
         ))
 
 ;; auto insert mode when capturing
