@@ -821,50 +821,6 @@ absolute path. Finally load eglot."
            (:maildir "/gmail/[Gmail]/Bin"      :key ?t)
            (:maildir "/gmail/[Gmail]/All Mail"   :key ?a))))
 
-;  (use-package smudge)
-;    :config
-;    (setq smudge-oauth2-client-id "e5e96a9e79504489baeb2062ed716462")
-;    (setq smudge-oauth2-client-secret (gawmk/lookup-password :host "smudge-spotify" :user "nil"))
-;    (global-smudge-remote-mode)
-;
-;  ;; A hydra for controlling spotify.
-;  (defhydra hydra-spotify (:hint nil)
-;    "
-;    ^Search^                  ^Control^               ^Manage^
-;    ^^^^^^^^-----------------------------------------------------------------
-;    _t_: Track               _SPC_: Play/Pause        _+_: Volume up
-;    _m_: My Playlists        _n_  : Next Track        _-_: Volume down
-;    _f_: Featured Playlists  _p_  : Previous Track    _x_: Mute
-;    _u_: User Playlists      _r_  : Repeat            _d_: Device
-;    ^^                       _s_  : Shuffle         
-;    "
-;    ("t" smudge-track-search :exit t)
-;    ("m" smudge-my-playlists :exit t)
-;    ("f" smudge-featured-playlists :exit t)
-;    ("u" smudge-user-playlists :exit t)
-;    ("SPC" smudge-controller-toggle-play :exit nil)
-;    ("n" smudge-controller-next-track :exit nil)
-;    ("p" smudge-controller-previous-track :exit nil)
-;    ("r" smudge-controller-toggle-repeat :exit nil)
-;    ("s" smudge-controller-toggle-shuffle :exit nil)
-;    ("+" smudge-controller-volume-up :exit nil)
-;    ("-" smudge-controller-volume-down :exit nil)
-;    ("x" smudge-controller-volume-mute-unmute :exit nil)
-;    ("d" smudge-select-device :exit nil))
-;
-;  (gawmk/leader-key
-;    "sp" '(hydra-spotify/body :which-key "spotify controls"))
-;
-;  ; start spotifyd on emacs startup
-;  (add-hook 'emacs-startup-hook
-;            (lambda ()
-;              (call-process-shell-command "spotifyd &")))
-;
-;  ; kill spotifyd on emacs kill
-;  (add-hook 'kill-emacs-hook
-;            (lambda ()
-;              (call-process-shell-command "pkill spotifyd")))
-
 (use-package ledger-mode
   :defer t
   :mode ("\\.ledger.gpg\\'"
