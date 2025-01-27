@@ -26,11 +26,13 @@
 - [[Terminal]]
 - [[Magit]]
 - [[PDF]]
+- [[CSV]]
 - [[Eglot]]
 - [[Completion]]
   - [[Corfu]]
 - [[mu4e]]
 - [[Ledger-mode]]
+- [[Auctex]]
 * Custom
 -----
 #+begin_src emacs-lisp
@@ -853,6 +855,11 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
   (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1) (blink-cursor-mode -1) (line-number-mode -1)))
 #+end_src
 
+* CSV
+#+begin_src emacs-lisp
+(use-package csv-mode)
+#+end_src
+
 * Eglot
 #+begin_src emacs-lisp
   (use-package eglot
@@ -972,3 +979,23 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     "la" '(ledger-add-transaction :which-key "add a ledger transaction")
     "lr" '(ledger-report :which-key "generate a ledger report"))
 #+end_src
+
+* Auctex
+
+#+begin_src emacs-lisp
+  (use-package auctex
+    :config
+    (setq TeX-parse-self t); Enable parse on load.
+    (setq TeX-auto-save t); Enable parse on save.
+    (setq-default TeX-master nil)
+
+    (setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
+
+    (add-hook 'TeX-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
+    (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode); Enable Flyspell program mode for emacs lisp mode, which highlights all misspells
+    (setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
+    (add-hook 'TeX-mode-hook
+              (lambda () (TeX-fold-mode 1))); Automatically activate TeX-fold-mode.
+    (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
+#+end_src
+

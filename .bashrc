@@ -130,6 +130,7 @@ alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 export _JAVA_AWT_WM_NONREPARENTING=1
 export SHELL="/bin/bash"
 export EDITOR="emacs"
+export LEDGER_FILE="ledger.ledger"
 
 # starship
 if ! [ $TERM = 'dumb' ]; then

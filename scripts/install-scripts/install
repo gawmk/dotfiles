@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+
+# before you do all this, make sure to first transfer your ~/.gnupg/, .gitconfig, .authinfo.gpg, .ssh (DO THIS ONLY IF YOU CHANGE MACHINES FOR GOOD AND ERASE THE OLD DISK)
+
+SCRIPTS=""
+
+if [ -f "/etc/debian_version" ]; then
+
+  apt update
+  apt install sway waybar adduser alsa-utils cmake \
+      cmatrix cowsay fd-find firefox-esr fonts-font-awesome fzf \
+      grep grim hostname imv intellij-idea-ultimate kitty git \
+      neofetch neovim network-manager rfkill python3 \
+      ripgrep rubber sed slurp sudo swaybg swayidle swaylock syncthing tar \
+      thunderbird tmux unzip usbutils wlsunset xwayland zathura zip texlive-full \
+      -y
+  
+  # setting wlsunset up
+  wlsunset -l 50.8 -L 5.6
+  echo "wlsunset set!"
+
+  # TO INSTALL:
+  # auto-cpufreq, build emacs, ledger, mako, tofi, mu4e etc.
+  read -p "Should I install emacs? [y/n]: "
+  if [ "$REPLY" == "y" ]; then
+      SCRIPTS+="./emacs-build.sh"
+  fi
+
+  read -p "Should I install ollama? [y/n]: "
+  if [ "$REPLY" == "y" ]; then
+      SCRIPTS+=" ./ollama-install.sh"
+  fi
+
+
+  for script in $SCRIPTS; do
+      echo $script 
+  done
+fi

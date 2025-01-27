@@ -5,8 +5,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
+ '(org-agenda-files
+   '("~/docs/uni/intelligent-systems/intsys.org" "/home/mikimasta/org/agenda.org" "/home/mikimasta/org/archive.org" "/home/mikimasta/org/birthdays.org" "/home/mikimasta/org/inbox.org" "/home/mikimasta/org/investing.org" "/home/mikimasta/org/notes.org" "/home/mikimasta/org/projects.org" "/home/mikimasta/org/tasks.org"))
  '(package-selected-packages
-   '(visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
+   '(csv-mode eglot-booster lsp-booster visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -739,6 +741,8 @@ absolute path. Finally load eglot."
 
 (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1) (blink-cursor-mode -1) (line-number-mode -1)))
 
+(use-package csv-mode)
+
 (use-package eglot
   :config
   (fset #'jsonrpc--log-event #'ignore)
@@ -841,3 +845,18 @@ absolute path. Finally load eglot."
 (gawmk/leader-key
   "la" '(ledger-add-transaction :which-key "add a ledger transaction")
   "lr" '(ledger-report :which-key "generate a ledger report"))
+
+(use-package auctex
+  :config
+  (setq TeX-parse-self t); Enable parse on load.
+  (setq TeX-auto-save t); Enable parse on save.
+  (setq-default TeX-master nil)
+
+  (setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
+
+  (add-hook 'TeX-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
+  (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode); Enable Flyspell program mode for emacs lisp mode, which highlights all misspells
+  (setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
+  (add-hook 'TeX-mode-hook
+            (lambda () (TeX-fold-mode 1))); Automatically activate TeX-fold-mode.
+  (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
