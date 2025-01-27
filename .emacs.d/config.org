@@ -584,7 +584,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 
   ;; TODO states
   (setq org-todo-keywords
-        '((sequence "TODO(t!)" "NEXT(n!)" "PLANNING(p!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
+        '((sequence "TODO(t!)" "NEXT(n!)" "WAITING(w!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
           ))
 
   ;; auto insert mode when capturing
@@ -594,7 +594,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   (setq org-todo-keyword-faces
         '(
           ("TODO" . (:foreground "#d65d0e" :weight bold))
-          ("PLANNING" . (:foreground "#d4679c" :weight bold))
+          ("WAITING" . (:foreground "#d4679c" :weight bold))
           ("IN-PROGRESS" . (:foreground "#eebd35" :weight bold))
           ("DONE" . (:foreground "#689d6a" :weight bold))
           ))

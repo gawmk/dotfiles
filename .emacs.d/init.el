@@ -5,10 +5,8 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
- '(org-agenda-files
-   '("~/docs/uni/intelligent-systems/intsys.org" "/home/mikimasta/org/agenda.org" "/home/mikimasta/org/archive.org" "/home/mikimasta/org/birthdays.org" "/home/mikimasta/org/inbox.org" "/home/mikimasta/org/investing.org" "/home/mikimasta/org/notes.org" "/home/mikimasta/org/projects.org" "/home/mikimasta/org/tasks.org"))
  '(package-selected-packages
-   '(csv-mode eglot-booster lsp-booster visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
+   '(visual-fill-column org-bullets latex vterm page-break-lines counsel-projectile projectile hydra evil-collection evil general all-the-icons helpful ivy-rich which-key doom-modeline doom-themes counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -496,7 +494,7 @@ such alists."
 
 ;; TODO states
 (setq org-todo-keywords
-      '((sequence "TODO(t!)" "NEXT(n!)" "PLANNING(p!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
+      '((sequence "TODO(t!)" "NEXT(n!)" "WAITING(w!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
         ))
 
 ;; auto insert mode when capturing
@@ -506,7 +504,7 @@ such alists."
 (setq org-todo-keyword-faces
       '(
         ("TODO" . (:foreground "#d65d0e" :weight bold))
-        ("PLANNING" . (:foreground "#d4679c" :weight bold))
+        ("WAITING" . (:foreground "#d4679c" :weight bold))
         ("IN-PROGRESS" . (:foreground "#eebd35" :weight bold))
         ("DONE" . (:foreground "#689d6a" :weight bold))
         ))
