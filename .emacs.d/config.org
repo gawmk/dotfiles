@@ -33,6 +33,7 @@
 - [[mu4e]]
 - [[Ledger-mode]]
 - [[Auctex]]
+- [[gptel]]
 * Custom
 -----
 #+begin_src emacs-lisp
@@ -419,7 +420,8 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   ;; tab bar
   (define-key window-map "t"  'tab-bar-new-tab)
   (define-key window-map "rn" 'tab-bar-rename-tab)
-  (define-key window-map "p"  'tab-bar-switch-to-recent-tab)
+  (define-key window-map "n"  'switch-to-next-buffer)
+  (define-key window-map "p"  'switch-to-prev-buffer)
 
 
 #+end_src
@@ -632,9 +634,9 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
                         ))
 
 
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode))
+  ;(use-package org-bullets
+   ; :after org
+    ;:hook (org-mode . org-bullets-mode))
 
   (defun gawmk/org-mode-visual-fill ()
     (setq visual-fill-column-width 100
@@ -857,7 +859,10 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
 * CSV
 #+begin_src emacs-lisp
-(use-package csv-mode)
+  (use-package csv-mode)
+  (add-hook 'csv-mode-hook #'csv-align-mode)
+
+
 #+end_src
 
 * Eglot
@@ -866,7 +871,7 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     :config
     (fset #'jsonrpc--log-event #'ignore)
     (add-hook 'c-mode-hook #'eglot-ensure))
-
+    (setq eldoc-echo-area-use-multiline-p nil)
   (with-eval-after-load 'eglot
     (setq completion-category-defaults nil)
     (add-to-list 'eglot-server-programs
@@ -999,3 +1004,21 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
 #+end_src
 
+* gptel
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+
+    (setq gptel-default-mode 'org-mode)
+    (gawmk/leader-key
+      "gps" '(gptel-send :which-key "Send text up to point to gptel")
+      "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
+      "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
+
+    (setq
+     gptel-model 'deepseek-r1
+     gptel-backend (gptel-make-ollama "Ollama"
+                     :host "localhost:11434"
+                     :stream t
+                     :models '(deepseek-r1 llama3.2))))
+#+end_src

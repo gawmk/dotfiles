@@ -337,7 +337,8 @@ or go back to just one window (by deleting all but the selected window)."
 ;; tab bar
 (define-key window-map "t"  'tab-bar-new-tab)
 (define-key window-map "rn" 'tab-bar-rename-tab)
-(define-key window-map "p"  'tab-bar-switch-to-recent-tab)
+(define-key window-map "n"  'switch-to-next-buffer)
+(define-key window-map "p"  'switch-to-prev-buffer)
 
 (use-package popper
   :defer t
@@ -542,9 +543,9 @@ such alists."
                       ))
 
 
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode))
+;(use-package org-bullets
+ ; :after org
+  ;:hook (org-mode . org-bullets-mode))
 
 (defun gawmk/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -740,12 +741,13 @@ absolute path. Finally load eglot."
 (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1) (blink-cursor-mode -1) (line-number-mode -1)))
 
 (use-package csv-mode)
+(add-hook 'csv-mode-hook #'csv-align-mode)
 
 (use-package eglot
   :config
   (fset #'jsonrpc--log-event #'ignore)
   (add-hook 'c-mode-hook #'eglot-ensure))
-
+  (setq eldoc-echo-area-use-multiline-p nil)
 (with-eval-after-load 'eglot
   (setq completion-category-defaults nil)
   (add-to-list 'eglot-server-programs
@@ -858,3 +860,19 @@ absolute path. Finally load eglot."
   (add-hook 'TeX-mode-hook
             (lambda () (TeX-fold-mode 1))); Automatically activate TeX-fold-mode.
   (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
+
+(use-package gptel
+  :config
+
+  (setq gptel-default-mode 'org-mode)
+  (gawmk/leader-key
+    "gps" '(gptel-send :which-key "Send text up to point to gptel")
+    "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
+    "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
+
+  (setq
+   gptel-model 'deepseek-r1
+   gptel-backend (gptel-make-ollama "Ollama"
+                   :host "localhost:11434"
+                   :stream t
+                   :models '(deepseek-r1 llama3.2))))
