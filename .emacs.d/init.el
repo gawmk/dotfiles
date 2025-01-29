@@ -38,7 +38,8 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
-(setq shell-command-switch "-ic")
+;causes no job control in this shell error
+;(setq shell-command-switch "-ic")
 
 (setq use-dialog-box nil)
 
