@@ -17,7 +17,7 @@ include /etc/sway/config-vars.d/*
 exec mako
 
 ### Output configuration
-output * bg ~/pics/wallpapers/triss.jpg fill
+output * bg ~/pics/wallpapers/forest.jpg fill
 
 set $gnome-schema org.gnome.desktop.interface
 exec_always {
@@ -262,7 +262,7 @@ bindsym XF86AudioRaiseVolume exec amixer set Master 5%+
 bindsym XF86AudioLowerVolume exec amixer set Master 5%-
 
 ### GAPS ###
-gaps inner 5
+gaps inner 0
 
 ### BORDERS ###
 # default_border pixel 2

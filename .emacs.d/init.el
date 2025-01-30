@@ -101,7 +101,7 @@
 (setq display-line-numbers t)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ;displays line nums in programming modes
 
-(set-frame-parameter nil 'alpha-background 80)        ;transparency
+(set-frame-parameter nil 'alpha-background 70)        ;transparency
 (add-to-list 'default-frame-alist '(alpha-background . 80))
 
 (use-package page-break-lines    ;pretty page breaks
@@ -423,6 +423,8 @@ such alists."
 (use-package org
   :hook (org-mode . gawmk/org-mode-setup)
   :config
+  (setq org-hide-leading-stars t)
+  (setq org-startup-with-inline-images t)
   (define-key org-mode-map (kbd "C-M-h") 'org-do-promote)
   (define-key org-mode-map (kbd "C-M-l") 'org-do-demote)
   (define-key org-mode-map (kbd "C-M-k") 'org-move-subtree-up)
@@ -656,12 +658,15 @@ such alists."
   "C-S-j" (my-org-in-calendar calendar-forward-year))
 
 (setq org-babel-python-command "python3")
+(add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
 (setq org-confirm-babel-evaluate nil)
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
    (python . t)
-   (C . t)))
+   (C . t)
+   (jupyter . t)))
+
 
 
 (require 'org-tempo)
@@ -889,3 +894,7 @@ absolute path. Finally load eglot."
                    :models '(deepseek-r1 llama3.2))))
 
 (use-package jupyter)
+(setq org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                     (:session . "jl")
+                                                     (:results . "raw")
+                                                     (:kernel . "python3")))
