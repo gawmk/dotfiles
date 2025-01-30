@@ -556,6 +556,10 @@ such alists."
 (use-package visual-fill-column
   :hook (org-mode . gawmk/org-mode-visual-fill))
 
+(use-package org-tidy
+  :hook
+  (org-mode . org-tidy-mode))
+
 ;; agenda settings
 (setq org-agenda-files '("~/org"))
 (setq org-agenda-restore-windows-after-quit t)
@@ -730,6 +734,12 @@ absolute path. Finally load eglot."
   "mg" '(magit-status :which-key "magit status pane")
   "cmg" '(magit-clone :which-key "clone a repository"))
 
+(use-package pandoc-mode)
+
+(gawmk/leader-key
+  "ep" '(pandoc-main-hydra/body :which-key "pandoc export dispatcher")
+  "eo" '(org-export-dispatch :which-key "org export dispatcher"))
+
 (use-package pdf-tools
   :defer t
   :commands (pdf-loader-install)
@@ -877,3 +887,5 @@ absolute path. Finally load eglot."
                    :host "localhost:11434"
                    :stream t
                    :models '(deepseek-r1 llama3.2))))
+
+(use-package jupyter)
