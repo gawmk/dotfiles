@@ -127,21 +127,11 @@ alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 
 
 # vars
-export _JAVA_AWT_WM_NONREPARENTING=1
-export SHELL="/bin/bash"
-export EDITOR="emacs"
-export LEDGER_FILE="ledger.ledger"
 
 # starship
 if ! [ $TERM = 'dumb' ]; then
     eval "$(starship init bash)"
 fi
-
-# rust
-. "$HOME/.cargo/env"
-
-# Created by `pipx` on 2024-03-17 22:46:58
-export PATH="$PATH:/home/mikimasta/.local/bin"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"

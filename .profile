@@ -8,8 +8,17 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
+# ENV
+
+export PATH="/home/mikimasta/.sdkman/candidates/maven/current/bin:/home/mikimasta/.sdkman/candidates/gradle/current/bin:/home/mikimasta/.cargo/bin:/home/mikimasta/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/mikimasta/.local/bin:/home/mikimasta/.local/bin"
+export _JAVA_AWT_WM_NONREPARENTING=1
+export SHELL="/bin/bash"
+export EDITOR="emacs"
+export LEDGER_FILE="ledger.ledger"
+
 # ssh-agent
 eval $(ssh-agent -s)
+
 # sway
 test -z "$DISPLAY" -a -z "$WAYLAND_DISPLAY" -a -n "$XDG_VTNR" && test 1 -eq "$XDG_VTNR" && QT_QPA_PLATFORM=wayland SDL_VIDEODRIVER=wayland XDG_SESSION_TYPE=wayland exec sway
 
@@ -32,3 +41,5 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 # cargo
 . "$HOME/.cargo/env"
+
+

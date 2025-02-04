@@ -38,13 +38,18 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
-;causes no job control in this shell error
-;(setq shell-command-switch "-ic")
+                                        ;causes no job control in this shell error
+                                        ;(setq shell-command-switch "-ic")
 
 (setq use-dialog-box nil)
 
 (add-to-list 'exec-path "~/.local/bin/")
 
+(use-package exec-path-from-shell)
+(setq exec-path-from-shell-arguments nil)
+(setq exec-path-from-shell-debug t)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 (setq global-auto-revert-non-file-buffers 1)
 (global-auto-revert-mode 1)
 
@@ -546,9 +551,9 @@ such alists."
                       ))
 
 
-;(use-package org-bullets
- ; :after org
-  ;:hook (org-mode . org-bullets-mode))
+                                        ;(use-package org-bullets
+                                        ; :after org
+                                        ;:hook (org-mode . org-bullets-mode))
 
 (defun gawmk/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -683,7 +688,8 @@ such alists."
       (org-babel-tangle))))
 
 (gawmk/leader-key
-  "xb" '(org-babel-execute-src-block :which-key "execute a code block"))
+  "xb" '(org-babel-execute-src-block :which-key "execute a code block")
+  "xa" '(async-shell-command :which-key "execute a shell command asychronoulsy"))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'gawmk/org-babel-tangle-config)))
 
