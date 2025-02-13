@@ -45,6 +45,8 @@
 
 (add-to-list 'exec-path "~/.local/bin/")
 
+(add-to-list 'auto-mode-alist '("\\.pl\\'"  . prolog-mode))
+
 (use-package exec-path-from-shell)
 (setq exec-path-from-shell-arguments nil)
 (setq exec-path-from-shell-debug t)
