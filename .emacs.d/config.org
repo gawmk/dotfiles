@@ -760,7 +760,12 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     "C-S-j" (my-org-in-calendar calendar-forward-year))
 
 #+end_src
-
+** Org-roam
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :custom
+    org-roam-directory (file-truename "~/org"))
+#+end_src
 **  Babel
 #+begin_src emacs-lisp
   (setq org-babel-python-command "python3")
@@ -906,6 +911,7 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
   (use-package eglot-booster
     :after eglot
     :config (eglot-booster-mode))
+
       #+end_src
 
 * Completion

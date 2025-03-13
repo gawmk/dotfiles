@@ -664,6 +664,10 @@ such alists."
   "C-S-k" (my-org-in-calendar calendar-backward-year)
   "C-S-j" (my-org-in-calendar calendar-forward-year))
 
+(use-package org-roam
+  :custom
+  org-roam-directory (file-truename "~/org"))
+
 (setq org-babel-python-command "python3")
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
 (setq org-confirm-babel-evaluate nil)
