@@ -9,3 +9,4 @@ nmcli connection add type wifi con-name $CONNAME        \
         802-1x.identity $USERNAME                       \
         802-1x.password $PASSWORD                       \
         802-1x.phase2-auth mschapv2                     \
+        802-11-wireless.powersave 2                     \

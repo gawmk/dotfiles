@@ -131,6 +131,7 @@
 (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 
 (add-hook 'org-mode-hook #'variable-pitch-mode)
+(add-hook 'org-mode-hook #'auto-complete-text-off)
 
 (with-eval-after-load 'org
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
@@ -217,7 +218,6 @@ or go back to just one window (by deleting all but the selected window)."
   (define-key minibuffer-mode-map (kbd "C-k") 'next-history-element)
 
   (gawmk/leader-key
-    "pf" '(project-find-file :which-key "project management")
     "mc" '(compile :which-key "compile")
     "mu" '(mu4e :which-key "mail")
     "tt" '(launch-vterm :which-key "launch and rename vterm")
@@ -246,6 +246,7 @@ or go back to just one window (by deleting all but the selected window)."
     (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
     (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
     (define-key evil-normal-state-map (kbd "&") 'async-shell-command)
+    (define-key evil-visual-state-map (kbd "C-/") 'comment-or-uncomment-region)
     ;; Use visual line motions even outside of visual-line-mode buffers
     (evil-global-set-key 'motion "j" 'evil-next-visual-line)
     (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
@@ -311,6 +312,15 @@ or go back to just one window (by deleting all but the selected window)."
   "sb" '(counsel-switch-buffer :which-key "switch buffer"))
 
 (use-package project)
+
+(gawmk/leader-key
+  "pf" '(project-find-file :which-key "find a file in project")
+  "pc" '(project-compile :which-key "compile at project root")
+  "ps" '(project-search :which-key "search regex in project")
+  "pb" '(project-switch-to-buffer :which-key "switch to buffer in project")
+  "pd" '(project-dired :which-key "switch to project root dired")
+  "px" '(project-async-shell-command :which-key "async shell command in root")
+  "pp" '(project-switch-project :which-key "switch project"))
 
 (use-package tab-bar)
 (tab-bar-mode 1)
@@ -421,7 +431,6 @@ such alists."
 (gawmk/leader-key 
   "dd" '(dired :which-key "open dired")
   "di" '(image-dired :which-key "view images in dired (thumbnails)")
-  "dp" '(project-dired :which-key "open dired project")
   "dj" '(dired-jump :which-key "dired jump"))
 
 (defun gawmk/org-mode-setup ()
@@ -666,7 +675,9 @@ such alists."
 
 (use-package org-roam
   :custom
-  org-roam-directory (file-truename "~/org"))
+  org-roam-directory (file-truename "~/org")
+  :config
+  (org-roam-db-autosync-mode))
 
 (setq org-babel-python-command "python3")
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
@@ -787,27 +798,34 @@ absolute path. Finally load eglot."
   :config (eglot-booster-mode))
 
 (use-package corfu
-   :init
-   (global-corfu-mode)
+  :init
+  (global-corfu-mode)
 
-   :custom
-   (corfu-cycle t)
-   (corfu-auto t)
-   (corfu-auto-prefix 2)
-   (corfu-auto-delay 0.0)
-   (corfu-echo-documentation 0.25)
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-prefix 2) 
+  (corfu-auto-delay 0.0)
+  (corfu-echo-documentation 0.25)
 
-   :bind (:map corfu-map
-               ("RET" . nil)
-               ("C-j" . corfu-next)
-               ("C-k" . corfu-previous)
-               ("C-<return>" . corfu-insert)))
+  :bind (:map corfu-map
+              ("RET" . nil)
+              ("C-j" . corfu-next)
+              ("C-k" . corfu-previous)
+              ("C-<return>" . corfu-insert)))
 
 (use-package cape
   :init
+  ;(setq completion-at-point-functions t)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-tex)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
+
+
+(defun auto-complete-text-off ()
+  (interactive) 
+  (message "Trying to turn off ispell completion...")
+  (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
 (use-package mu4e
   :ensure nil
@@ -880,6 +898,9 @@ absolute path. Finally load eglot."
   (setq TeX-auto-save t); Enable parse on save.
   (setq-default TeX-master nil)
 
+  (gawmk/leader-key
+    "lc" '(TeX-command-run-all :which-key "compile and preview"))
+
   (setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
 
   (add-hook 'TeX-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
@@ -887,6 +908,8 @@ absolute path. Finally load eglot."
   (setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
   (add-hook 'TeX-mode-hook
             (lambda () (TeX-fold-mode 1))); Automatically activate TeX-fold-mode.
+  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+        TeX-source-correlate-start-server t)  
   (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
 
 (use-package gptel

@@ -188,6 +188,7 @@ Disabling startup clutter, transparency etc.
   (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 
   (add-hook 'org-mode-hook #'variable-pitch-mode)
+  (add-hook 'org-mode-hook #'auto-complete-text-off)
 
   (with-eval-after-load 'org
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
@@ -285,7 +286,6 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     (define-key minibuffer-mode-map (kbd "C-k") 'next-history-element)
 
     (gawmk/leader-key
-      "pf" '(project-find-file :which-key "project management")
       "mc" '(compile :which-key "compile")
       "mu" '(mu4e :which-key "mail")
       "tt" '(launch-vterm :which-key "launch and rename vterm")
@@ -318,6 +318,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
       (define-key evil-normal-state-map (kbd "L") 'evil-end-of-line)
       (define-key evil-normal-state-map (kbd "H") 'evil-beginning-of-line)
       (define-key evil-normal-state-map (kbd "&") 'async-shell-command)
+      (define-key evil-visual-state-map (kbd "C-/") 'comment-or-uncomment-region)
       ;; Use visual line motions even outside of visual-line-mode buffers
       (evil-global-set-key 'motion "j" 'evil-next-visual-line)
       (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
@@ -328,7 +329,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
       :after evil
       :config
       (evil-collection-init))
-  
+
   (eval-after-load "evil-maps"
     (dolist (map '(evil-motion-state-map
                    evil-insert-state-map
@@ -393,6 +394,16 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 ** Project
 #+begin_src emacs-lisp
   (use-package project)
+
+  (gawmk/leader-key
+    "pf" '(project-find-file :which-key "find a file in project")
+    "pc" '(project-compile :which-key "compile at project root")
+    "ps" '(project-search :which-key "search regex in project")
+    "pb" '(project-switch-to-buffer :which-key "switch to buffer in project")
+    "pd" '(project-dired :which-key "switch to project root dired")
+    "px" '(project-async-shell-command :which-key "async shell command in root")
+    "pp" '(project-switch-project :which-key "switch project"))
+
 #+end_src
 ** Tab Bar and Window Management
 #+begin_src emacs-lisp
@@ -511,7 +522,6 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   (gawmk/leader-key 
     "dd" '(dired :which-key "open dired")
     "di" '(image-dired :which-key "view images in dired (thumbnails)")
-    "dp" '(project-dired :which-key "open dired project")
     "dj" '(dired-jump :which-key "dired jump"))
 #+end_src
 * Org
@@ -764,7 +774,9 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 #+begin_src emacs-lisp
   (use-package org-roam
     :custom
-    org-roam-directory (file-truename "~/org"))
+    org-roam-directory (file-truename "~/org")
+    :config
+    (org-roam-db-autosync-mode))
 #+end_src
 **  Babel
 #+begin_src emacs-lisp
@@ -918,29 +930,35 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
 ** Corfu
 #+begin_src emacs-lisp
-   (use-package corfu
-     :init
-     (global-corfu-mode)
+  (use-package corfu
+    :init
+    (global-corfu-mode)
 
-     :custom
-     (corfu-cycle t)
-     (corfu-auto t)
-     (corfu-auto-prefix 2)
-     (corfu-auto-delay 0.0)
-     (corfu-echo-documentation 0.25)
+    :custom
+    (corfu-cycle t)
+    (corfu-auto t)
+    (corfu-auto-prefix 2) 
+    (corfu-auto-delay 0.0)
+    (corfu-echo-documentation 0.25)
 
-     :bind (:map corfu-map
-                 ("RET" . nil)
-                 ("C-j" . corfu-next)
-                 ("C-k" . corfu-previous)
-                 ("C-<return>" . corfu-insert)))
+    :bind (:map corfu-map
+                ("RET" . nil)
+                ("C-j" . corfu-next)
+                ("C-k" . corfu-previous)
+                ("C-<return>" . corfu-insert)))
 
   (use-package cape
     :init
+    ;(setq completion-at-point-functions t)
     (add-hook 'completion-at-point-functions #'cape-file)
     (add-hook 'completion-at-point-functions #'cape-tex)
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
+
+  (defun auto-complete-text-off ()
+    (interactive) 
+    (message "Trying to turn off ispell completion...")
+    (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
 #+end_src
 
@@ -1025,6 +1043,9 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     (setq TeX-auto-save t); Enable parse on save.
     (setq-default TeX-master nil)
 
+    (gawmk/leader-key
+      "lc" '(TeX-command-run-all :which-key "compile and preview"))
+
     (setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
 
     (add-hook 'TeX-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
@@ -1032,8 +1053,10 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     (setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
     (add-hook 'TeX-mode-hook
               (lambda () (TeX-fold-mode 1))); Automatically activate TeX-fold-mode.
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+          TeX-source-correlate-start-server t)  
     (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
-#+end_src
+    #+end_src
 
 * gptel
 #+begin_src emacs-lisp
