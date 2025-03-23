@@ -441,6 +441,7 @@ such alists."
   :config
   (setq org-hide-leading-stars t)
   (setq org-startup-with-inline-images t)
+  (setq org-image-actual-width nil)
   (define-key org-mode-map (kbd "C-M-h") 'org-do-promote)
   (define-key org-mode-map (kbd "C-M-l") 'org-do-demote)
   (define-key org-mode-map (kbd "C-M-k") 'org-move-subtree-up)
@@ -481,6 +482,11 @@ such alists."
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+;; redisplay images after saving
+(add-hook 'org-mode-hook
+          (lambda ()
+            (add-hook 'after-save-hook #'org-redisplay-inline-images nil 'make-it-local)))
 
 
 (gawmk/leader-key
@@ -561,9 +567,9 @@ such alists."
                       ))
 
 
-                                        ;(use-package org-bullets
-                                        ; :after org
-                                        ;:hook (org-mode . org-bullets-mode))
+					;(use-package org-bullets
+					; :after org
+					;:hook (org-mode . org-bullets-mode))
 
 (defun gawmk/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
