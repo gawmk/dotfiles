@@ -477,7 +477,6 @@ such alists."
 (setq org-refile-targets
       '(("~/org/archive.org" :maxlevel . 2)
         ("~/org/projects.org" :maxlevel . 2)
-        ("~/org/agenda.org" :maxlevel . 2)
         ("~/org/tasks.org" :maxlevel . 1)))
 
 ;; Save Org buffers after refiling!

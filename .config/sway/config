@@ -116,10 +116,13 @@ workspace 10 output $laptop
     bindsym $mod+space exec $menu
 
     # Color picker
-    bindsym $mod+Shift+p exec grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | wl-copy
+    bindsym $mod+Shift+p exec grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | wl-copy && notify-send "Color values saved to clipboard!"
 
     # Screenshot
-    bindsym $mod+Shift+c exec grim -g "$(slurp -d)" ~/pics/screenshots/ss_$(date +'%Y-%m-%d_%H%M%S').png && wl-copy < ~/pics/screenshots/ss_$(date +'%Y-%m-%d_%H%M%S').png
+    bindsym $mod+Shift+c exec grim -g "$(slurp -d)" ~/pics/screenshots/ss_$(date +'%Y-%m-%d_%H%M%S').png && wl-copy < ~/pics/screenshots/ss_$(date +'%Y-%m-%d_%H%M%S').png && notify-send "📸Screenshot saved!"  "~/pics/screenshots/"
+
+    # org specific screenshot
+    bindsym $mod+Shift+s exec ~/scripts/org-screenshot.sh
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
