@@ -312,9 +312,24 @@ or go back to just one window (by deleting all but the selected window)."
   "sb" '(counsel-switch-buffer :which-key "switch buffer"))
 
 (use-package project)
+(defun my-project-shell ()
+  "override the standard eshell to launch vterm in project root"
+  (interactive)
+  (require 'comint)
+  (let* ((default-directory (project-root (project-current t)))
+         (default-project-shell-name (project-prefixed-buffer-name "vterm"))
+         (shell-buffer (get-buffer default-project-shell-name)))
+    (if (and shell-buffer (not current-prefix-arg))
+        (if (comint-check-proc shell-buffer)
+            (pop-to-buffer shell-buffer (bound-and-true-p display-comint-buffer-action))
+          (vterm shell-buffer))
+      (vterm (generate-new-buffer-name default-project-shell-name)))))
+
+(advice-add 'project-shell :override #'my-project-shell)
 
 (gawmk/leader-key
   "pf" '(project-find-file :which-key "find a file in project")
+  "pt" '(project-shell :which-key "launch a term in project root")
   "pc" '(project-compile :which-key "compile at project root")
   "ps" '(project-search :which-key "search regex in project")
   "pb" '(project-switch-to-buffer :which-key "switch to buffer in project")
@@ -372,7 +387,6 @@ or go back to just one window (by deleting all but the selected window)."
   (define-key comint-mode-map "C-p" nil)
 
   (setq popper-group-function #'popper-group-by-project) ; project.el projects
-  (setq popper-group-function #'popper-group-by-directory) ; group by project.el
 
   (setq popper-reference-buffers
         '("\\*Messages\\*"
@@ -388,16 +402,15 @@ or go back to just one window (by deleting all but the selected window)."
               '("^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
                 "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
                 "^\\*term.*\\*$"   term-mode   ;term as a popup
-                ; "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
-                )))
+                "^\\*.+-vterm\\*$")))
 
 (popper-mode 1)
 (popper-echo-mode 1)
 (defun popper-display-popup-right (buffer &optional alist)
   "Display popup-buffer BUFFER at the right side of the screen.
-ALIST is an association list of action symbols and values.  See
-Info node `(elisp) Buffer Display Action Alists' for details of
-such alists."
+  ALIST is an association list of action symbols and values.  See
+  Info node `(elisp) Buffer Display Action Alists' for details of
+  such alists."
   (display-buffer-in-side-window
    buffer
    (append alist
@@ -462,7 +475,7 @@ such alists."
   (keymap-set org-mode-map "C-c" nil)
 
   ;; visual stuff
-  (setq org-ellipsis " ▾")
+  (setq org-ellipsis "▾")
   (setq org-hide-emphasis-markers t)
   (setq org-pretty-entities nil)
 
@@ -790,17 +803,34 @@ absolute path. Finally load eglot."
 (use-package eglot
   :config
   (fset #'jsonrpc--log-event #'ignore)
-  (add-hook 'c-mode-hook #'eglot-ensure))
   (setq eldoc-echo-area-use-multiline-p nil)
+  (add-hook 'c-mode-hook #'eglot-ensure)
+  (add-hook 'python-mode-hook #'eglot-ensure))
+
 (with-eval-after-load 'eglot
   (setq completion-category-defaults nil)
   (add-to-list 'eglot-server-programs
+	       '(python-mode . ("pyright"))
                '(c-mode . ("ccls"))))
-
 
 (use-package eglot-booster
   :after eglot
   :config (eglot-booster-mode))
+
+(use-package eldoc :defer
+  :custom
+  (eldoc-idle-delay 0.1)
+  :config
+  (evil-define-key 'normal eglot-mode-map (kbd "K") 'eldoc)
+  (advice-add 'eldoc-doc-buffer :after
+          (lambda (&rest _)
+            (let ((buf (get-buffer "*eldoc*")))
+              (when (buffer-live-p buf)
+                (select-window (get-buffer-window buf))))))
+
+  (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
+
+(use-package markdown-mode)
 
 (use-package corfu
   :init
