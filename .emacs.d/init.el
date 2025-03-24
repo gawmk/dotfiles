@@ -130,6 +130,7 @@
 (set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 160 :weight 'semibold)
 (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 160 :weight 'semibold)
 
+
 (add-hook 'org-mode-hook #'variable-pitch-mode)
 (add-hook 'org-mode-hook #'auto-complete-text-off)
 
