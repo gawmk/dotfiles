@@ -11,6 +11,10 @@ set $term kitty
 
 # App Launcher
 set $menu tofi-run | xargs swaymsg exec --
+
+# App Launcher
+set $dmenu tofi-drun | xargs swaymsg exec --
+
 include /etc/sway/config-vars.d/*
 
 # Notifications
@@ -113,7 +117,7 @@ workspace 10 output $laptop
     bindsym $mod+Shift+q kill
 
     # Start your launcher
-    bindsym $mod+space exec $menu
+    bindsym $mod+space exec $dmenu
 
     # Color picker
     bindsym $mod+Shift+p exec ~/scripts/color-picker.sh 
@@ -247,7 +251,7 @@ mode "resize" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod+r mode "resize"
+bindsym $mod+R mode "resize"
 
 #
 # Status Bar:

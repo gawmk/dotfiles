@@ -15,6 +15,7 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 export SHELL="/bin/bash"
 export EDITOR="emacs"
 export LEDGER_FILE="ledger.ledger"
+export R_HOME="usr/lib/R"
 
 # ssh-agent
 eval $(ssh-agent -s)
@@ -43,3 +44,18 @@ fi
 . "$HOME/.cargo/env"
 
 
+
+# >>> juliaup initialize >>>
+
+# !! Contents within this block are managed by juliaup !!
+
+case ":$PATH:" in
+    *:/home/mikimasta/.juliaup/bin:*)
+        ;;
+
+    *)
+        export PATH=/home/mikimasta/.juliaup/bin${PATH:+:${PATH}}
+        ;;
+esac
+
+# <<< juliaup initialize <<<

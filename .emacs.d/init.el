@@ -82,7 +82,9 @@
   ([remap describe-key] . helpful-key))
 
 ;; daemon
-(server-start)
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 ;; ask for pass without a window
 (setq epg-pinentry-mode 'loopback)
 
@@ -114,6 +116,10 @@
 (use-package page-break-lines    ;pretty page breaks
   :diminish page-break-lines-mode
   :config (page-break-lines-mode))
+
+(use-package olivetti
+  :init
+  (setq olivetti-body-width 100))
 
 (use-package doom-themes
   :config
@@ -585,17 +591,12 @@ or go back to just one window (by deleting all but the selected window)."
 					; :after org
 					;:hook (org-mode . org-bullets-mode))
 
-(defun gawmk/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :hook (org-mode . gawmk/org-mode-visual-fill))
 
 (use-package org-tidy
   :hook
   (org-mode . org-tidy-mode))
+
+(add-hook 'org-mode-hook 'olivetti-mode)
 
 ;; agenda settings
 (setq org-agenda-files '("~/org"))
@@ -603,51 +604,6 @@ or go back to just one window (by deleting all but the selected window)."
 (setq org-agenda-window-setup 'only-window)
 
 (setq org-agenda-skip-timestamp-if-done t)
-
-;; custom agenda commands
-
-;; Agenda View "d"
-(defun air-org-skip-subtree-if-priority (priority)
-  "Skip an agenda subtree if it has a priority of PRIORITY.
-
-  PRIORITY may be one of the characters ?A, ?B, or ?C."
-  (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-        (pri-value (* 1000 (- org-lowest-priority priority)))
-        (pri-current (org-get-priority (thing-at-point 'line t))))
-    (if (= pri-value pri-current)
-        subtree-end
-      nil)))
-
-(setq org-agenda-skip-deadline-if-done t)
-
-(setq org-agenda-custom-commands
-      '(
-        ;; Daily Agenda & TODOs
-        ("d" "Daily agenda and all TODOs"
-
-         ;; Display items with priority A
-         ((tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
-
-          ;; View 7 days in the calendar view
-          (agenda "" ((org-agenda-span 7)))
-
-          ;; Display items with priority B (really it is view all items minus A & C)
-          (tags-todo "PRIORITY=\"B\""
-                   ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)
-                                                   (air-org-skip-subtree-if-priority ?C)
-                                                   ))
-                    (org-agenda-overriding-header "ALL normal priority tasks:")))
-          ;; Display items with pirority C
-          (tags "PRIORITY=\"C\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "Low-priority unfinished tasks:")))
-          )
-
-         ;; Don't compress things (change to suite your tastes)
-         ((org-agenda-compact-blocks nil)))
-        ))
 
 ;; agenda keybinds
 (eval-after-load 'org-agenda
@@ -811,7 +767,7 @@ absolute path. Finally load eglot."
 (with-eval-after-load 'eglot
   (setq completion-category-defaults nil)
   (add-to-list 'eglot-server-programs
-	       '(python-mode . ("pyright"))
+	       '(python-mode . ("pyright-langserver"))
                '(c-mode . ("ccls"))))
 
 (use-package eglot-booster
@@ -964,8 +920,15 @@ absolute path. Finally load eglot."
                    :stream t
                    :models '(deepseek-r1 llama3.2))))
 
+(use-package julia-mode)
+
 (use-package jupyter)
 (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                      (:session . "jl")
                                                      (:results . "raw")
                                                      (:kernel . "python3")))
+(defun my-python-noindent-docstring (&optional _previous)
+  (if (eq (car (python-indent-context)) :inside-docstring)
+      'noindent))
+
+(advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)
