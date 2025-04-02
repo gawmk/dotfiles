@@ -702,6 +702,49 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 
   (setq org-agenda-skip-timestamp-if-done t)
 
+  ;;olivetti mode for agenda
+  (add-hook 'org-agenda-mode-hook 'olivetti-mode)
+
+  ;; Agenda View "d"
+  (defun air-org-skip-subtree-if-priority (priority)
+    "Skip an agenda subtree if it has a priority of PRIORITY.
+
+    PRIORITY may be one of the characters ?A, ?B, or ?C."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (pri-value (* 1000 (- org-lowest-priority priority)))
+          (pri-current (org-get-priority (thing-at-point 'line t))))
+      (if (= pri-value pri-current)
+          subtree-end
+        nil)))
+
+  (setq org-agenda-custom-commands
+        '(
+          ;; Daily Agenda & TODOs
+          ("d" "Daily agenda and all TODOs"
+
+           ;; Display items with priority A
+           ((tags "PRIORITY=\"A\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
+
+            ;; View 7 days in the calendar view
+            (agenda "" ((org-agenda-span 7)))
+
+            ;; Display items with priority B (really it is view all items minus A & C)
+            (tags-todo "PRIORITY=\"B\""
+                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)
+                                                     (air-org-skip-subtree-if-priority ?C)
+                                                     ))
+                      (org-agenda-overriding-header "ALL normal priority tasks:")))
+            ;; Display items with pirority C
+            (tags "PRIORITY=\"C\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "Low-priority unfinished tasks:")))
+            )
+
+           ;; Don't compress things (change to suite your tastes)
+           ((org-agenda-compact-blocks nil)))
+          ))
   ;; agenda keybinds
   (eval-after-load 'org-agenda
     '(progn
