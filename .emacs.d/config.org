@@ -142,6 +142,27 @@ Where to store backups and some helpful packages.
 -----
 Disabling startup clutter, transparency etc.
 #+begin_src emacs-lisp
+  (defun flyspell-mode (&optional _)
+    "Disabled flyspell-mode. Do nothing.")
+  (defun flyspell-prog-mode ()
+    "Disabled flyspell-prog-mode. Do nothing.")
+
+  (setq-default spell-checking-enable-by-default nil)
+  (flyspell-mode 0)
+  ;; Disable flyspell completely
+  (setq flyspell-mode nil)
+  (setq global-flyspell-mode nil)
+  (remove-hook 'text-mode-hook 'flyspell-mode)
+  (remove-hook 'prog-mode-hook 'flyspell-prog-mode)
+  ;; Don't load ispell or try to configure it
+  (setq ispell-program-name nil)
+  (setq ispell-local-dictionary nil)
+  (setq ispell-local-dictionary-alist nil)
+  (setq ispell-dictionary nil)
+  (defun debian-ispell-set-default-dictionary "eng")
+  (setq ispell-extra-args '("--sucks-to-be-a-spell-checker"))
+
+
   (setq initial-scratch-message nil)
   (setq inhibit-startup-screen t)
 
@@ -188,7 +209,6 @@ Disabling startup clutter, transparency etc.
 
 
   (add-hook 'org-mode-hook #'variable-pitch-mode)
-  (add-hook 'org-mode-hook #'auto-complete-text-off)
 
   (with-eval-after-load 'org
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
@@ -204,33 +224,33 @@ Disabling startup clutter, transparency etc.
 
 ** Dashboard
 #+begin_src emacs-lisp
-(defun gawmk/show-welcome-buffer ()
-  "Show *Welcome* buffer."
-  (with-current-buffer (get-buffer-create "*Welcome*")
-    (setq truncate-lines t)
-    (let* ((buffer-read-only)
-           (image-path "~/pics/wallpapers/novigrad.png")
-           (image (create-image image-path))
-           (size (image-size image))
-           (height (cdr size))
-           (width (car size))
-           (top-margin (floor (/ (- (window-height) height) 2)))
-           (left-margin (floor (/ (- (window-width) width) 2)))
-           (prompt-title "Welcome to Emacs!"))
-      (erase-buffer)
-      (setq mode-line-format nil)
-      (goto-char (point-min))
-      (insert (make-string top-margin ?\n ))
-      (insert (make-string left-margin ?\ ))
-      (insert-image image)
-      (insert "\n\n\n")
-      (insert (make-string (floor (/ (- (window-width) (string-width prompt-title)) 2)) ?\ ))
-      (insert prompt-title))
-    (setq cursor-type nil)
-    (read-only-mode +1)
-    (switch-to-buffer (current-buffer))
-    (local-set-key (kbd "q") 'kill-this-buffer)))
-(gawmk/show-welcome-buffer)
+   (defun gawmk/show-welcome-buffer ()
+     "Show *Welcome* buffer."
+     (with-current-buffer (get-buffer-create "*Welcome*")
+       (setq truncate-lines t)
+       (let* ((buffer-read-only)
+              (image-path "~/pics/wallpapers/novigrad.png")
+              (image (create-image image-path))
+              (size (image-size image))
+              (height (cdr size))
+              (width (car size))
+              (top-margin (floor (/ (- (window-height) height) 2)))
+              (left-margin (floor (/ (- (window-width) width) 2)))
+              (prompt-title "Welcome to Emacs!"))
+         (erase-buffer)
+         (setq mode-line-format nil)
+         (goto-char (point-min))
+         (insert (make-string top-margin ?\n ))
+         (insert (make-string left-margin ?\ ))
+         (insert-image image)
+         (insert "\n\n\n")
+         (insert (make-string (floor (/ (- (window-width) (string-width prompt-title)) 2)) ?\ ))
+         (insert prompt-title))
+       (setq cursor-type nil)
+       (read-only-mode +1)
+       (switch-to-buffer (current-buffer))
+       (local-set-key (kbd "q") 'kill-this-buffer)))
+   (gawmk/show-welcome-buffer)
 #+end_src
 
 * Keybindings
@@ -801,7 +821,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
    '((emacs-lisp . t)
      (python . t)
      (C . t)
-     (jupyter . t)))
+     ))
 
 
 
@@ -922,37 +942,38 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
 * Eglot
 #+begin_src emacs-lisp
-  (use-package eglot
-    :config
-    (fset #'jsonrpc--log-event #'ignore)
-    (setq eldoc-echo-area-use-multiline-p nil)
-    (add-hook 'c-mode-hook #'eglot-ensure)
-    (add-hook 'python-mode-hook #'eglot-ensure))
+    (use-package eglot
+      :config
+      (fset #'jsonrpc--log-event #'ignore)
+      (setq eldoc-echo-area-use-multiline-p nil)
+      (add-hook 'c-mode-hook #'eglot-ensure)
+      (add-hook 'python-mode-hook #'eglot-ensure))
 
-  (with-eval-after-load 'eglot
-    (setq completion-category-defaults nil)
-    (add-to-list 'eglot-server-programs
-  	       '(python-mode . ("pyright-langserver"))
-                 '(c-mode . ("ccls"))))
+    (with-eval-after-load 'eglot
+      (setq completion-category-defaults nil)
+      (add-to-list 'eglot-server-programs
+    	       '(python-mode . ("pyright-langserver"))
+                   '(c-mode . ("ccls"))))
 
-  (use-package eglot-booster
-    :after eglot
-    :config (eglot-booster-mode))
+    ;; (use-package eglot-booster
+    ;;   :after eglot
+    ;;   :config (eglot-booster-mode))
 
-  (use-package eldoc :defer
-    :custom
-    (eldoc-idle-delay 0.1)
-    :config
-    (evil-define-key 'normal eglot-mode-map (kbd "K") 'eldoc)
-    (advice-add 'eldoc-doc-buffer :after
-            (lambda (&rest _)
-              (let ((buf (get-buffer "*eldoc*")))
-                (when (buffer-live-p buf)
-                  (select-window (get-buffer-window buf))))))
+    (use-package eldoc
+      :defer
+      :custom
+      (eldoc-idle-delay 0.1)
+      :config
+      (evil-define-key 'normal eglot-mode-map (kbd "K") 'eldoc)
+      (advice-add 'eldoc-doc-buffer :after
+              (lambda (&rest _)
+                (let ((buf (get-buffer "*eldoc*")))
+                  (when (buffer-live-p buf)
+                    (select-window (get-buffer-window buf))))))
 
-    (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
+      (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
 
-  (use-package markdown-mode)
+    (use-package markdown-mode)
 
       #+end_src
 
@@ -985,10 +1006,10 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 
-  (defun auto-complete-text-off ()
-    (interactive) 
-    (message "Trying to turn off ispell completion...")
-    (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
+  ;; (defun auto-complete-text-off ()
+  ;;   (interactive) 
+  ;;   (message "Trying to turn off ispell completion...")
+  ;;   (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
 #+end_src
 

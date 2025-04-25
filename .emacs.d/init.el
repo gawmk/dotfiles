@@ -88,6 +88,26 @@
 ;; ask for pass without a window
 (setq epg-pinentry-mode 'loopback)
 
+(defun flyspell-mode (&optional _)
+  "Disabled flyspell-mode. Do nothing.")
+(defun flyspell-prog-mode ()
+  "Disabled flyspell-prog-mode. Do nothing.")
+
+(setq-default spell-checking-enable-by-default nil)
+(flyspell-mode 0)
+;; Disable flyspell completely
+(setq flyspell-mode nil)
+(setq global-flyspell-mode nil)
+(remove-hook 'text-mode-hook 'flyspell-mode)
+(remove-hook 'prog-mode-hook 'flyspell-prog-mode)
+;; Don't load ispell or try to configure it
+(setq ispell-program-name nil)
+(setq ispell-local-dictionary nil)
+(setq ispell-local-dictionary-alist nil)
+(setq ispell-dictionary nil)
+(setq ispell-extra-args '("--sucks-to-be-a-spell-checker"))
+
+
 (setq initial-scratch-message nil)
 (setq inhibit-startup-screen t)
 
@@ -131,7 +151,6 @@
 
 
 (add-hook 'org-mode-hook #'variable-pitch-mode)
-(add-hook 'org-mode-hook #'auto-complete-text-off)
 
 (with-eval-after-load 'org
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
@@ -699,7 +718,7 @@ or go back to just one window (by deleting all but the selected window)."
  '((emacs-lisp . t)
    (python . t)
    (C . t)
-   (jupyter . t)))
+   ))
 
 
 
@@ -807,11 +826,12 @@ absolute path. Finally load eglot."
 	       '(python-mode . ("pyright-langserver"))
                '(c-mode . ("ccls"))))
 
-(use-package eglot-booster
-  :after eglot
-  :config (eglot-booster-mode))
+;; (use-package eglot-booster
+;;   :after eglot
+;;   :config (eglot-booster-mode))
 
-(use-package eldoc :defer
+(use-package eldoc
+  :defer
   :custom
   (eldoc-idle-delay 0.1)
   :config
@@ -851,10 +871,10 @@ absolute path. Finally load eglot."
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 
-(defun auto-complete-text-off ()
-  (interactive) 
-  (message "Trying to turn off ispell completion...")
-  (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
+;; (defun auto-complete-text-off ()
+;;   (interactive) 
+;;   (message "Trying to turn off ispell completion...")
+;;   (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
 ;; (use-package mu4e
 ;;   :ensure nil

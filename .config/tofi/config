@@ -13,7 +13,7 @@
 	# characters not in the chosen font will fail to render.
 	#
 	# Otherwise, fonts are interpreted in Pango format.
-	font = /usr/share/fonts/iosevka-comfy-motion-normalboldupright.ttf
+	font = /usr/share/fonts/iosevka-comfy-motion/TTF/iosevka-comfy-motion-normalboldupright.ttf
 
 	# Point size of text.
 	font-size = 24

@@ -32,7 +32,7 @@ fi
 tar xvfz $WGET_FILE && cd emacs-$VERSION
 
 sudo apt install build-dep emacs
-
+sudo apt install build-essential
 ./configure --with-native-compilation\
             --with-tree-sitter\
 			--with-gif\

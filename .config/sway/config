@@ -25,12 +25,8 @@ output * bg ~/pics/wallpapers/forest.jpg fill
 
 set $gnome-schema org.gnome.desktop.interface
 exec_always {
-    gsettings set $gnome-schema cursor-theme 'BreezeX-Dark'
-    gsettings set $gnome-schema cursor-size '35'
+    gsettings set org.gnome.desktop.interface gtk-theme "Gruvbox-Dark-Medium"
 }
-
-### Mouse cursor
-seat seat0 xcursor_theme BreezeX-Dark 35
 
 ### INPUT CONFIG ### 
 input "2:7:SynPS/2_Synaptics_TouchPad" {

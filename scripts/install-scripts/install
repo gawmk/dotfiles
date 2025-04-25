@@ -11,7 +11,7 @@ if [ -f "/etc/debian_version" ]; then
   apt install stow sway waybar adduser alsa-utils cmake git systemd-resolved ledger\
       cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard tofi mako-notifier \
       grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc\
-      neofetch neovim iwd iwgtk rfkill python3 thunderbird gpg-agent imagemagick \
+      neofetch neovim iwd rfkill python3 thunderbird gpg-agent imagemagick \
       ripgrep rubber sed slurp sudo swaybg swayidle swaylock syncthing tar \
       unzip usbutils wlsunset zathura zip texlive-full libreoffice pipewire pavucontrol flatpak \
       -y
@@ -20,8 +20,12 @@ if [ -f "/etc/debian_version" ]; then
   wlsunset -l 50.8 -L 5.6
   echo "wlsunset set!"
 
+cd && git clone --depth 1 https://github.com/protesilaos/iosevka-comfy
+cd iosevka-comfy/ && sudo mv iosevka* /usr/share/fonts && fc-cache
+
+curl -sS https://starship.rs/install.sh | sh
   # TO INSTALL:
-  # auto-cpufreq, build emacs, ledger, configure syncthing
+  # auto-cpufreq, build emacs, ledger, configure syncthing, iwgtk
   read -p "Should I install emacs? [y/n]: "
   if [ "$REPLY" == "y" ]; then
       SCRIPTS+="./emacs-build.sh"
