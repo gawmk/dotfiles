@@ -88,13 +88,6 @@
 ;; ask for pass without a window
 (setq epg-pinentry-mode 'loopback)
 
-;; access passwords outside of emacs
-(defun gawmk/lookup-password (&rest keys)
-  (let ((result (apply #'auth-source-search keys)))
-    (if result
-        (funcall (plist-get (car result) :secret))
-      nil)))
-
 (setq initial-scratch-message nil)
 (setq inhibit-startup-screen t)
 
@@ -948,21 +941,21 @@ absolute path. Finally load eglot."
         TeX-source-correlate-start-server t)  
   (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
 
-(use-package gptel
-  :config
+;; (use-package gptel
+;;   :config
 
-  (setq gptel-default-mode 'org-mode)
-  (gawmk/leader-key
-    "gps" '(gptel-send :which-key "Send text up to point to gptel")
-    "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
-    "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
+;;   (setq gptel-default-mode 'org-mode)
+;;   (gawmk/leader-key
+;;     "gps" '(gptel-send :which-key "Send text up to point to gptel")
+;;     "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
+;;     "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
 
-  (setq
-   gptel-model 'deepseek-r1
-   gptel-backend (gptel-make-ollama "Ollama"
-                   :host "localhost:11434"
-                   :stream t
-                   :models '(deepseek-r1 llama3.2))))
+;;   (setq
+;;    gptel-model 'deepseek-r1
+;;    gptel-backend (gptel-make-ollama "Ollama"
+;;                    :host "localhost:11434"
+;;                    :stream t
+;;                    :models '(deepseek-r1 llama3.2))))
 
 (use-package julia-mode)
 

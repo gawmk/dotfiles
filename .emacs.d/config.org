@@ -137,13 +137,6 @@ Where to store backups and some helpful packages.
     (server-start))
   ;; ask for pass without a window
   (setq epg-pinentry-mode 'loopback)
-
-  ;; access passwords outside of emacs
-  (defun gawmk/lookup-password (&rest keys)
-    (let ((result (apply #'auth-source-search keys)))
-      (if result
-          (funcall (plist-get (car result) :secret))
-        nil)))
 #+end_src
 * Basic UI config
 -----
@@ -1097,21 +1090,21 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
 * gptel
 #+begin_src emacs-lisp
-  (use-package gptel
-    :config
+  ;; (use-package gptel
+  ;;   :config
 
-    (setq gptel-default-mode 'org-mode)
-    (gawmk/leader-key
-      "gps" '(gptel-send :which-key "Send text up to point to gptel")
-      "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
-      "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
+  ;;   (setq gptel-default-mode 'org-mode)
+  ;;   (gawmk/leader-key
+  ;;     "gps" '(gptel-send :which-key "Send text up to point to gptel")
+  ;;     "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
+  ;;     "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
 
-    (setq
-     gptel-model 'deepseek-r1
-     gptel-backend (gptel-make-ollama "Ollama"
-                     :host "localhost:11434"
-                     :stream t
-                     :models '(deepseek-r1 llama3.2))))
+  ;;   (setq
+  ;;    gptel-model 'deepseek-r1
+  ;;    gptel-backend (gptel-make-ollama "Ollama"
+  ;;                    :host "localhost:11434"
+  ;;                    :stream t
+  ;;                    :models '(deepseek-r1 llama3.2))))
 #+end_src
 
 * python stuff
