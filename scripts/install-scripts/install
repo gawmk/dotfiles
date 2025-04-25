@@ -9,7 +9,7 @@ if [ -f "/etc/debian_version" ]; then
 
   apt update
   apt install sway waybar adduser alsa-utils cmake git systemd-resolved\
-      cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard \
+      cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard tofi mako-notifier \
       grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc\
       neofetch neovim iwd iwgtk rfkill python3 thunderbird gpg-agent imagemagick \
       ripgrep rubber sed slurp sudo swaybg swayidle swaylock syncthing tar \
