@@ -8,7 +8,7 @@ SCRIPTS=""
 if [ -f "/etc/debian_version" ]; then
 
   apt update
-  apt install sway waybar adduser alsa-utils cmake git systemd-resolved ledger\
+  apt install stow sway waybar adduser alsa-utils cmake git systemd-resolved ledger\
       cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard tofi mako-notifier \
       grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc\
       neofetch neovim iwd iwgtk rfkill python3 thunderbird gpg-agent imagemagick \
@@ -21,7 +21,7 @@ if [ -f "/etc/debian_version" ]; then
   echo "wlsunset set!"
 
   # TO INSTALL:
-  # auto-cpufreq, build emacs, ledger
+  # auto-cpufreq, build emacs, ledger, configure syncthing
   read -p "Should I install emacs? [y/n]: "
   if [ "$REPLY" == "y" ]; then
       SCRIPTS+="./emacs-build.sh"
