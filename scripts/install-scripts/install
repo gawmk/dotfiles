@@ -3,14 +3,16 @@
 
 # before you do all this, make sure to first transfer your ~/.gnupg/, .gitconfig, .authinfo.gpg, .ssh (DO THIS ONLY IF YOU CHANGE MACHINES FOR GOOD AND ERASE THE OLD DISK)
 
+# add backports repo?
+
 SCRIPTS=""
 
 if [ -f "/etc/debian_version" ]; then
 
   apt update
-  apt install stow sway waybar adduser alsa-utils cmake git systemd-resolved ledger\
+  apt install stow sway waybar adduser alsa-utils cmake git systemd-resolved ledger \
       cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard tofi mako-notifier \
-      grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc\
+      grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc libnotify-bin \
       neofetch neovim iwd rfkill python3 thunderbird gpg-agent imagemagick \
       ripgrep rubber sed slurp sudo swaybg swayidle swaylock syncthing tar \
       unzip usbutils wlsunset zathura zip texlive-full libreoffice pipewire pavucontrol flatpak \
