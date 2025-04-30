@@ -512,7 +512,7 @@ or go back to just one window (by deleting all but the selected window)."
 ;; refile
 (setq org-refile-targets
       '(("~/org/archive.org" :maxlevel . 2)
-        ("~/org/todo.org" :maxlevel . 3)))
+        ("~/org/todo.org" :maxlevel . 2)))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)

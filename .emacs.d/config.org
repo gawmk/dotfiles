@@ -606,7 +606,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   ;; refile
   (setq org-refile-targets
         '(("~/org/archive.org" :maxlevel . 2)
-          ("~/org/todo.org" :maxlevel . 3)))
+          ("~/org/todo.org" :maxlevel . 2)))
 
   ;; Save Org buffers after refiling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
