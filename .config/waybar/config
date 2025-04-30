@@ -71,10 +71,10 @@
             "show-passive-items": true,
         },
         "clock": {
+	    "on-click": "flatpak run app.zen_browser.zen https://calendar.google.com",
             "interval": 60,
             "format": "  {:%a %b %d %H:%M}", // %b %d %Y  --Date formatting
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-            "format-alt": "{:%Y-%m-%d}"
         },
         "temperature": {
             // "thermal-zone": 2,
