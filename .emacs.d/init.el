@@ -455,7 +455,9 @@ or go back to just one window (by deleting all but the selected window)."
 (use-package dired-open
   :config
   (setq dired-open-extensions '(
-                                ("mp4" . "mpv"))))
+                                ("mp4" . "mpv")
+				  ("docx" . "libreoffice")
+				  ("xlsx" . "libreoffice"))))
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
@@ -510,8 +512,7 @@ or go back to just one window (by deleting all but the selected window)."
 ;; refile
 (setq org-refile-targets
       '(("~/org/archive.org" :maxlevel . 2)
-        ("~/org/projects.org" :maxlevel . 2)
-        ("~/org/tasks.org" :maxlevel . 1)))
+        ("~/org/todo.org" :maxlevel . 3)))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -871,10 +872,10 @@ absolute path. Finally load eglot."
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 
-;; (defun auto-complete-text-off ()
-;;   (interactive) 
-;;   (message "Trying to turn off ispell completion...")
-;;   (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
+(defun auto-complete-text-off ()
+  (interactive) 
+  (message "Trying to turn off ispell completion...")
+  (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
 ;; (use-package mu4e
 ;;   :ensure nil
@@ -978,6 +979,7 @@ absolute path. Finally load eglot."
 ;;                    :models '(deepseek-r1 llama3.2))))
 
 (use-package julia-mode)
+(use-package eglot-jl)
 
 (use-package jupyter)
 (setq org-babel-default-header-args:jupyter-python '((:async . "yes")

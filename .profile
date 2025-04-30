@@ -10,12 +10,12 @@
 
 # ENV
 
-export PATH="/home/mikimasta/.sdkman/candidates/maven/current/bin:/home/mikimasta/.sdkman/candidates/gradle/current/bin:/home/mikimasta/.cargo/bin:/home/mikimasta/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/mikimasta/.local/bin:/home/mikimasta/.local/bin"
+export PATH="/home/mikimasta/.juliaup/bin:/home/mikimasta/.sdkman/candidates/maven/current/bin:/home/mikimasta/.sdkman/candidates/gradle/current/bin:/home/mikimasta/.cargo/bin:/home/mikimasta/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/mikimasta/.local/bin:/home/mikimasta/.local/bin" 
 export _JAVA_AWT_WM_NONREPARENTING=1
 export SHELL="/bin/bash"
-export EDITOR="emacs"
+export EDITOR="vim"
 export LEDGER_FILE="ledger.ledger"
-export R_HOME="usr/lib/R"
+export R_HOME="/usr/lib/R"
 
 # ssh-agent
 eval $(ssh-agent -s)

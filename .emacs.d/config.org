@@ -532,31 +532,33 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
                   #+end_src
 * Dired
 #+begin_src emacs-lisp
-  (use-package dired
-    :ensure nil
-    :custom ((dired-listing-switches "-aGho --group-directories-first"))
-    :config
-    (setf dired-kill-when-opening-new-dired-buffer t)
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-up-directory
-      "l" 'dired-find-file))
+    (use-package dired
+      :ensure nil
+      :custom ((dired-listing-switches "-aGho --group-directories-first"))
+      :config
+      (setf dired-kill-when-opening-new-dired-buffer t)
+      (evil-collection-define-key 'normal 'dired-mode-map
+        "h" 'dired-up-directory
+        "l" 'dired-find-file))
 
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
+    (use-package all-the-icons-dired
+      :hook (dired-mode . all-the-icons-dired-mode))
 
-  (use-package dired-open
-    :config
-    (setq dired-open-extensions '(
-                                  ("mp4" . "mpv"))))
-  (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
-  (gawmk/leader-key 
-    "dd" '(dired :which-key "open dired")
-    "di" '(image-dired :which-key "view images in dired (thumbnails)")
-    "dj" '(dired-jump :which-key "dired jump"))
+    (use-package dired-open
+      :config
+      (setq dired-open-extensions '(
+                                    ("mp4" . "mpv")
+  				  ("docx" . "libreoffice")
+  				  ("xlsx" . "libreoffice"))))
+    (use-package dired-hide-dotfiles
+      :hook (dired-mode . dired-hide-dotfiles-mode)
+      :config
+      (evil-collection-define-key 'normal 'dired-mode-map
+        "H" 'dired-hide-dotfiles-mode))
+    (gawmk/leader-key 
+      "dd" '(dired :which-key "open dired")
+      "di" '(image-dired :which-key "view images in dired (thumbnails)")
+      "dj" '(dired-jump :which-key "dired jump"))
 #+end_src
 * Org
 #+begin_src emacs-lisp
@@ -604,8 +606,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   ;; refile
   (setq org-refile-targets
         '(("~/org/archive.org" :maxlevel . 2)
-          ("~/org/projects.org" :maxlevel . 2)
-          ("~/org/tasks.org" :maxlevel . 1)))
+          ("~/org/todo.org" :maxlevel . 3)))
 
   ;; Save Org buffers after refiling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -1005,10 +1006,10 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 
-  ;; (defun auto-complete-text-off ()
-  ;;   (interactive) 
-  ;;   (message "Trying to turn off ispell completion...")
-  ;;   (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
+  (defun auto-complete-text-off ()
+    (interactive) 
+    (message "Trying to turn off ispell completion...")
+    (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
 #+end_src
 
@@ -1130,7 +1131,8 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 * python stuff
 #+begin_src emacs-lisp
   (use-package julia-mode)
-  
+  (use-package eglot-jl)
+
   (use-package jupyter)
   (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                        (:session . "jl")
