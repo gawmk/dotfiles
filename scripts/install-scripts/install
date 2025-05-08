@@ -10,7 +10,7 @@ SCRIPTS=""
 if [ -f "/etc/debian_version" ]; then
 
   apt update
-  apt install stow sway waybar adduser alsa-utils cmake git systemd-resolved ledger \
+  apt install stow sway xdg-desktop-portal-wlr waybar adduser alsa-utils cmake git systemd-resolved ledger \
       cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard tofi mako-notifier \
       grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc libnotify-bin \
       neofetch neovim iwd rfkill python3 thunderbird gpg-agent imagemagick \

@@ -16,6 +16,8 @@ export SHELL="/bin/bash"
 export EDITOR="vim"
 export LEDGER_FILE="ledger.ledger"
 export R_HOME="/usr/lib/R"
+export XDG_CURRENT_DESKTOP="sway"
+export MOZ_ENABLE_WAYLAND=1
 
 # ssh-agent
 eval $(ssh-agent -s)
