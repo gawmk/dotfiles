@@ -115,10 +115,69 @@ config.set('content.local_content_can_access_remote_urls', True, 'file:///home/m
 # Type: Bool
 config.set('content.local_content_can_access_file_urls', False, 'file:///home/mikimasta/.local/share/qutebrowser/userscripts/*')
 
+# darkmode
 config.set("colors.webpage.darkmode.enabled", True)
 
+# BINDINGS
+config.bind('<Escape>', 'mode-leave ;; jseval -q document.activeElement.blur()', mode='insert')
 
 
+
+
+
+# ENGINES
+c.url.searchengines = { 'DEFAULT': 'https://duckduckgo.com/?ia=web&q={}', '!a': 'https://wiki.archlinux.org/index.php?title=Special%3ASearch&search={}','!g': 'https://google.com/search?hl=en&q={}', '!m': 'https://google.com/maps?q={}', '!w': 'https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search={}', '!gh': 'https://github.com/search?q={}', '!y': 'https://youtube.com/results?search_query={}', '!r': 'https://www.reddit.com/r/{}'}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### PREFERENCES
+c.completion.height = "30%"
+c.downloads.location.directory = "/home/mikimasta"
+c.downloads.location.prompt = False
+c.prompt.filebrowser = False
+c.prompt.radius = 20
+c.input.insert_mode.auto_load = True
+c.input.insert_mode.auto_leave = True
+c.downloads.prevent_mixed_content = True
+c.downloads.position = "bottom"
+c.window.transparent = True
+c.completion.web_history.max_items = -1
+c.completion.scrollbar.width = 20
+c.content.default_encoding = "utf-8"
+c.content.blocking.method = "adblock"
+c.content.cookies.accept = "all"
+c.content.media.video_capture = True
+c.content.media.audio_capture = True
+c.content.media.audio_video_capture = True
+c.content.notifications.enabled = True
+c.content.notifications.presenter = "libnotify"
+c.content.webgl = True
+c.content.pdfjs = True
+c.content.xss_auditing = False
+c.content.local_content_can_access_remote_urls = True
+c.content.plugins = True
+c.content.tls.certificate_errors = "load-insecurely"
+c.content.geolocation = True
+c.content.javascript.clipboard = "access"
+c.content.prefers_reduced_motion = True
+c.hints.radius = 20
+c.hints.uppercase = False
+c.scrolling.smooth = False
+c.qt.chromium.experimental_web_platform_features = "always"
+c.qt.workarounds.disable_hangouts_extension = True
 
 
 
@@ -420,7 +479,7 @@ c.colors.tabs.indicator.error = bright_red
 c.colors.tabs.odd.fg = fg2
 
 # Background color of unselected odd tabs.
-c.colors.tabs.odd.bg = bg2
+c.colors.tabs.odd.bg = bg3
 
 # Foreground color of unselected even tabs.
 c.colors.tabs.even.fg = c.colors.tabs.odd.fg
@@ -429,16 +488,16 @@ c.colors.tabs.even.fg = c.colors.tabs.odd.fg
 c.colors.tabs.even.bg = bg3
 
 # Foreground color of selected odd tabs.
-c.colors.tabs.selected.odd.fg = fg2
+c.colors.tabs.selected.odd.fg = bg3
 
 # Background color of selected odd tabs.
-c.colors.tabs.selected.odd.bg = bg0
+c.colors.tabs.selected.odd.bg = fg2
 
 # Foreground color of selected even tabs.
 c.colors.tabs.selected.even.fg = c.colors.tabs.selected.odd.fg
 
 # Background color of selected even tabs.
-c.colors.tabs.selected.even.bg = bg0
+c.colors.tabs.selected.even.bg = fg2
 
 # Background color of pinned unselected even tabs.
 c.colors.tabs.pinned.even.bg = bright_green

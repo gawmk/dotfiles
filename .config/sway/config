@@ -268,11 +268,12 @@ bindsym XF86AudioRaiseVolume exec amixer set Master 5%+
 bindsym XF86AudioLowerVolume exec amixer set Master 5%-
 
 ### GAPS ###
-gaps inner 0
+gaps inner 10
 
 ### BORDERS ###
-# default_border pixel 2
-default_border none
+default_border pixel 1
+client.focused #665c54 #665c54 #665c54 #665c54 #665c54
+#default_border none
 
 ### WLSUNSET ###
 exec wlsunset -l 50.8 -L 5.6 &
