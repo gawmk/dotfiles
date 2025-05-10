@@ -228,7 +228,7 @@ Disabling startup clutter, transparency etc.
      (with-current-buffer (get-buffer-create "*Welcome*")
        (setq truncate-lines t)
        (let* ((buffer-read-only)
-              (image-path "~/pics/wallpapers/novigrad.png")
+              (image-path "~/pics/wallpapers/shepherd.png")
               (image (create-image image-path))
               (size (image-size image))
               (height (cdr size))
@@ -308,7 +308,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     (gawmk/leader-key
       "mc" '(compile :which-key "compile")
       "mu" '(mu4e :which-key "mail")
-      "tt" '(launch-vterm :which-key "launch and rename vterm")
+      "tt" '(vterm :which-key "launch and rename vterm")
       "ff" '(counsel-find-file :which-key "find file")
       "rf" '(counsel-recentf :which-key "open recent file")
       "hf" '(counsel-describe-function :which-key "describe function")

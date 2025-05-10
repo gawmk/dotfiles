@@ -13,10 +13,23 @@ settings:
       w: session-save
       wq: quit --save
       wqa: quit --save
+  auto_save.session:
+    global: true
   bindings.commands:
     global:
+      command:
+        <Ctrl+j>: completion-item-focus --history next
+        <Ctrl+k>: completion-item-focus --history prev
       insert:
-        <Escape>: mode-leave;;fake-key <Esc>
+        <Escape>: mode-leave ;; jseval -q document.activeElement.blur()
+      normal:
+        <Ctrl+j>: nop
+  completion.open_categories:
+    global:
+    - quickmarks
+    - bookmarks
+    - history
+    - filesystem
   content.javascript.clipboard:
     https://chatgpt.com: access-paste
     https://github.com: access-paste
@@ -27,6 +40,7 @@ settings:
     global: true
   content.register_protocol_handler:
     https://calendar.google.com?cid=%25s: true
+    https://outlook.office365.com?mailtouri=%25s: true
   downloads.position:
     global: bottom
   fonts.default_family:

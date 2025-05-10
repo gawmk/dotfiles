@@ -145,7 +145,7 @@ c.url.searchengines = { 'DEFAULT': 'https://duckduckgo.com/?ia=web&q={}', '!a': 
 
 ### PREFERENCES
 c.completion.height = "30%"
-c.downloads.location.directory = "/home/mikimasta"
+c.downloads.location.directory = "/home/mikimasta/Downloads"
 c.downloads.location.prompt = False
 c.prompt.filebrowser = False
 c.prompt.radius = 20
@@ -154,7 +154,7 @@ c.input.insert_mode.auto_leave = True
 c.downloads.prevent_mixed_content = True
 c.downloads.position = "bottom"
 c.window.transparent = True
-c.completion.web_history.max_items = -1
+c.completion.web_history.max_items = 300
 c.completion.scrollbar.width = 20
 c.content.default_encoding = "utf-8"
 c.content.blocking.method = "adblock"

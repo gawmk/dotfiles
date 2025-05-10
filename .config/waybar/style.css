@@ -70,7 +70,7 @@ window#waybar.solo {
 }
 
 #battery.charging {
-    color:      rgba(217, 216, 216, 1);
+    color:      rgba(168, 153, 132, 1);
 }
 
 #custom-storage.warning {

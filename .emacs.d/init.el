@@ -167,7 +167,7 @@
   (with-current-buffer (get-buffer-create "*Welcome*")
     (setq truncate-lines t)
     (let* ((buffer-read-only)
-           (image-path "~/pics/wallpapers/novigrad.png")
+           (image-path "~/pics/wallpapers/shepherd.png")
            (image (create-image image-path))
            (size (image-size image))
            (height (cdr size))
@@ -239,7 +239,7 @@ or go back to just one window (by deleting all but the selected window)."
   (gawmk/leader-key
     "mc" '(compile :which-key "compile")
     "mu" '(mu4e :which-key "mail")
-    "tt" '(launch-vterm :which-key "launch and rename vterm")
+    "tt" '(vterm :which-key "launch and rename vterm")
     "ff" '(counsel-find-file :which-key "find file")
     "rf" '(counsel-recentf :which-key "open recent file")
     "hf" '(counsel-describe-function :which-key "describe function")
