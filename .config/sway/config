@@ -21,7 +21,7 @@ include /etc/sway/config-vars.d/*
 exec mako
 
 ### Output configuration
-output * bg ~/pics/wallpapers/forest.jpg fill
+output * bg ~/multimedia/pics/wallpapers/forest.jpg fill
 
 set $gnome-schema org.gnome.desktop.interface
 exec_always {

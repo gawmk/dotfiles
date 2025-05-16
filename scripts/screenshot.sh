@@ -23,7 +23,7 @@ if [[ -z "$filename" ]]; then
 fi
 
 # Final path
-dest=~/pics/screenshots/${filename}.png
+dest=~/multimedia/pics/screenshots/${filename}.png
 
 # Move screenshot and copy to clipboard
 mv "$tmpfile" "$dest"

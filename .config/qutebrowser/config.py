@@ -227,8 +227,8 @@ bright_gray = "#928374"
 bright_orange = "#fe8019"
 
 dark_red = "#cc241d"
-dark_green = "#98971a"
-dark_yellow = "#d79921"
+dark_green = "#79740e"
+dark_yellow = "#b57614"
 dark_blue = "#458588"
 dark_purple = "#b16286"
 dark_aqua = "#689d6a"
@@ -500,13 +500,13 @@ c.colors.tabs.selected.even.fg = c.colors.tabs.selected.odd.fg
 c.colors.tabs.selected.even.bg = fg2
 
 # Background color of pinned unselected even tabs.
-c.colors.tabs.pinned.even.bg = bright_green
+c.colors.tabs.pinned.even.bg = dark_green
 
 # Foreground color of pinned unselected even tabs.
 c.colors.tabs.pinned.even.fg = bg2
 
 # Background color of pinned unselected odd tabs.
-c.colors.tabs.pinned.odd.bg = bright_green
+c.colors.tabs.pinned.odd.bg = dark_green
 
 # Foreground color of pinned unselected odd tabs.
 c.colors.tabs.pinned.odd.fg = c.colors.tabs.pinned.even.fg

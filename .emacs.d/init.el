@@ -126,10 +126,6 @@
 (set-frame-parameter nil 'alpha-background 70)        ;transparency
 (add-to-list 'default-frame-alist '(alpha-background . 80))
 
-(use-package page-break-lines    ;pretty page breaks
-  :diminish page-break-lines-mode
-  :config (page-break-lines-mode))
-
 (use-package olivetti
   :init
   (setq olivetti-body-width 100))
@@ -167,23 +163,23 @@
   (with-current-buffer (get-buffer-create "*Welcome*")
     (setq truncate-lines t)
     (let* ((buffer-read-only)
-           (image-path "~/pics/wallpapers/shepherd.png")
-           (image (create-image image-path))
-           (size (image-size image))
-           (height (cdr size))
-           (width (car size))
-           (top-margin (floor (/ (- (window-height) height) 2)))
-           (left-margin (floor (/ (- (window-width) width) 2)))
-           (prompt-title "Welcome to Emacs!"))
-      (erase-buffer)
-      (setq mode-line-format nil)
-      (goto-char (point-min))
-      (insert (make-string top-margin ?\n ))
-      (insert (make-string left-margin ?\ ))
-      (insert-image image)
-      (insert "\n\n\n")
-      (insert (make-string (floor (/ (- (window-width) (string-width prompt-title)) 2)) ?\ ))
-      (insert prompt-title))
+	     (image-path "~/multimedia/pics/wallpapers/shepherd.png")
+	     (image (create-image image-path))
+	     (size (image-size image))
+	     (height (cdr size))
+	     (width (car size))
+	   (top-margin (floor (/ (abs (- (window-height) height)) 2)))
+	   (left-margin (floor (/ (abs (- (window-width) width)) 2)))
+	     (prompt-title "Welcome to Emacs!"))
+	(erase-buffer)
+	(setq mode-line-format nil)
+	(goto-char (point-min))
+	(insert (make-string top-margin ?\n ))
+	(insert (make-string left-margin ?\ ))
+	(insert-image image)
+	(insert "\n\n\n")
+	(insert (make-string (floor (/ (- (window-width) (string-width prompt-title)) 2)) ?\ ))
+	(insert prompt-title))
     (setq cursor-type nil)
     (read-only-mode +1)
     (switch-to-buffer (current-buffer))
@@ -389,6 +385,7 @@ or go back to just one window (by deleting all but the selected window)."
 ;; tab bar
 (define-key window-map "t"  'tab-bar-new-tab)
 (define-key window-map "rn" 'tab-bar-rename-tab)
+(define-key window-map "rb" 'rename-buffer)
 (define-key window-map "n"  'switch-to-next-buffer)
 (define-key window-map "p"  'switch-to-prev-buffer)
 
@@ -456,6 +453,7 @@ or go back to just one window (by deleting all but the selected window)."
   :config
   (setq dired-open-extensions '(
                                 ("mp4" . "mpv")
+                                ("mkv" . "mpv")
 				  ("docx" . "libreoffice")
 				  ("xlsx" . "libreoffice"))))
 (use-package dired-hide-dotfiles
@@ -468,11 +466,7 @@ or go back to just one window (by deleting all but the selected window)."
   "di" '(image-dired :which-key "view images in dired (thumbnails)")
   "dj" '(dired-jump :which-key "dired jump"))
 
-(defun gawmk/org-mode-setup ()
-  (org-indent-mode)
-  (visual-line-mode 1))
 (use-package org
-  :hook (org-mode . gawmk/org-mode-setup)
   :config
   (setq org-hide-leading-stars t)
   (setq org-startup-with-inline-images t)
@@ -485,15 +479,6 @@ or go back to just one window (by deleting all but the selected window)."
   (define-key org-mode-map (kbd "C-M-p") 'org-priority-down)
   (define-key org-mode-map (kbd "C-M-S-p") 'org-priority-up)
 
-  (dolist (face '((org-level-1 . 1.3)
-                  (org-level-2 . 1.12)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
   (keymap-set org-mode-map "C-c" nil)
 
   ;; visual stuff
@@ -584,31 +569,6 @@ or go back to just one window (by deleting all but the selected window)."
 
 (eval-after-load "org"
   (add-hook 'org-add-hook 'my/modify-org-done-face))
-
-;; Tags
-(setq org-tag-alist '(
-                      ;; Places
-                      ("@home" . ?h)
-                      ("@work" . ?w)
-                      ("@uni" . ?u)
-
-                      ;; dev
-                      ("@computer" . ?c)
-                      ("@phone" . ?p)
-
-                      ("errand" . ?e)
-                      ("meeting" . ?m)
-                      ))
-
-
-					;(use-package org-bullets
-					; :after org
-					;:hook (org-mode . org-bullets-mode))
-
-
-(use-package org-tidy
-  :hook
-  (org-mode . org-tidy-mode))
 
 (add-hook 'org-mode-hook 'olivetti-mode)
 
@@ -962,21 +922,26 @@ absolute path. Finally load eglot."
         TeX-source-correlate-start-server t)  
   (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
 
-;; (use-package gptel
-;;   :config
+(use-package gptel
+  :config
 
-;;   (setq gptel-default-mode 'org-mode)
-;;   (gawmk/leader-key
-;;     "gps" '(gptel-send :which-key "Send text up to point to gptel")
-;;     "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
-;;     "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
+  (setq gptel-default-mode 'org-mode)
+  (gawmk/leader-key
+    "gps" '(gptel-send :which-key "Send text up to point to gptel")
+    "gpm" '(gptel-menu :which-key "Send text up to point to gptel")
+    "gpt" '(gptel :which-key "Open a dedicated gptel buffer"))
 
-;;   (setq
-;;    gptel-model 'deepseek-r1
-;;    gptel-backend (gptel-make-ollama "Ollama"
-;;                    :host "localhost:11434"
-;;                    :stream t
-;;                    :models '(deepseek-r1 llama3.2))))
+  (setq
+   gptel-model 'gemma3:4b
+   gptel-backend (gptel-make-ollama "Ollama"
+                   :host "localhost:11434"
+                   :stream t
+                   :models '(gemma3:4b))))
+
+(use-package copilot
+  :vc (:url "https://github.com/copilot-emacs/copilot.el"
+            :rev :newest
+            :branch "main"))
 
 (use-package julia-mode)
 (use-package eglot-jl)
