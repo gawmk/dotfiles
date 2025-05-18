@@ -145,7 +145,7 @@ c.url.searchengines = { 'DEFAULT': 'https://duckduckgo.com/?ia=web&q={}', '!a': 
 
 ### PREFERENCES
 c.completion.height = "30%"
-c.downloads.location.directory = "/home/mikimasta/Downloads"
+c.downloads.location.directory = "/home/gawmk/Downloads"
 c.downloads.location.prompt = False
 c.prompt.filebrowser = False
 c.prompt.radius = 20

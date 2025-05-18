@@ -12,10 +12,10 @@ if [ -f "/etc/debian_version" ]; then
   apt update
   apt install stow sway xdg-desktop-portal-wlr waybar adduser alsa-utils cmake git systemd-resolved ledger \
       cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard tofi mako-notifier \
-      grep grim hostname imv kitty git bluez cron curl fonts-font-awesome gcc libnotify-bin \
-      neofetch neovim iwd rfkill python3 thunderbird gpg-agent imagemagick \
+      grep grim gimp hostname imv kitty git bluez cron curl fonts-font-awesome gcc libnotify-bin \
+      iwd iwgtk rfkill python3 thunderbird gpg-agent imagemagick \
       ripgrep rubber sed slurp sudo swaybg swayidle swaylock syncthing tar libspa-0.2-bluetooth \
-      unzip usbutils wlsunset zathura zip texlive-full libreoffice pipewire pavucontrol flatpak \
+      unzip usbutils wlsunset zathura zip libreoffice pipewire wireplumber pavucontrol flatpak \
       -y
   
   # setting wlsunset up
@@ -36,6 +36,11 @@ curl -sS https://starship.rs/install.sh | sh
   read -p "Should I install ollama? [y/n]: "
   if [ "$REPLY" == "y" ]; then
       SCRIPTS+=" ./ollama-install.sh"
+  fi
+
+  read -p "Should I setup fonts/syncthing/other utils?"
+  if [ "$REPLY" == "y" ]; then
+      SCRIPTS+=" ./post-install-setup.sh"
   fi
 
 

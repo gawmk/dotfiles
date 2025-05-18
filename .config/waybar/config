@@ -27,9 +27,9 @@
             },
             "format": "<span font='18'>{icon}</span>",
             "format-icons": {
-                "1": "󰖟",
-                "2": "", 
-                "3": "󰶈",
+                "1": "1",
+                "2": "2", 
+                "3": "3",
                 "4": "4",
                 "5": "5",
                 "6": "6",
@@ -71,9 +71,9 @@
             "show-passive-items": true,
         },
         "clock": {
-	    "on-click": "/home/mikimasta/source-code/qutebrowser/.venv/bin/python3 -m qutebrowser https://calendar.google.com",
+	    "on-click": "qutebrowser https://calendar.google.com",
             "interval": 60,
-            "format": "  {:%a %b %d %H:%M}", // %b %d %Y  --Date formatting
+            "format": "{:%a %b %d %H:%M}", // %b %d %Y  --Date formatting
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         },
         "temperature": {
@@ -122,13 +122,12 @@
             "bat": "BAT2"
         },
         "network": {
-            // "interface": "wlp2*", // (Optional) To force the use of this interface
-            "format-wifi": "<span font='14'>󰖩</span> :{ipaddr}", //({essid} {signalStrength}%)
-            "format-ethernet": "{ipaddr}/{cidr} ",
-            "tooltip-format-wifi": "{essid} ({signalStrength}%)󰖩",
-            "tooltip-format": "{ifname} via {gwaddr} ",
-            "format-linked": "{ifname} (No IP) ",
-            "format-disconnected": "Disconnected ⚠",
+            "format-wifi": "wifi {bandwidthDownBits}", 
+            "format-ethernet": "eth {bandwidthDownBits}",
+            "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+            "tooltip-format": "{ifname} via {gwaddr} ",
+            "format-linked": "{ifname} (No IP) ",
+            "format-disconnected": "disconnected",
 	    "on-click" : "iwgtk"
 
         },

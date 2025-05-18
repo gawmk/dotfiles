@@ -749,7 +749,8 @@ absolute path. Finally load eglot."
   (keymap-set vterm-mode-map "<insert-state> C-w" 'window-map)
 
 
-(defun launch-vterm (buffer-name)
+(defun
+    launch-vterm (buffer-name)
   "Start a terminal and rename buffer."
   (interactive "sbuffer name: ")
   (vterm)
