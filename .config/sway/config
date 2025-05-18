@@ -23,11 +23,6 @@ exec mako
 ### Output configuration
 output * bg ~/multimedia/pics/wallpapers/forest.jpg fill
 
-set $gnome-schema org.gnome.desktop.interface
-exec_always {
-    gsettings set org.gnome.desktop.interface gtk-theme "Gruvbox-Dark-Medium"
-}
-
 ### INPUT CONFIG ### 
 input "2:7:SynPS/2_Synaptics_TouchPad" {
     dwt enabled
@@ -116,7 +111,7 @@ workspace 10 output $laptop
     bindsym $mod+Shift+q kill
 
     # Start your launcher
-    bindsym $mod+space exec $dmenu
+    bindsym $mod+d exec $dmenu
 
     # Color picker
     bindsym $mod+Shift+p exec ~/scripts/color-picker.sh 
@@ -262,10 +257,11 @@ bar {
 
 }
 
+set $sink @DEFAULT_AUDIO_SINK@
 ### VOLUME CONTROL ###
-bindsym XF86AudioMute exec amixer set Master toggle
-bindsym XF86AudioRaiseVolume exec amixer set Master 5%+
-bindsym XF86AudioLowerVolume exec amixer set Master 5%-
+bindsym XF86AudioMute exec wpctl set-mute $sink toggle
+bindsym XF86AudioRaiseVolume exec wpctl set-volume $sink 3%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume $sink 3%-
 
 ### GAPS ###
 gaps inner 10
@@ -277,12 +273,6 @@ client.focused #665c54 #665c54 #665c54 #665c54 #665c54
 
 ### WLSUNSET ###
 exec wlsunset -l 50.8 -L 5.6 &
-
-### GNOME ###
-set $gnome-schema org.gnome.desktop.interface
-exec_always {
-    gsettings set $gnome-schema gtk-theme 'Gruvbox-Dark-Medium'
-}
 
 include /etc/sway/config.d/*
 
