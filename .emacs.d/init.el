@@ -38,14 +38,21 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
-                                        ;causes no job control in this shell error
-                                        ;(setq shell-command-switch "-ic")
+					;causes no job control in this shell error
+					;(setq shell-command-switch "-ic")
 
 (setq use-dialog-box nil)
 
 (add-to-list 'exec-path "~/.local/bin/")
 
 (add-to-list 'auto-mode-alist '("\\.pl\\'"  . prolog-mode))
+
+;; Never enable abbrev-mode automatically
+(setq-default abbrev-mode nil)
+
+;; Don't save abbrevs to disk
+(setq save-abbrevs nil)
+
 
 (use-package exec-path-from-shell)
 (setq exec-path-from-shell-arguments nil)
