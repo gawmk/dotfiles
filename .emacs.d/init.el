@@ -485,7 +485,15 @@ or go back to just one window (by deleting all but the selected window)."
 
   (define-key org-mode-map (kbd "C-M-p") 'org-priority-down)
   (define-key org-mode-map (kbd "C-M-S-p") 'org-priority-up)
-
+  (dolist (face '((org-level-1 . 1.3)
+                  (org-level-2 . 1.12)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
   (keymap-set org-mode-map "C-c" nil)
 
   ;; visual stuff
@@ -527,20 +535,30 @@ or go back to just one window (by deleting all but the selected window)."
   "osp" '(org-set-property :which-key "choose a property to set for an item")
   "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
+
 (setq org-capture-templates
       `(("t" "Task" entry  (file+headline "~/org/inbox.org" "Tasks")
          ,(concat "* TODO [#B] %?\n"
                   "/Entered on/ %U"))
         ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
          "** %?")
+  	
+        ("j" "Work Log Entry"
+         entry (file+datetree "~/org/work-log.org")
+         "* %?"
+         :empty-lines 0)
 
         ("c" "Code To-Do"
          entry (file+headline "~/org/inbox.org" "Code Related Tasks")
          "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: ")
 
-        ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
-         ,(concat "* %? :meeting:\n"
-                  "/Entered on/ %U"))
+	("m" "Meeting"
+         entry (file+datetree "~/org/meetings.org")
+         "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
+         :tree-type week
+         :clock-in t
+         :clock-resume t
+         :empty-lines 0)
         ))
 
 ;; TODO states
@@ -787,6 +805,7 @@ absolute path. Finally load eglot."
   (fset #'jsonrpc--log-event #'ignore)
   (setq eldoc-echo-area-use-multiline-p nil)
   (add-hook 'c-mode-hook #'eglot-ensure)
+  (setq eglot-connect-timeout 1000)
   (add-hook 'python-mode-hook #'eglot-ensure))
 
 (with-eval-after-load 'eglot

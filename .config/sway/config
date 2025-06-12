@@ -34,6 +34,13 @@ input "2:7:SynPS/2_Synaptics_TouchPad" {
     accel_profile flat
 }
 
+input "1008:4172:HP_HP_430_Mouse" {
+    natural_scroll disabled
+    scroll_factor 1
+    pointer_accel -0.15
+    accel_profile flat
+}
+
 input "2:10:TPPS/2_Elan_TrackPoint" {
     middle_emulation enabled
     scroll_factor 0.25
@@ -111,7 +118,8 @@ workspace 10 output $laptop
     bindsym $mod+Shift+q kill
 
     # Start your launcher
-    bindsym $mod+d exec $dmenu
+    bindsym $mod+space exec $dmenu
+    bindsym $mod+t exec kitty
 
     # Color picker
     bindsym $mod+Shift+p exec ~/scripts/color-picker.sh 
@@ -188,28 +196,13 @@ workspace 10 output $laptop
 #
 # Layout stuff:
 #
-    # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
-    # respectively.
-    bindsym $mod+b splith
-    bindsym $mod+v splitv
-
     # Switch the current container between different layout styles
-    bindsym $mod+s layout stacking
-    bindsym $mod+w layout tabbed
-    bindsym $mod+e layout toggle split
 
     # Make the current focus fullscreen
     bindsym $mod+f fullscreen
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
-
-    # Swap focus between the tiling area and the floating area
-    bindsym $mod+space+f focus mode_toggle
-
-    # Move focus to the parent container
-    bindsym $mod+a focus parent
 #
 # Scratchpad:
 #
