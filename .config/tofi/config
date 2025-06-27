@@ -1,3 +1,25 @@
 font = /usr/share/fonts/iosevka-comfy-motion/TTF/iosevka-comfy-motion-normalboldupright.ttf
 
 Font-size = 24
+
+width=400
+height=200
+
+border-width=0
+outline-width=1
+outline-color=#928D85
+
+border-color=#252525
+background-color=#252525
+
+
+selection-color=#252525
+text-color=#A89984
+
+prompt-text="> "
+selection-padding=-1
+selection-background=#DDC7A1
+
+anchor=top
+
+margin-top=30%
