@@ -148,9 +148,9 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(set-face-attribute 'default nil :font "Iosevka Comfy" :height 170 :weight 'semibold)
-(set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 170 :weight 'semibold)
-(set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 170 :weight 'semibold)
+(set-face-attribute 'default nil :font "Iosevka Comfy" :height 150 :weight 'semibold)
+(set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 150 :weight 'semibold)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 150 :weight 'semibold)
 
 
 (add-hook 'org-mode-hook #'variable-pitch-mode)
