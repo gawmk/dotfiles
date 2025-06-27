@@ -1,35 +1,3 @@
 font = /usr/share/fonts/iosevka-comfy-motion/TTF/iosevka-comfy-motion-normalboldupright.ttf
 
 Font-size = 24
-
-outline-width = 0
-border-width = 0
-
-width = 300
-height = 300
-result-spacing = 15
-
-background-color = #232423ff
-
-border-color = #a89984
-
-prompt-text = "exec: " 
-
-default-result-color = #a09984
-
-selection-color = #a96b2c
-
-corner-radius = 0
-
-
-# fullscreen
-
-width = 100%
-height = 100%
-border-width = 0
-outline-width = 0
-padding-left = 35%
-padding-top = 35%
-result-spacing = 25
-num-results = 5
-background-color = #000A

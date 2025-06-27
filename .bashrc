@@ -118,7 +118,6 @@ alias ls='ls --color=auto'
 alias toggle='swaymsg output eDP-1 toggle'
 alias vim='nvim'
 alias fuck='thefuck'
-alias cat='batcat'
 alias light='brightnessctl'
 alias bt='bluetoothctl power on && bluetoothctl'
 alias imv='imv-wayland'
@@ -129,6 +128,12 @@ alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 
 
 # vars
+# gurobi
+export GRB_LICENSE_FILE=/opt/gurobi1202/linux64/gurobi.lic
+export GUROBI_HOME="/opt/gurobi1201/linux64"
+export PATH="${PATH}:${GUROBI_HOME}/bin"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
+
 
 # starship
 if ! [ $TERM = 'dumb' ]; then
@@ -144,12 +149,15 @@ export SDKMAN_DIR="$HOME/.sdkman"
 # !! Contents within this block are managed by juliaup !!
 
 case ":$PATH:" in
-    *:/home/mikimasta/.juliaup/bin:*)
+    *:/home/gawmk/.juliaup/bin:*)
         ;;
 
     *)
-        export PATH=/home/mikimasta/.juliaup/bin${PATH:+:${PATH}}
+        export PATH=/home/gawmk/.juliaup/bin${PATH:+:${PATH}}
         ;;
 esac
 
 # <<< juliaup initialize <<<
+
+# Created by `pipx` on 2025-05-21 09:14:18
+export PATH="$PATH:/home/gawmk/.local/bin"

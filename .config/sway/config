@@ -90,6 +90,7 @@ output "Unknown VG248 MCLMQS011710" {
 set $laptop eDP-1
 set $hdmiMonitor HDMI-A-1 
 
+
 workspace 1 output $hdmiMonitor 
 workspace 2 output $hdmiMonitor 
 workspace 3 output $hdmiMonitor 
@@ -99,7 +100,6 @@ workspace 6 output $hdmiMonitor
 workspace 7 output $hdmiMonitor 
 workspace 8 output $hdmiMonitor 
 workspace 9 output $hdmiMonitor
-workspace 10 output $laptop
 
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
@@ -246,7 +246,25 @@ bindsym $mod+R mode "resize"
 # Read `man 5 sway-bar` for more information about this section.
 bar {
 
-    swaybar_command waybar
+    swaybar_command swaybar
+    font pango:Iosevka Comfy Wide Motion 12
+    position top
+    workspace_min_width 30
+    tray_output none
+    status_command ~/.config/sway/bar.sh
+
+    workspace_buttons yes
+
+    separator_symbol |
+
+
+
+    colors {
+    	   background #252525
+	   focused_workspace #252525 #252525 #FFFFFF
+	   focused_statusline #A29291
+
+    }
 
 }
 
