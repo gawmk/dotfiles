@@ -170,7 +170,7 @@
   (with-current-buffer (get-buffer-create "*Welcome*")
     (setq truncate-lines t)
     (let* ((buffer-read-only)
-	     (image-path "~/multimedia/pics/wallpapers/shepherd.png")
+	     (image-path "~/sync/multimedia/pics/wallpapers/shepherd.png")
 	     (image (create-image image-path))
 	     (size (image-size image))
 	     (height (cdr size))
@@ -460,6 +460,7 @@ or go back to just one window (by deleting all but the selected window)."
   :config
   (setq dired-open-extensions '(
                                 ("mp4" . "mpv")
+                                ("mp3" . "mpv")
                                 ("mkv" . "mpv")
 				  ("docx" . "libreoffice")
 				  ("xlsx" . "libreoffice"))))
@@ -472,6 +473,27 @@ or go back to just one window (by deleting all but the selected window)."
   "dd" '(dired :which-key "open dired")
   "di" '(image-dired :which-key "view images in dired (thumbnails)")
   "dj" '(dired-jump :which-key "dired jump"))
+
+(use-package denote
+  :ensure t
+  :hook (dired-mode . denote-dired-mode)
+  :config
+  (setq denote-directory (expand-file-name "~/sync/org/notes/"))
+  (setq denote-history-completion-in-prompts nil)
+
+  ;; Automatically rename Denote buffers when opening them so that
+  ;; instead of their long file name they have, for example, a literal
+  ;; "[D]" followed by the file's title.  Read the doc string of
+  ;; `denote-rename-buffer-format' for how to modify this.
+  (denote-rename-buffer-mode 1))
+
+(use-package denote-org)
+
+(gawmk/leader-key
+  "dnr" '(denote-rename-file :which-key "rename a file to denote format")
+  "dnl" '(denote-link :which-key "like a denote file")
+  "dng" '(denote-grep :which-key "look for grep in denote")
+  "dnn" '(denote :which-key "create a denote"))
 
 (use-package org
   :config
@@ -511,8 +533,8 @@ or go back to just one window (by deleting all but the selected window)."
 
 ;; refile
 (setq org-refile-targets
-      '(("~/org/archive.org" :maxlevel . 2)
-        ("~/org/todo.org" :maxlevel . 2)))
+      '(("~/sync/org/archive.org" :maxlevel . 2)
+        ("~/sync/org/todo.org" :maxlevel . 2)))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -598,7 +620,7 @@ or go back to just one window (by deleting all but the selected window)."
 (add-hook 'org-mode-hook 'olivetti-mode)
 
 ;; agenda settings
-  (setq org-agenda-files '("~/org"))
+  (setq org-agenda-files '("~/sync/org"))
   (setq org-agenda-restore-windows-after-quit t)
   (setq org-agenda-window-setup 'only-window)
 
@@ -692,12 +714,6 @@ or go back to just one window (by deleting all but the selected window)."
     "C-S-l" (my-org-in-calendar calendar-forward-month)
     "C-S-k" (my-org-in-calendar calendar-backward-year)
     "C-S-j" (my-org-in-calendar calendar-forward-year))
-
-(use-package org-roam
-  :custom
-  org-roam-directory (file-truename "~/org")
-  :config
-  (org-roam-db-autosync-mode))
 
 (setq org-babel-python-command "python3")
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
@@ -867,50 +883,6 @@ absolute path. Finally load eglot."
   (message "Trying to turn off ispell completion...")
   (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t))
 
-;; (use-package mu4e
-;;   :ensure nil
-;;   :load-path "/usr/share/emacs/site-lisp/mu4e/"
-;;   :config
-;;   (setq mail-user-agent 'mu4e-user-agent)
-;;   (setq message-kill-buffer-on-exit t)
-;;   ;; This is set to 't' to avoid mail syncing issues when using mbsync
-;;   (setq mu4e-change-filenames-when-moving t)
-;;   (setq mu4e-sent-messages-behavior 'delete)
-;;   (setq message-send-mail-function 'smtpmail-send-it)
-
-;;   ;; wrap email text
-;;   (setq mu4e-compose-format-flowed t)
-
-;;   ;; Refresh mail using isync every 10 minutes
-;;   (setq mu4e-update-interval (* 10 60))
-;;   (setq mu4e-get-mail-command "mbsync -a -c ~/.config/mu4e/mbsyncrc")
-;;   (setq mu4e-maildir "~/mail")
-
-;;   (setq mu4e-contexts
-;;         (list
-;;          ;; Work account
-;;          (make-mu4e-context
-;;           :name "Gmail"
-;;           :match-func
-;;           (lambda (msg)
-;;             (when msg
-;;               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-;;           :vars '((user-mail-address . "mikolaj.gawrys@gmail.com")
-;;                   (user-full-name    . "Mikołaj Gawryś")
-;;                   (smtpmail-stream-type . starttls)
-;;                   (smtpmail-smtp-server . "smtp.gmail.com")
-;;                   (smtpmail-smtp-service . 587)
-;;                   (mu4e-drafts-folder  . "/gmail/[Gmail]/Drafts")
-;;                   (mu4e-sent-folder  . "/gmail/[Gmail]/Sent Mail")
-;;                   (mu4e-refile-folder  . "/gmail/[Gmail]/All Mail")
-;;                   (mu4e-trash-folder  . "/gmail/[Gmail]/Bin")))))
-
-;;   (setq mu4e-maildir-shortcuts
-;;         '( (:maildir "/gmail/Inbox"              :key ?i)
-;;            (:maildir "/gmail/[Gmail]/Sent Mail"  :key ?s)
-;;            (:maildir "/gmail/[Gmail]/Bin"      :key ?t)
-;;            (:maildir "/gmail/[Gmail]/All Mail"   :key ?a))))
-
 (use-package ledger-mode
   :defer t
   :mode ("\\.ledger.gpg\\'"
@@ -967,11 +939,6 @@ absolute path. Finally load eglot."
                    :host "localhost:11434"
                    :stream t
                    :models '(gemma3:4b))))
-
-(use-package copilot
-  :vc (:url "https://github.com/copilot-emacs/copilot.el"
-            :rev :newest
-            :branch "main"))
 
 (use-package julia-mode)
 (use-package eglot-jl)
