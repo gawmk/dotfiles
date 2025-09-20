@@ -14,16 +14,10 @@ fi
 # Take screenshot
 grim -g "$region" "$tmpfile"
 
-# Prompt for filename using tofi
-filename=$(echo "" | tofi --prompt-text "Screenshot name: " --require-match=false)
-
-# If user cancels or enters nothing, fallback to timestamp
-if [[ -z "$filename" ]]; then
-    filename="ss_$(date +'%Y-%m-%d_%H%M%S')"
-fi
+filename="ss_$(date +'%Y-%m-%d_%H%M%S')"
 
 # Final path
-dest=~/multimedia/pics/screenshots/${filename}.png
+dest=~/sync/multimedia/pics/screenshots/${filename}.png
 
 # Move screenshot and copy to clipboard
 mv "$tmpfile" "$dest"

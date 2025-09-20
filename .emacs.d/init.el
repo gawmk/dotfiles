@@ -544,17 +544,29 @@ or go back to just one window (by deleting all but the selected window)."
           (lambda ()
             (add-hook 'after-save-hook #'org-redisplay-inline-images nil 'make-it-local)))
 
+(use-package org-download
+  :config
+  (setq org-download-heading-lvl nil)
+  (setq org-download-screenshot-method "grim -g \"$(slurp)\" %s")
+  (setq org-download-method 'directory)
+  (setq-default org-download-image-dir "./img"))
+
+(require 'org-download)
+
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
 
 (gawmk/leader-key
   "oa" '(org-agenda :which-key "org agenda")
   "oc" '(org-capture :which-key "org agenda")
+  "oss" '(org-download-screenshot :which-key "make an ss and paste it")
+  "osp" '(org-download-clipboard :which-key "paste an ss from system clipboard")
   "oid" '(org-deadline :which-key "insert a deadline on a TODO")
   "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
   "oil" '(org-insert-link :which-key "insert a link to a resource")
   "od" '(org-todo :which-key "cycle through TODO states")
   "ot" '(org-set-tags-command :which-key "insert a tag on a headline")
   "or" '(org-refile :which-key "move an org heading to a diff file")
-  "osp" '(org-set-property :which-key "choose a property to set for an item")
   "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
 
@@ -564,7 +576,7 @@ or go back to just one window (by deleting all but the selected window)."
                   "/Entered on/ %U"))
         ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
          "** %?")
-  	
+        
         ("j" "Work Log Entry"
          entry (file+datetree "~/org/work-log.org")
          "* %?"
@@ -574,7 +586,7 @@ or go back to just one window (by deleting all but the selected window)."
          entry (file+headline "~/org/inbox.org" "Code Related Tasks")
          "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: ")
 
-	("m" "Meeting"
+      	("m" "Meeting"
          entry (file+datetree "~/org/meetings.org")
          "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
          :tree-type week
