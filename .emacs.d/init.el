@@ -18,7 +18,7 @@
   :config
   ;; Increase preview width
   (plist-put org-latex-preview-appearance-options
-             :page-width 1.1)
+             :zoom 1.0)
 
   ;; ;; Use dvisvgm to generate previews
   ;; ;; You don't need this, it's the default:
@@ -27,6 +27,7 @@
   ;; Turn on `org-latex-preview-mode', it's built into Org and much faster/more
   ;; featured than org-fragtog. (Remember to turn off/uninstall org-fragtog.)
   (add-hook 'org-mode-hook 'org-latex-preview-mode)
+  (add-hook 'org-mode-hook #'org-latex-preview)
 
   (setq org-latex-preview-mode-display-live t)
 
@@ -94,8 +95,7 @@
 (setq display-line-numbers t)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ;displays line nums in programming modes
 
-(set-frame-parameter nil 'alpha-background 80)        ;transparency
-(add-to-list 'default-frame-alist '(alpha-background . 80))
+(set-frame-parameter nil 'alpha-background 100)
 
 (use-package olivetti
   :init
@@ -206,7 +206,7 @@ or go back to just one window (by deleting all but the selected window)."
     "mc" '(compile :which-key "compile")
     "tt" '(vterm :which-key "launch and rename vterm")
     "ff" '(find-file :which-key "find file")
-    "rf" '(recentf :which-key "open recent file")
+    "rf" '(consult-recent-file :which-key "open recent file")
     "hf" '(describe-function :which-key "describe function")
     "hb" '(describe-bindings :which-key "describe bindings")
     "hv" '(describe-variable :which-key "describe variable")))
@@ -271,7 +271,7 @@ or go back to just one window (by deleting all but the selected window)."
 (gawmk/leader-key
   "st" '(tab-switch :which-key "switch tab")
   "kb" '(kill-buffer :which-key "kill buffer")
-  "sb" '(counsel-switch-buffer :which-key "switch buffer"))
+  "sb" '(consult-buffer :which-key "switch buffer"))
 
 ;; Enable Vertico.
 (use-package vertico
@@ -627,23 +627,23 @@ or go back to just one window (by deleting all but the selected window)."
 
 
 (setq org-capture-templates
-      `(("t" "Task" entry  (file+headline "~/org/inbox.org" "Tasks")
+      `(("t" "Task" entry  (file+headline "~/sync/org/inbox.org" "Tasks")
          ,(concat "* TODO [#B] %?\n"
                   "/Entered on/ %U"))
-        ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
+        ("n" "Note"  entry (file+headline "~/sync/org/inbox.org" "Notes")
          "** %?")
         
         ("j" "Work Log Entry"
-         entry (file+datetree "~/org/work-log.org")
+         entry (file+datetree "~/sync/org/work-log.org")
          "* %?"
          :empty-lines 0)
 
         ("c" "Code To-Do"
-         entry (file+headline "~/org/inbox.org" "Code Related Tasks")
+         entry (file+headline "~/sync/org/inbox.org" "Code Related Tasks")
          "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: ")
 
         ("m" "Meeting"
-         entry (file+datetree "~/org/meetings.org")
+         entry (file+datetree "~/sync/org/meetings.org")
          "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
          :tree-type week
          :clock-in t
@@ -989,11 +989,78 @@ absolute path. Finally load eglot."
         TeX-source-correlate-start-server t)  
   (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
 
+(use-package latex
+  :ensure auctex
+  :hook ((LaTeX-mode . prettify-symbols-mode)))
+
+;; CDLatex settings
 (use-package cdlatex
   :ensure t
-  :hook (LaTeX-mode . turn-on-cdlatex)
+  :hook ((LaTeX-mode . turn-on-cdlatex)
+	 (org-mode . org-cdlatex-mode))
   :bind (:map cdlatex-mode-map 
               ("<tab>" . cdlatex-tab)))
+
+;; Yasnippet settings
+(use-package yasnippet
+  :ensure t
+  :hook ((LaTeX-mode . yas-minor-mode)
+	 (org-mode . yas-minor-mode)
+         (post-self-insert . my/yas-try-expanding-auto-snippets))
+  :config
+  (use-package warnings
+    :config
+    (cl-pushnew '(yasnippet backquote-change)
+                warning-suppress-types
+                :test 'equal))
+
+  (setq yas-triggers-in-field t)
+  
+  ;; Function that tries to autoexpand YaSnippets
+  ;; The double quoting is NOT a typo!
+  (defun my/yas-try-expanding-auto-snippets ()
+    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+        (yas-expand)))))
+
+;; CDLatex integration with YaSnippet: Allow cdlatex tab to work inside Yas
+;; fields
+(use-package cdlatex
+  :hook ((cdlatex-tab . yas-expand)
+         (cdlatex-tab . cdlatex-in-yas-field))
+  :config
+  (use-package yasnippet
+    :bind (:map yas-keymap
+		("<tab>" . yas-next-field-or-cdlatex)
+		("TAB" . yas-next-field-or-cdlatex))
+    :config
+    (defun cdlatex-in-yas-field ()
+      ;; Check if we're at the end of the Yas field
+      (when-let* ((_ (overlayp yas--active-field-overlay))
+                  (end (overlay-end yas--active-field-overlay)))
+        (if (>= (point) end)
+            ;; Call yas-next-field if cdlatex can't expand here
+            (let ((s (thing-at-point 'sexp)))
+              (unless (and s (assoc (substring-no-properties s)
+                                    cdlatex-command-alist-comb))
+                (yas-next-field-or-maybe-expand)
+                t))
+          ;; otherwise expand and jump to the correct location
+          (let (cdlatex-tab-hook minp)
+            (setq minp
+                  (min (save-excursion (cdlatex-tab)
+                                       (point))
+                       (overlay-end yas--active-field-overlay)))
+            (goto-char minp) t))))
+
+    (defun yas-next-field-or-cdlatex nil
+      (interactive)
+      "Jump to the next Yas field correctly with cdlatex active."
+      (if
+          (or (bound-and-true-p cdlatex-mode)
+              (bound-and-true-p org-cdlatex-mode))
+          (cdlatex-tab)
+        (yas-next-field-or-maybe-expand)))))
 
 (use-package gptel
   :config
