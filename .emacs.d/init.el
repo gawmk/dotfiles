@@ -1,5 +1,3 @@
-(use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/")
-
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -15,6 +13,25 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/")
+(use-package org-latex-preview :load-path "~/.emacs.d/elpa/org-mode/lisp/"
+  :config
+  ;; Increase preview width
+  (plist-put org-latex-preview-appearance-options
+             :page-width 1.1)
+
+  ;; ;; Use dvisvgm to generate previews
+  ;; ;; You don't need this, it's the default:
+  ;; (setq org-latex-preview-process-default 'dvisvgm)
+
+  ;; Turn on `org-latex-preview-mode', it's built into Org and much faster/more
+  ;; featured than org-fragtog. (Remember to turn off/uninstall org-fragtog.)
+  (add-hook 'org-mode-hook 'org-latex-preview-mode)
+
+  (setq org-latex-preview-mode-display-live t)
+
+  (setq org-latex-preview-mode-update-delay 0.25))
+
 ;; Write backups to ~/.emacs.d/backup/
 (setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
       backup-by-copying      t  ; Don't de-link hard links
@@ -24,21 +41,12 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
-					;causes no job control in this shell error
-					;(setq shell-command-switch "-ic")
+  					;causes no job control in this shell error
+  					;(setq shell-command-switch "-ic")
 
 (setq use-dialog-box nil)
 
 (add-to-list 'exec-path "~/.local/bin/")
-
-(add-to-list 'auto-mode-alist '("\\.pl\\'"  . prolog-mode))
-
-;; Never enable abbrev-mode automatically
-(setq-default abbrev-mode nil)
-
-;; Don't save abbrevs to disk
-(setq save-abbrevs nil)
-
 
 (use-package exec-path-from-shell)
 (setq exec-path-from-shell-arguments nil)
@@ -56,23 +64,13 @@
   :config
   (setq which-key-idle-delay 0.3))
 
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
-         ("C-x C-f" . counsel-find-file)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history)))
 
-(counsel-mode 1)
 (use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
+:bind
+([remap describe-function] . helpful-callable)
+([remap describe-command]  . helpful-command)
+([remap describe-variable] . helpful-variable)
+([remap describe-key]      . helpful-key))
 
 ;; daemon
 (require 'server)
@@ -96,7 +94,7 @@
 (setq display-line-numbers t)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ;displays line nums in programming modes
 
-(set-frame-parameter nil 'alpha-background 70)        ;transparency
+(set-frame-parameter nil 'alpha-background 80)        ;transparency
 (add-to-list 'default-frame-alist '(alpha-background . 80))
 
 (use-package olivetti
@@ -113,6 +111,7 @@
    (doom-themes-visual-bell-config)
    ;; Corrects (and improves) org-mode's native fontification.
    (doom-themes-org-config))
+
 (set-face-attribute 'default nil :font "Iosevka Comfy" :height 150 :weight 'semibold)
 (set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 150 :weight 'semibold)
 (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 150 :weight 'semibold)
@@ -194,8 +193,6 @@ or go back to just one window (by deleting all but the selected window)."
   ;; will only have an effect for general.el key definers. The advice can later be removed with
   ;; (general-auto-unbind-keys t).
   (general-auto-unbind-keys)
-
-
   (general-create-definer gawmk/leader-key
     :states '(normal visual insert emacs)
     :keymaps 'override
@@ -207,13 +204,12 @@ or go back to just one window (by deleting all but the selected window)."
 
   (gawmk/leader-key
     "mc" '(compile :which-key "compile")
-    "mu" '(mu4e :which-key "mail")
     "tt" '(vterm :which-key "launch and rename vterm")
-    "ff" '(counsel-find-file :which-key "find file")
-    "rf" '(counsel-recentf :which-key "open recent file")
-    "hf" '(counsel-describe-function :which-key "describe function")
+    "ff" '(find-file :which-key "find file")
+    "rf" '(recentf :which-key "open recent file")
+    "hf" '(describe-function :which-key "describe function")
     "hb" '(describe-bindings :which-key "describe bindings")
-    "hv" '(counsel-describe-variable :which-key "describe variable")))
+    "hv" '(describe-variable :which-key "describe variable")))
 
 (use-package evil
     :init
@@ -272,32 +268,124 @@ or go back to just one window (by deleting all but the selected window)."
   "ts" '(hydra-text-scale/body :which-key "scale text")
   "rw" '(hydra-resize-windows/body :which-key "resize windows"))
 
-(use-package ivy
-  :diminish
-  :bind (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)	
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
-  :init
-  (ivy-mode 1))
-
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
-
 (gawmk/leader-key
   "st" '(tab-switch :which-key "switch tab")
   "kb" '(kill-buffer :which-key "kill buffer")
   "sb" '(counsel-switch-buffer :which-key "switch buffer"))
+
+;; Enable Vertico.
+(use-package vertico
+  :custom
+  (vertico-scroll-margin 0) ;; Different scroll margin
+  (vertico-resize t)
+  (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :init
+  (vertico-mode)
+  :bind (:map vertico-map
+	 ("C-k" . 'vertico-previous)
+	 ("C-j" . 'vertico-next)))
+   
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Emacs minibuffer configurations.
+(use-package emacs
+  :custom
+  ;; Enable context menu. `vertico-multiform-mode' adds a menu in the minibuffer
+  ;; to switch display modes.
+  (context-menu-mode t)
+  ;; Support opening new minibuffers from inside existing minibuffers.
+  (enable-recursive-minibuffers t)
+  ;; Hide commands in M-x which do not work in the current mode.  Vertico
+  ;; commands are hidden in normal buffers. This setting is useful beyond
+  ;; Vertico.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)))
+
+;; Optionally use the `orderless' completion style.
+(use-package orderless
+  :custom
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-category-defaults nil) ;; Disable defaults, use our settings
+  (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
+
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init section is always executed.
+  :init
+
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
+
+;; Example configuration for Consult
+(use-package consult
+  ;; Replace bindings. Lazily loaded by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-s" . consult-line))
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Tweak the register preview for `consult-register-load',
+  ;; `consult-register-store' and the built-in commands.  This improves the
+  ;; register formatting, adds thin separator lines, register sorting and hides
+  ;; the window mode line.
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq register-preview-delay 0.5)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep consult-man
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+)
 
 (use-package project)
 (defun my-project-shell ()
@@ -461,141 +549,143 @@ or go back to just one window (by deleting all but the selected window)."
   "dng" '(denote-grep :which-key "look for grep in denote")
   "dnn" '(denote :which-key "create a denote"))
 
+;; temporary until karthink org is upstream
 (use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/"
-    :config
-    (setq org-hide-leading-stars t)
-    (setq org-startup-with-inline-images t)
-    (setq org-image-actual-width nil)
-    (define-key org-mode-map (kbd "C-M-h") 'org-do-promote)
-    (define-key org-mode-map (kbd "C-M-l") 'org-do-demote)
-    (define-key org-mode-map (kbd "C-M-k") 'org-move-subtree-up)
-    (define-key org-mode-map (kbd "C-M-j") 'org-move-subtree-down)
+  :config
 
-    (define-key org-mode-map (kbd "C-M-p") 'org-priority-down)
-    (define-key org-mode-map (kbd "C-M-S-p") 'org-priority-up)
-    (dolist (face '((org-level-1 . 1.5)
-                    (org-level-2 . 1.3)
-                    (org-level-3 . 1.2)
-                    (org-level-4 . 1.1)
-                    (org-level-5 . 1.1)
-                    (org-level-6 . 1.1)
-                    (org-level-7 . 1.1)
-                    (org-level-8 . 1.1)))
-      (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
-    (keymap-set org-mode-map "C-c" nil)
+  (setq org-hide-leading-stars t)
+  (setq org-startup-with-inline-images t)
+  (setq org-image-actual-width nil)
+  (define-key org-mode-map (kbd "C-M-h") 'org-do-promote)
+  (define-key org-mode-map (kbd "C-M-l") 'org-do-demote)
+  (define-key org-mode-map (kbd "C-M-k") 'org-move-subtree-up)
+  (define-key org-mode-map (kbd "C-M-j") 'org-move-subtree-down)
 
-    ;; visual stuff
-    (setq org-ellipsis "▾")
-    (setq org-hide-emphasis-markers t)
-    (setq org-pretty-entities nil)
+  (define-key org-mode-map (kbd "C-M-p") 'org-priority-down)
+  (define-key org-mode-map (kbd "C-M-S-p") 'org-priority-up)
+  (dolist (face '((org-level-1 . 1.5)
+                  (org-level-2 . 1.3)
+                  (org-level-3 . 1.2)
+                  (org-level-4 . 1.1)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :weight 'bold :height (cdr face)))
+  (keymap-set org-mode-map "C-c" nil)
 
-    ;; Follow the links
-    (setq org-return-follows-link  t)
+  ;; visual stuff
+  (setq org-ellipsis "▾")
+  (setq org-hide-emphasis-markers t)
+  (setq org-pretty-entities nil)
 
-    ;; log mode
-    (setq org-agenda-start-with-log-mode t)
-    (setq org-log-done 'time)
-    (setq org-log-into-drawer t))
+  ;; Follow the links
+  (setq org-return-follows-link  t)
 
-  ;; refile
-  (setq org-refile-targets
-        '(("~/sync/org/archive.org" :maxlevel . 2)
-          ("~/sync/org/todo.org" :maxlevel . 2)))
+  ;; log mode
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t))
 
-  ;; Save Org buffers after refiling!
-  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+;; refile
+(setq org-refile-targets
+      '(("~/sync/org/archive.org" :maxlevel . 2)
+        ("~/sync/org/todo.org" :maxlevel . 2)))
 
-  ;; redisplay images after saving
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (add-hook 'after-save-hook #'org-redisplay-inline-images nil 'make-it-local)))
+;; Save Org buffers after refiling!
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
 
-  (use-package org-download
-    :config
-    (setq org-download-heading-lvl nil)
-    (setq org-download-screenshot-method "grim -g \"$(slurp)\" %s")
-    (setq org-download-method 'directory)
-    (setq-default org-download-image-dir "./img"))
+;; redisplay images after saving
+(add-hook 'org-mode-hook
+          (lambda ()
+            (add-hook 'after-save-hook #'org-redisplay-inline-images nil 'make-it-local)))
 
-  (require 'org-download)
+(use-package org-download
+  :config
+  (setq org-download-heading-lvl nil)
+  (setq org-download-screenshot-method "grim -g \"$(slurp)\" %s")
+  (setq org-download-method 'directory)
+  (setq-default org-download-image-dir "./img"))
 
-  ;; Drag-and-drop to `dired`
-  (add-hook 'dired-mode-hook 'org-download-enable)
+(require 'org-download)
 
-  (gawmk/leader-key
-    "oa" '(org-agenda :which-key "org agenda")
-    "oc" '(org-capture :which-key "org agenda")
-    "oss" '(org-download-screenshot :which-key "make an ss and paste it")
-    "osp" '(org-download-clipboard :which-key "paste an ss from system clipboard")
-    "oid" '(org-deadline :which-key "insert a deadline on a TODO")
-    "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
-    "oil" '(org-insert-link :which-key "insert a link to a resource")
-    "od" '(org-todo :which-key "cycle through TODO states")
-    "ot" '(org-set-tags-command :which-key "insert a tag on a headline")
-    "or" '(org-refile :which-key "move an org heading to a diff file")
-    "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+
+(gawmk/leader-key
+  "oa" '(org-agenda :which-key "org agenda")
+  "oc" '(org-capture :which-key "org agenda")
+  "oss" '(org-download-screenshot :which-key "make an ss and paste it")
+  "osp" '(org-download-clipboard :which-key "paste an ss from system clipboard")
+  "oid" '(org-deadline :which-key "insert a deadline on a TODO")
+  "oit" '(org-time-stamp :which-key "insert a timestamp on a TODO")
+  "oil" '(org-insert-link :which-key "insert a link to a resource")
+  "od" '(org-todo :which-key "cycle through TODO states")
+  "ot" '(org-set-tags-command :which-key "insert a tag on a headline")
+  "or" '(org-refile :which-key "move an org heading to a diff file")
+  "ois" '(org-schedule :which-key "insert a scheduled tag on a TODO"))
 
 
-  (setq org-capture-templates
-        `(("t" "Task" entry  (file+headline "~/org/inbox.org" "Tasks")
-           ,(concat "* TODO [#B] %?\n"
-                    "/Entered on/ %U"))
-          ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
-           "** %?")
-          
-          ("j" "Work Log Entry"
-           entry (file+datetree "~/org/work-log.org")
-           "* %?"
-           :empty-lines 0)
+(setq org-capture-templates
+      `(("t" "Task" entry  (file+headline "~/org/inbox.org" "Tasks")
+         ,(concat "* TODO [#B] %?\n"
+                  "/Entered on/ %U"))
+        ("n" "Note"  entry (file+headline "~/org/inbox.org" "Notes")
+         "** %?")
+        
+        ("j" "Work Log Entry"
+         entry (file+datetree "~/org/work-log.org")
+         "* %?"
+         :empty-lines 0)
 
-          ("c" "Code To-Do"
-           entry (file+headline "~/org/inbox.org" "Code Related Tasks")
-           "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: ")
+        ("c" "Code To-Do"
+         entry (file+headline "~/org/inbox.org" "Code Related Tasks")
+         "* TODO [#B] %?\n:Created: %T\n%i\n%a\nProposed Solution: ")
 
-        	("m" "Meeting"
-           entry (file+datetree "~/org/meetings.org")
-           "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
-           :tree-type week
-           :clock-in t
-           :clock-resume t
-           :empty-lines 0)
-          ))
+        ("m" "Meeting"
+         entry (file+datetree "~/org/meetings.org")
+         "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
+         :tree-type week
+         :clock-in t
+         :clock-resume t
+         :empty-lines 0)
+        ))
 
-  ;; TODO states
-  (setq org-todo-keywords
-        '((sequence "TODO(t!)" "NEXT(n!)" "WAITING(w!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
-          ))
+;; TODO states
+(setq org-todo-keywords
+      '((sequence "TODO(t!)" "NEXT(n!)" "WAITING(w!)" "IN-PROGRESS(i!)" "|" "DONE(d!)" "CANC(c!)")
+        ))
 
-  ;; auto insert mode when capturing
-  (add-hook 'org-capture-mode-hook 'evil-insert-state)
-  (add-hook 'org-mode-hook 'org-indent-mode)
-  ;; TODO colors
-  (setq org-todo-keyword-faces
-        '(
-          ("TODO" . (:foreground "#d65d0e" :weight bold))
-          ("WAITING" . (:foreground "#d4679c" :weight bold))
-          ("IN-PROGRESS" . (:foreground "#eebd35" :weight bold))
-          ("DONE" . (:foreground "#689d6a" :weight bold))
-          ))
+;; auto insert mode when capturing
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
+(add-hook 'org-mode-hook 'org-indent-mode)
+;; TODO colors
+(setq org-todo-keyword-faces
+      '(
+        ("TODO" . (:foreground "#d65d0e" :weight bold))
+        ("WAITING" . (:foreground "#d4679c" :weight bold))
+        ("IN-PROGRESS" . (:foreground "#eebd35" :weight bold))
+        ("DONE" . (:foreground "#689d6a" :weight bold))
+        ))
 
-  (setq org-priority-faces
-        '(
-          (?A . (:foreground "Grey"))
-          (?B . (:foreground "Grey"))
-          (?C . (:foreground "Grey"))))
+(setq org-priority-faces
+      '(
+        (?A . (:foreground "Grey"))
+        (?B . (:foreground "Grey"))
+        (?C . (:foreground "Grey"))))
 
-  ;; DONE todo strikethrough
-  (defun my/modify-org-done-face ()
-    (setq org-fontify-done-headline t)
-    (set-face-attribute 'org-done nil :strike-through t)
-    (set-face-attribute 'org-headline-done nil
-                        :strike-through t
-                        :foreground "Grey"))
+;; DONE todo strikethrough
+(defun my/modify-org-done-face ()
+  (setq org-fontify-done-headline t)
+  (set-face-attribute 'org-done nil :strike-through t)
+  (set-face-attribute 'org-headline-done nil
+                      :strike-through t
+                      :foreground "Grey"))
 
-  (eval-after-load "org"
-    (add-hook 'org-add-hook 'my/modify-org-done-face))
+(eval-after-load "org"
+  (add-hook 'org-add-hook 'my/modify-org-done-face))
 
-  (add-hook 'org-mode-hook 'olivetti-mode)
+(add-hook 'org-mode-hook 'olivetti-mode)
 
 ;; agenda settings
   (setq org-agenda-files '("~/sync/org"))
@@ -692,68 +782,6 @@ or go back to just one window (by deleting all but the selected window)."
     "C-S-l" (my-org-in-calendar calendar-forward-month)
     "C-S-k" (my-org-in-calendar calendar-backward-year)
     "C-S-j" (my-org-in-calendar calendar-forward-year))
-
-;; Increase preview width
-  (plist-put org-latex-preview-appearance-options
-             :page-width 0.8)
-
-  ;; ;; Use dvisvgm to generate previews
-  ;; ;; You don't need this, it's the default:
-  ;; (setq org-latex-preview-process-default 'dvisvgm)
-  
-  ;; Turn on `org-latex-preview-mode', it's built into Org and much faster/more
-  ;; featured than org-fragtog. (Remember to turn off/uninstall org-fragtog.)
-  (add-hook 'org-mode-hook 'org-latex-preview-mode)
-
-  ;; ;; Block C-n, C-p etc from opening up previews when using `org-latex-preview-mode'
-  ;; (setq org-latex-preview-mode-ignored-commands
-  ;;       '(next-line previous-line mwheel-scroll
-  ;;         scroll-up-command scroll-down-command))
-
-  ;; ;; Enable consistent equation numbering
-  ;; (setq org-latex-preview-numbered t)
-
-  ;; Bonus: Turn on live previews.  This shows you a live preview of a LaTeX
-  ;; fragment and updates the preview in real-time as you edit it.
-  ;; To preview only environments, set it to '(block edit-special) instead
-  (setq org-latex-preview-mode-display-live t)
-
-  ;; More immediate live-previews -- the default delay is 1 second
-  (setq org-latex-preview-mode-update-delay 0.25)
-
-;; code for centering LaTeX previews -- a terrible idea
-(defun my/org-latex-preview-uncenter (ov)
-  (overlay-put ov 'before-string nil))
-(defun my/org-latex-preview-recenter (ov)
-  (overlay-put ov 'before-string (overlay-get ov 'justify)))
-(defun my/org-latex-preview-center (ov)
-  (save-excursion
-    (goto-char (overlay-start ov))
-    (when-let* ((elem (org-element-context))
-                ((or (eq (org-element-type elem) 'latex-environment)
-                     (string-match-p "^\\\\\\[" (org-element-property :value elem))))
-                (img (overlay-get ov 'display))
-                (prop `(space :align-to (- center (0.55 . ,img))))
-                (justify (propertize " " 'display prop 'face 'default)))
-      (overlay-put ov 'justify justify)
-      (overlay-put ov 'before-string (overlay-get ov 'justify)))))
-(define-minor-mode org-latex-preview-center-mode
-  "Center equations previewed with `org-latex-preview'."
-  :global nil
-  (if org-latex-preview-center-mode
-      (progn
-        (add-hook 'org-latex-preview-overlay-open-functions
-                  #'my/org-latex-preview-uncenter nil :local)
-        (add-hook 'org-latex-preview-overlay-close-functions
-                  #'my/org-latex-preview-recenter nil :local)
-        (add-hook 'org-latex-preview-overlay-update-functions
-                  #'my/org-latex-preview-center nil :local))
-    (remove-hook 'org-latex-preview-overlay-close-functions
-                  #'my/org-latex-preview-recenter)
-    (remove-hook 'org-latex-preview-overlay-update-functions
-                  #'my/org-latex-preview-center)
-    (remove-hook 'org-latex-preview-overlay-open-functions
-                  #'my/org-latex-preview-uncenter)))
 
 (setq org-babel-python-command "python3")
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
@@ -960,6 +988,12 @@ absolute path. Finally load eglot."
   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
         TeX-source-correlate-start-server t)  
   (setq LaTeX-babel-hyphen nil)); Disable language-specific hyphen insertion.
+
+(use-package cdlatex
+  :ensure t
+  :hook (LaTeX-mode . turn-on-cdlatex)
+  :bind (:map cdlatex-mode-map 
+              ("<tab>" . cdlatex-tab)))
 
 (use-package gptel
   :config
