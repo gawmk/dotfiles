@@ -42,8 +42,8 @@
       kept-old-versions      5) ; and how many of the old
 (setq create-lockfiles nil)
 
-  					;causes no job control in this shell error
-  					;(setq shell-command-switch "-ic")
+    					;causes no job control in this shell error
+    					;(setq shell-command-switch "-ic")
 
 (setq use-dialog-box nil)
 
@@ -67,11 +67,11 @@
 
 
 (use-package helpful
-:bind
-([remap describe-function] . helpful-callable)
-([remap describe-command]  . helpful-command)
-([remap describe-variable] . helpful-variable)
-([remap describe-key]      . helpful-key))
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-command]  . helpful-command)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key]      . helpful-key))
 
 ;; daemon
 (require 'server)
@@ -516,7 +516,9 @@ or go back to just one window (by deleting all but the selected window)."
                                 ("mp4" . "mpv")
                                 ("mp3" . "mpv")
                                 ("mkv" . "mpv")
+                                ("opus" . "mpv")
 				  ("docx" . "libreoffice")
+				  ("xls" . "libreoffice")
 				  ("xlsx" . "libreoffice"))))
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -545,14 +547,18 @@ or go back to just one window (by deleting all but the selected window)."
 
 (gawmk/leader-key
   "dnr" '(denote-rename-file :which-key "rename a file to denote format")
-  "dnl" '(denote-link :which-key "like a denote file")
+  "dnl" '(denote-link-or-create :which-key "like a denote file")
   "dng" '(denote-grep :which-key "look for grep in denote")
+  "dno" '(denote-open-or-create :which-key "open or create a note")
   "dnn" '(denote :which-key "create a denote"))
+
+(use-package denote-explore)
 
 ;; temporary until karthink org is upstream
 (use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/"
   :config
 
+  (setq org-startup-with-latex-preview t)
   (setq org-hide-leading-stars t)
   (setq org-startup-with-inline-images t)
   (setq org-image-actual-width nil)
@@ -887,6 +893,9 @@ absolute path. Finally load eglot."
 (use-package csv-mode)
 (add-hook 'csv-mode-hook #'csv-align-mode)
 
+
+(add-hook 'js-json-mode-hook #'json-pretty-print-buffer)
+
 (use-package eglot
   :config
   (fset #'jsonrpc--log-event #'ignore)
@@ -1000,6 +1009,11 @@ absolute path. Finally load eglot."
 	 (org-mode . org-cdlatex-mode))
   :bind (:map cdlatex-mode-map 
               ("<tab>" . cdlatex-tab)))
+(require 'cdlatex)
+(add-to-list 'cdlatex-command-alist
+	     '("vb" "bmatrix environment" "\\begin{bmatrix} \n ? \n\\end{bmatrix}" cdlatex-position-cursor nil nil t))
+(add-to-list 'cdlatex-command-alist
+	     '("pr" "partial symbol" "\\partial ?" cdlatex-position-cursor nil nil t))
 
 ;; Yasnippet settings
 (use-package yasnippet

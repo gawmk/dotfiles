@@ -58,7 +58,6 @@
 -----
 Where to store backups and some helpful packages. 
 #+begin_src emacs-lisp
-
   (use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/")
   (use-package org-latex-preview :load-path "~/.emacs.d/elpa/org-mode/lisp/"
     :config
@@ -88,8 +87,8 @@ Where to store backups and some helpful packages.
         kept-old-versions      5) ; and how many of the old
   (setq create-lockfiles nil)
 
-    					;causes no job control in this shell error
-    					;(setq shell-command-switch "-ic")
+      					;causes no job control in this shell error
+      					;(setq shell-command-switch "-ic")
 
   (setq use-dialog-box nil)
 
@@ -113,11 +112,11 @@ Where to store backups and some helpful packages.
 
 
   (use-package helpful
-  :bind
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-command]  . helpful-command)
-  ([remap describe-variable] . helpful-variable)
-  ([remap describe-key]      . helpful-key))
+    :bind
+    ([remap describe-function] . helpful-callable)
+    ([remap describe-command]  . helpful-command)
+    ([remap describe-variable] . helpful-variable)
+    ([remap describe-key]      . helpful-key))
 
 #+end_src
 ** Auth
@@ -617,7 +616,9 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
                                     ("mp4" . "mpv")
                                     ("mp3" . "mpv")
                                     ("mkv" . "mpv")
+                                    ("opus" . "mpv")
   				  ("docx" . "libreoffice")
+  				  ("xls" . "libreoffice")
   				  ("xlsx" . "libreoffice"))))
     (use-package dired-hide-dotfiles
       :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -649,11 +650,16 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 
   (gawmk/leader-key
     "dnr" '(denote-rename-file :which-key "rename a file to denote format")
-    "dnl" '(denote-link :which-key "like a denote file")
+    "dnl" '(denote-link-or-create :which-key "like a denote file")
     "dng" '(denote-grep :which-key "look for grep in denote")
+    "dno" '(denote-open-or-create :which-key "open or create a note")
     "dnn" '(denote :which-key "create a denote"))
 
 
+#+end_src
+** Denote Explore
+#+begin_src emacs-lisp
+(use-package denote-explore)
 #+end_src
 * Org
 #+begin_src emacs-lisp
@@ -662,6 +668,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   (use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/"
     :config
 
+    (setq org-startup-with-latex-preview t)
     (setq org-hide-leading-stars t)
     (setq org-startup-with-inline-images t)
     (setq org-image-actual-width nil)
@@ -1018,12 +1025,13 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
   (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1) (blink-cursor-mode -1) (line-number-mode -1)))
 #+end_src
 
-* CSV
+* CSV, JSON etc.
 #+begin_src emacs-lisp
   (use-package csv-mode)
   (add-hook 'csv-mode-hook #'csv-align-mode)
 
 
+  (add-hook 'js-json-mode-hook #'json-pretty-print-buffer)
 #+end_src
 
 * Eglot
@@ -1156,6 +1164,11 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
   	 (org-mode . org-cdlatex-mode))
     :bind (:map cdlatex-mode-map 
                 ("<tab>" . cdlatex-tab)))
+  (require 'cdlatex)
+  (add-to-list 'cdlatex-command-alist
+  	     '("vb" "bmatrix environment" "\\begin{bmatrix} \n ? \n\\end{bmatrix}" cdlatex-position-cursor nil nil t))
+  (add-to-list 'cdlatex-command-alist
+  	     '("pr" "partial symbol" "\\partial ?" cdlatex-position-cursor nil nil t))
 
 
 #+end_src
