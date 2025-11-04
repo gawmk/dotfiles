@@ -598,37 +598,48 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
                   #+end_src
 * Dired
 #+begin_src emacs-lisp
-    (use-package dired
-      :ensure nil
-      :custom ((dired-listing-switches "-aGho --group-directories-first"))
-      :config
-      (setf dired-kill-when-opening-new-dired-buffer t)
-      (evil-collection-define-key 'normal 'dired-mode-map
-        "h" 'dired-up-directory
-        "l" 'dired-find-file))
+  (use-package dired
+    :ensure nil
+    :custom ((dired-listing-switches "-aGho --group-directories-first"))
+    :config
+    (setf dired-kill-when-opening-new-dired-buffer t)
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-up-directory
+      "l" 'dired-find-file))
 
-    (use-package all-the-icons-dired
-      :hook (dired-mode . all-the-icons-dired-mode))
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
 
-    (use-package dired-open
-      :config
-      (setq dired-open-extensions '(
-                                    ("mp4" . "mpv")
-                                    ("mp3" . "mpv")
-                                    ("mkv" . "mpv")
-                                    ("opus" . "mpv")
+  (use-package dired-open
+    :config
+    (setq dired-open-extensions '(
+                                  ("mp4" . "mpv")
+                                  ("mp3" . "mpv")
+                                  ("mkv" . "mpv")
+                                  ("opus" . "mpv")
   				  ("docx" . "libreoffice")
   				  ("xls" . "libreoffice")
   				  ("xlsx" . "libreoffice"))))
-    (use-package dired-hide-dotfiles
-      :hook (dired-mode . dired-hide-dotfiles-mode)
-      :config
-      (evil-collection-define-key 'normal 'dired-mode-map
-        "H" 'dired-hide-dotfiles-mode))
-    (gawmk/leader-key 
-      "dd" '(dired :which-key "open dired")
-      "di" '(image-dired :which-key "view images in dired (thumbnails)")
-      "dj" '(dired-jump :which-key "dired jump"))
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
+  (gawmk/leader-key 
+    "dd" '(dired :which-key "open dired")
+    "di" '(image-dired :which-key "view images in dired (thumbnails)")
+    "dj" '(dired-jump :which-key "dired jump"))
+
+
+  (use-package empv
+    :config
+    (setq empv-audio-dir "~/sync/multimedia/music/")
+    (setq empv-fd-binary "fdfind")
+    (add-to-list 'empv-audio-file-extensions "opus"))
+
+
+  (gawmk/leader-key
+    "mpv" '(empv-hydra/body :which-key "empv stuff"))
 #+end_src
 * Denote
 #+begin_src emacs-lisp
@@ -728,6 +739,14 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   ;; Drag-and-drop to `dired`
   (add-hook 'dired-mode-hook 'org-download-enable)
 
+  (use-package org-tidy
+  :ensure t
+  :hook
+  (org-mode . org-tidy-mode)
+  :config
+  (setq org-tidy-protect-overlay nil))
+
+
   (gawmk/leader-key
     "oa" '(org-agenda :which-key "org agenda")
     "oc" '(org-capture :which-key "org agenda")
@@ -746,8 +765,12 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
         `(("t" "Task" entry  (file+headline "~/sync/org/inbox.org" "Tasks")
            ,(concat "* TODO [#B] %?\n"
                     "/Entered on/ %U"))
+  	
           ("n" "Note"  entry (file+headline "~/sync/org/inbox.org" "Notes")
            "** %?")
+
+  	("e" "Calendar" entry (file "~/sync/org/calendar.org")
+  	 "* %?")
           
           ("j" "Work Log Entry"
            entry (file+datetree "~/sync/org/work-log.org")
@@ -902,6 +925,20 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
       "C-S-k" (my-org-in-calendar calendar-backward-year)
       "C-S-j" (my-org-in-calendar calendar-forward-year))
 
+#+end_src
+** Org caldav
+#+begin_src emacs-lisp
+  (use-package org-caldav)
+
+  (setq org-caldav-url "http://192.168.1.69:5232/miki")
+
+  (setq org-caldav-calendar-id "6cdce643-20cd-4e68-3093-c8f5dd2306a4")
+
+  (setq org-caldav-days-in-past 90)
+
+  (setq org-caldav-inbox "~/sync/org/calendar.org")
+  (setq org-caldav-files nil)
+  (setq org-icalendar-timezone "Europe/Warsaw")
 #+end_src
 **  Babel
 #+begin_src emacs-lisp
@@ -1071,6 +1108,11 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
   (use-package markdown-mode)
 
       #+end_src
+
+** Devdocs
+#+begin_src emacs-lisp
+(use-package devdocs)
+#+end_src
 
 * Completion
 

@@ -530,6 +530,17 @@ or go back to just one window (by deleting all but the selected window)."
   "di" '(image-dired :which-key "view images in dired (thumbnails)")
   "dj" '(dired-jump :which-key "dired jump"))
 
+
+(use-package empv
+  :config
+  (setq empv-audio-dir "~/sync/multimedia/music/")
+  (setq empv-fd-binary "fdfind")
+  (add-to-list 'empv-audio-file-extensions "opus"))
+
+
+(gawmk/leader-key
+  "mpv" '(empv-hydra/body :which-key "empv stuff"))
+
 (use-package denote
   :ensure t
   :hook (dired-mode . denote-dired-mode)
@@ -618,6 +629,14 @@ or go back to just one window (by deleting all but the selected window)."
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
 
+(use-package org-tidy
+:ensure t
+:hook
+(org-mode . org-tidy-mode)
+:config
+(setq org-tidy-protect-overlay nil))
+
+
 (gawmk/leader-key
   "oa" '(org-agenda :which-key "org agenda")
   "oc" '(org-capture :which-key "org agenda")
@@ -636,8 +655,12 @@ or go back to just one window (by deleting all but the selected window)."
       `(("t" "Task" entry  (file+headline "~/sync/org/inbox.org" "Tasks")
          ,(concat "* TODO [#B] %?\n"
                   "/Entered on/ %U"))
+	
         ("n" "Note"  entry (file+headline "~/sync/org/inbox.org" "Notes")
          "** %?")
+
+	("e" "Calendar" entry (file "~/sync/org/calendar.org")
+	 "* %?")
         
         ("j" "Work Log Entry"
          entry (file+datetree "~/sync/org/work-log.org")
@@ -789,6 +812,18 @@ or go back to just one window (by deleting all but the selected window)."
     "C-S-k" (my-org-in-calendar calendar-backward-year)
     "C-S-j" (my-org-in-calendar calendar-forward-year))
 
+(use-package org-caldav)
+
+(setq org-caldav-url "http://192.168.1.69:5232/miki")
+
+(setq org-caldav-calendar-id "6cdce643-20cd-4e68-3093-c8f5dd2306a4")
+
+(setq org-caldav-days-in-past 90)
+
+(setq org-caldav-inbox "~/sync/org/calendar.org")
+(setq org-caldav-files nil)
+(setq org-icalendar-timezone "Europe/Warsaw")
+
 (setq org-babel-python-command "python3")
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
 (setq org-confirm-babel-evaluate nil)
@@ -929,6 +964,8 @@ absolute path. Finally load eglot."
   (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
 
 (use-package markdown-mode)
+
+(use-package devdocs)
 
 (use-package corfu
   :init
