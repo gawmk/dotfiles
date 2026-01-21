@@ -23,8 +23,8 @@ export MOZ_ENABLE_WAYLAND=1
 # ssh-agent
 eval $(ssh-agent -s)
 
-# sway
-test -z "$DISPLAY" -a -z "$WAYLAND_DISPLAY" -a -n "$XDG_VTNR" && test 1 -eq "$XDG_VTNR" && QT_QPA_PLATFORM=wayland SDL_VIDEODRIVER=wayland XDG_SESSION_TYPE=wayland exec sway
+# remove bell sound
+sudo rmmod pcspkr
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then

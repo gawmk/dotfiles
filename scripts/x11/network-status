@@ -1,0 +1,9 @@
+#!/bin/bash
+
+state=$(iwctl station wlan0 show | grep State | awk '{print $2}')
+
+if [[ "$state" == "connected" ]]; then
+    echo "net: up"
+else
+    echo "net: down"
+fi

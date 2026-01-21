@@ -1,0 +1,19 @@
+/.config/FreeTube/
+/.config/GIMP/
+/.config/Google/
+/.config/MTK/
+/.config/Mullvad VPN/
+/.config/QtProject.conf
+/.config/Signal/
+/.config/Trolltech.conf
+/.config/autostart/
+/.config/balenaEtcher/
+/.config/chromium/
+/.config/dconf/
+/.config/eDEX-UI/
+/.config/fontforge/
+/.config/goldencheetah.org/
+/.config/monero-project/
+/.config/nwg-look/
+.emacs.d/auto-save-list/
+

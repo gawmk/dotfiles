@@ -2,7 +2,7 @@
 
 read -p "Which version of emacs would you like to build?: " VERSION
 
-BUILDDIR="$HOME/source-code/emacs-build"
+BUILDDIR="$HOME/source/emacs-build"
 WGET_FILE="emacs-"$VERSION".tar.gz"
 WGET_FILE_SIG="emacs-"$VERSION".tar.gz.sig"
 
@@ -41,10 +41,8 @@ sudo apt install build-essential
 			--with-rsvg\
 			--with-tiff\
 			--with-imagemagick\
-			--with-json\
 			--with-mailutils\
 			--with-modules\
-			--with-pgtk
 
 make clean
 make -j8

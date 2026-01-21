@@ -1,0 +1,11 @@
+#!/bin/bash
+
+HDMI="HDMI-A-1"
+DPI_HDMI=110
+DPI_INTERNAL=96
+
+if xrandr | grep -q "^$HDMI connected"; then
+    xrdb -merge <<< "Xft.dpi: $DPI_HDMI"
+else
+    xrdb -merge <<< "Xft.dpi: $DPI_INTERNAL"
+fi

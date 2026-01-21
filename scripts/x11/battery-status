@@ -1,0 +1,22 @@
+#!/bin/bash
+
+capacity=$(cat /sys/class/power_supply/BAT0/capacity)
+battery_status=$(cat /sys/class/power_supply/BAT0/status)
+AC_status=$(cat /sys/class/power_supply/AC/online)
+
+if [[ $AC_status == 1 ]]; then
+    output="b: $capacity% (c)"
+else
+    output="b: $capacity%"
+fi
+
+if [[ $AC_status == 0 && $capacity < 10 ]]; then
+    notify-send "Low battery!" -u critical
+fi
+
+echo $output
+
+
+
+
+

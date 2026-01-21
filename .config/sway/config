@@ -85,6 +85,19 @@ output "Unknown VG248 MCLMQS011710" {
     mode 1920x1080@120.000Hz
 }
 
+output "eDP-1" {
+    pos 0 0
+    mode 1920x180@60Hz
+    scale 1.0
+}
+
+output "AOC Q27G3XMN 1APR7JA001639" {
+    pos 1920 0 
+    mode 2560x1440@143.999Hz
+    scale 1.2
+}
+
+
 ### WORKSPACES CONFIG ###
 # falls back to laptop after unplugging
 set $laptop eDP-1
@@ -129,6 +142,10 @@ workspace 9 output $hdmiMonitor
 
     # Org screenshot
     bindsym $mod+Shift+s exec ~/scripts/org-screenshot.sh
+
+    # xwayland fractional scaling -- gotta go back to 1x
+    bindsym $mod+Shift+n exec swaymsg output HDMI-A-1 scale 1.0
+    bindsym $mod+Shift+m exec swaymsg output HDMI-A-1 scale 1.2
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.

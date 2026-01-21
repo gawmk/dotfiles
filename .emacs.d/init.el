@@ -31,7 +31,11 @@
 
   (setq org-latex-preview-mode-display-live t)
 
+  (setq org-latex-listings 'minted)
+
   (setq org-latex-preview-mode-update-delay 0.25))
+
+
 
 ;; Write backups to ~/.emacs.d/backup/
 (setq backup-directory-alist '(("." . "~/.config/emacs/backup"))
@@ -112,9 +116,9 @@
    ;; Corrects (and improves) org-mode's native fontification.
    (doom-themes-org-config))
 
-(set-face-attribute 'default nil :font "Iosevka Comfy" :height 150 :weight 'semibold)
-(set-face-attribute 'variable-pitch nil :font "Iosevka Comfy Duo" :height 150 :weight 'semibold)
-(set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 150 :weight 'semibold)
+(set-face-attribute 'default nil :font "IosevkaComfy Nerd Font" :height 140 :weight 'semibold)
+(set-face-attribute 'variable-pitch nil :font "IosevkaComfyDuo NerdFont" :height 140 :weight 'semibold)
+(set-face-attribute 'fixed-pitch nil :font "IosevkaComfy Nerd Font" :height 140 :weight 'semibold)
 
 (load-theme 'doom-gruvbox :no-confirm)
 
@@ -535,11 +539,12 @@ or go back to just one window (by deleting all but the selected window)."
   :config
   (setq empv-audio-dir "~/sync/multimedia/music/")
   (setq empv-fd-binary "fdfind")
+  (setq empv-invidious-instance "https://yewtu.be/api/v1")
   (add-to-list 'empv-audio-file-extensions "opus"))
 
 
 (gawmk/leader-key
-  "mpv" '(empv-hydra/body :which-key "empv stuff"))
+  "mp" '(empv-hydra/body :which-key "empv stuff"))
 
 (use-package denote
   :ensure t
