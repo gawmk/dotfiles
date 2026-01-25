@@ -10,7 +10,7 @@ else
     output="b: $capacity%"
 fi
 
-if [[ $AC_status == 0 && $capacity < 10 ]]; then
+if (( AC_status == 0 && capacity < 10 )); then
     notify-send "Low battery!" -u critical
 fi
 

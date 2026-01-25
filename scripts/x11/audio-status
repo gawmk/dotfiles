@@ -1,0 +1,14 @@
+#!/bin/bash
+
+out=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
+
+if echo "$out" | grep -q '\[MUTED\]'; then
+    echo "vol: mut"
+    exit 0
+fi
+
+vol=$(echo $out | awk '{ printf "%d\n", $2 * 100 + 0.5 }')
+
+src="spkr"
+
+echo "vol: $vol% ($src)"

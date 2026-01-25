@@ -120,6 +120,8 @@
 (set-face-attribute 'variable-pitch nil :font "IosevkaComfyDuo NerdFont" :height 140 :weight 'semibold)
 (set-face-attribute 'fixed-pitch nil :font "IosevkaComfy Nerd Font" :height 140 :weight 'semibold)
 
+(set-frame-parameter (selected-frame) 'alpha-background 85)
+(add-to-list 'default-frame-alist '(alpha-background . 85))
 (load-theme 'doom-gruvbox :no-confirm)
 
 

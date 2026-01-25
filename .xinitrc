@@ -14,6 +14,7 @@ xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Accel Speed" 1
 ### MISC ###
 xset -b #sysbell
 xrdb -merge ~/.Xresources &
+lxpolkit &
 
 ### VISUAL ###
 redshift -l 47.36:8.55 -t 6500K:3500K &
@@ -27,5 +28,6 @@ xrandr --output HDMI-A-0  \
 
 ### WM ETC ###
 dunst &
+picom --backend glx &
 exec dwmblocks &
 while type dwm >/dev/null ; do dwm && continue || break ;done 

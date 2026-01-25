@@ -17,7 +17,7 @@ export EDITOR="vim"
 export LEDGER_FILE="ledger.ledger"
 export R_HOME="/usr/lib/R"
 export XDG_CURRENT_DESKTOP="sway"
-export BROWSER="usr/bin/firefox-esr"
+export BROWSER="usr/bin/qutebrowser"
 export MOZ_ENABLE_WAYLAND=1
 
 # ssh-agent
