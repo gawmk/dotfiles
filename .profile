@@ -17,11 +17,17 @@ export EDITOR="vim"
 export LEDGER_FILE="ledger.ledger"
 export R_HOME="/usr/lib/R"
 export XDG_CURRENT_DESKTOP="sway"
-export BROWSER="usr/bin/qutebrowser"
+export BROWSER="/home/gawmk/.local/bin/qutebrowser"
 export MOZ_ENABLE_WAYLAND=1
 
 # ssh-agent
 eval $(ssh-agent -s)
+
+# imwheel
+
+if [[ -f "usr/bin/imwheel" ]]; then
+    imwheel
+fi
 
 # remove bell sound
 sudo rmmod pcspkr

@@ -13,6 +13,7 @@ config.load_autoconfig(False)
 config.set('content.cookies.accept', 'never', 'chrome-devtools://*')
 config.set('content.cookies.accept', 'never', 'devtools://*')
 
+#config.set('content.https_only', False, 'http://*.miki')
 # Custom Accept-Language for a specific site.
 config.set('content.headers.accept_language', '', 'https://matchmaker.krunker.io/*')
 
@@ -55,6 +56,7 @@ config.set('content.notifications.enabled', False, 'https://www.youtube.com')
 config.set('content.register_protocol_handler', True, 'https://calendar.google.com?cid=%25s')
 config.set('content.register_protocol_handler', True, 'https://outlook.office365.com?mailtouri=%25s')
 
+config.set('content.blocking.method', 'both')
 
 # ----------------------------
 # Dark mode (web pages)
@@ -77,12 +79,22 @@ config.bind('<Ctrl+j>', 'completion-item-focus --history next', mode='command')
 config.bind('<Ctrl+k>', 'completion-item-focus --history prev', mode='command')
 config.bind('<Ctrl+j>', 'nop', mode='normal')
 
+
+config.bind('j', 'scroll-px 0 150', mode='normal')
+config.bind('k', 'scroll-px 0 -150', mode='normal')
+
 c.aliases['q'] = 'close'
 c.aliases['qa'] = 'quit'
 c.aliases['w'] = 'session-save'
 c.aliases['wq'] = 'quit --save'
 c.aliases['wqa'] = 'quit --save'
 c.aliases['darkmode'] = 'config-cycle colors.webpage.darkmode.enabled'
+c.aliases['sd'] = 'session-load -c default'
+c.aliases['sw'] = 'session-load -c work'
+c.aliases['su'] = 'session-load -c uni'
+c.aliases['sf'] = 'session-load -c finance'
+c.aliases['ss'] = 'session-load -c selfhost'
+
 
 
 # ----------------------------
@@ -90,12 +102,12 @@ c.aliases['darkmode'] = 'config-cycle colors.webpage.darkmode.enabled'
 # ----------------------------
 c.url.searchengines = {
     'DEFAULT': 'https://duckduckgo.com/?ia=web&q={}',
-    '!a': 'https://wiki.archlinux.org/index.php?title=Special%3ASearch&search={}',
+    '!aw': 'https://wiki.archlinux.org/index.php?title=Special%3ASearch&search={}',
     '!g': 'https://google.com/search?hl=en&q={}',
     '!m': 'https://google.com/maps?q={}',
     '!w': 'https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search={}',
     '!gh': 'https://github.com/search?q={}',
-    '!y': 'https://youtube.com/results?search_query={}',
+    '!yt': 'https://youtube.com/results?search_query={}',
     '!r': 'https://www.reddit.com/r/{}',
 }
 
@@ -107,7 +119,7 @@ c.url.searchengines = {
 
 # font
 c.fonts.default_family = 'Iosevka Comfy Fixed'
-c.fonts.default_size = '14pt'
+c.fonts.default_size = '12pt'
 
 c.completion.height = '30%'
 c.completion.web_history.max_items = 300
@@ -126,7 +138,7 @@ c.tabs.width = '10%'
 
 c.tabs.favicons.scale = 1.2
 c.tabs.padding = {"bottom": 4, "left": 0, "right": 4, "top": 4}
-c.fonts.tabs.selected = 'bold 16pt'
+c.fonts.tabs.selected = 'bold 14pt'
 
 
 c.tabs.show = 'always'
@@ -140,7 +152,8 @@ c.url.default_page = 'startpage.mikolajgawrys.com'
 c.url.start_pages = ['startpage.mikolajgawrys.com']
 
 # Sessions
-c.auto_save.session = True
+c.auto_save.session = False
+c.session.default_name = 'default'
 
 # Downloads
 c.downloads.location.directory = '/home/gawmk/Downloads'

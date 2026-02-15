@@ -9,6 +9,5 @@ fi
 
 vol=$(echo $out | awk '{ printf "%d\n", $2 * 100 + 0.5 }')
 
-src="spkr"
 
-echo "vol: $vol% ($src)"
+echo "vol: $vol%"
