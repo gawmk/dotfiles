@@ -4,10 +4,10 @@ setxkbmap -option ctrl:nocaps
 
 ### MOUSE ###
 xinput set-prop "HP HP 430 Mouse" "libinput Accel Profile Enabled" 0, 1
-xinput set-prop "HP HP 430 Mouse" "libinput Accel Speed" -0.3
+xinput set-prop "HP HP 430 Mouse" "libinput Accel Speed" -0.1
 
-xinput set-prop "Razer Razer DeatchAdder V2" "libinput Accel Profile Enabled" 0, 1
-xinput set-prop "Razer Razer DeatchAdder V2" "libinput Accel Speed" -0.3
+xinput set-prop "Razer Razer DeathAdder V2" "libinput Accel Profile Enabled" 0, 1
+xinput set-prop "Razer Razer DeathAdder V2" "libinput Accel Speed" -0.3
 
 xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Accel Profile Enabled" 0, 1
 xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Accel Speed" 1
@@ -26,6 +26,10 @@ feh --bg-scale ~/sync/multimedia/pics/wallpapers/forest.jpg &
 xrandr --output HDMI-A-0  \
     --mode 2560x1440 \
     --rate 120 &
+
+xset -dpms
+xset s off
+xset s noblank
 
 ### WM ETC ###
 dunst &

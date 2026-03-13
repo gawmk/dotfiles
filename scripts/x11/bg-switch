@@ -1,0 +1,17 @@
+#!/bin/bash
+
+WPDIR="/home/gawmk/sync/multimedia/pics/wallpapers/"
+
+
+font="IosevkaComfy Nerd Font:size=14:weight=semibold"
+DMENUCMD=(dmenu -fn "$font" -l 10 -c)
+
+
+image=$(ls $WPDIR | "${DMENUCMD[@]}")
+
+[[ -z $image ]] && exit 0
+
+feh --bg-scale "$WPDIR/$image"
+
+
+

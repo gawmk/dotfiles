@@ -523,9 +523,9 @@ or go back to just one window (by deleting all but the selected window)."
                                 ("mp3" . "mpv")
                                 ("mkv" . "mpv")
                                 ("opus" . "mpv")
-				  ("docx" . "libreoffice")
-				  ("xls" . "libreoffice")
-				  ("xlsx" . "libreoffice"))))
+  				("docx" . "libreoffice")
+  				("xls" . "libreoffice")
+  				("xlsx" . "libreoffice"))))
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
@@ -544,6 +544,9 @@ or go back to just one window (by deleting all but the selected window)."
   (setq empv-invidious-instance "https://yewtu.be/api/v1")
   (add-to-list 'empv-audio-file-extensions "opus"))
 
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (text-scale-set 0)))
 
 (gawmk/leader-key
   "mp" '(empv-hydra/body :which-key "empv stuff"))
@@ -819,17 +822,16 @@ or go back to just one window (by deleting all but the selected window)."
     "C-S-k" (my-org-in-calendar calendar-backward-year)
     "C-S-j" (my-org-in-calendar calendar-forward-year))
 
-(use-package org-caldav)
+(use-package org-caldav
+  :after org
+  :config
+  (setq org-caldav-url "http://192.168.1.69:5232/miki"
+        org-caldav-calendar-id "6cdce643-20cd-4e68-3093-c8f5dd2306a4"
+        org-caldav-days-in-past 90
+        org-icalendar-timezone "Europe/Warsaw"
 
-(setq org-caldav-url "http://192.168.1.69:5232/miki")
-
-(setq org-caldav-calendar-id "6cdce643-20cd-4e68-3093-c8f5dd2306a4")
-
-(setq org-caldav-days-in-past 90)
-
-(setq org-caldav-inbox "~/sync/org/calendar.org")
-(setq org-caldav-files nil)
-(setq org-icalendar-timezone "Europe/Warsaw")
+	org-caldav-files nil 
+        org-caldav-inbox "~/sync/org/calendar.org"))
 
 (setq org-babel-python-command "python3")
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
