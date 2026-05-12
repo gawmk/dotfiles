@@ -1,5 +1,7 @@
 #!/bin/bash
-
+case $BLOCK_BUTTON in
+    1) iwgtk ;;          # left click
+esac
 state=$(iwctl station wlan0 show | grep State | awk '{print $2}')
 
 if [[ "$state" == "connected" ]]; then

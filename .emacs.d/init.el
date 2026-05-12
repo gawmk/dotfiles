@@ -53,11 +53,6 @@
 
 (add-to-list 'exec-path "~/.local/bin/")
 
-(use-package exec-path-from-shell)
-(setq exec-path-from-shell-arguments nil)
-(setq exec-path-from-shell-debug t)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
 (setq global-auto-revert-non-file-buffers 1)
 (global-auto-revert-mode 1)
 
@@ -76,13 +71,6 @@
   ([remap describe-command]  . helpful-command)
   ([remap describe-variable] . helpful-variable)
   ([remap describe-key]      . helpful-key))
-
-;; daemon
-(require 'server)
-(unless (server-running-p)
-  (server-start))
-;; ask for pass without a window
-(setq epg-pinentry-mode 'loopback)
 
 (setq initial-scratch-message nil)
 (setq inhibit-startup-screen t)
@@ -193,11 +181,6 @@ or go back to just one window (by deleting all but the selected window)."
   ;; allow for shorter bindings -- e.g., just using things like nmap alone without general-* prefix
   (general-evil-setup t)
 
-  ;; To automatically prevent Key sequence starts with a non-prefix key errors without the need to
-  ;; explicitly unbind non-prefix keys, you can add (general-auto-unbind-keys) to your configuration
-  ;; file. This will advise define-key to unbind any bound subsequence of the KEY. Currently, this
-  ;; will only have an effect for general.el key definers. The advice can later be removed with
-  ;; (general-auto-unbind-keys t).
   (general-auto-unbind-keys)
   (general-create-definer gawmk/leader-key
     :states '(normal visual insert emacs)
@@ -210,7 +193,7 @@ or go back to just one window (by deleting all but the selected window)."
 
   (gawmk/leader-key
     "mc" '(compile :which-key "compile")
-    "tt" '(vterm :which-key "launch and rename vterm")
+    "tt" '(launch-vterm :which-key "launch and rename vterm")
     "ff" '(find-file :which-key "find file")
     "rf" '(consult-recent-file :which-key "open recent file")
     "hf" '(describe-function :which-key "describe function")
@@ -525,6 +508,7 @@ or go back to just one window (by deleting all but the selected window)."
                                 ("opus" . "mpv")
   				("docx" . "libreoffice")
   				("xls" . "libreoffice")
+  				("ods" . "libreoffice")
   				("xlsx" . "libreoffice"))))
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -630,8 +614,8 @@ or go back to just one window (by deleting all but the selected window)."
 (use-package org-download
   :config
   (setq org-download-heading-lvl nil)
-  (setq org-download-screenshot-method "grim -g \"$(slurp)\" %s")
   (setq org-download-method 'directory)
+  (setq org-download-screenshot-method "flameshot gui -r > %s")
   (setq-default org-download-image-dir "./img"))
 
 (require 'org-download)
@@ -1014,6 +998,7 @@ absolute path. Finally load eglot."
   :config
   (setq ledger-reports
       '(("net" "ledger -f ledger.ledger bal ^assets ^liabilities")
+       ("fast" "ledger -f ledger.ledger bal ^assets:checking ^liabilities --collapse")
        ("bal" "%(binary) -f %(ledger-file) bal")
        ("reg" "%(binary) -f %(ledger-file) reg")
        ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
@@ -1022,6 +1007,10 @@ absolute path. Finally load eglot."
 
 (gawmk/leader-key
   "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+  "ll" '((lambda ()
+	   (interactive)
+	   (find-file (expand-file-name "~/sync/docs/finance/ledger.ledger")))
+	 :which-key "open ledger")
   "lr" '(ledger-report :which-key "generate a ledger report"))
 
 (use-package auctex
@@ -1149,5 +1138,7 @@ absolute path. Finally load eglot."
 (defun my-python-noindent-docstring (&optional _previous)
   (if (eq (car (python-indent-context)) :inside-docstring)
       'noindent))
+
+(use-package ein)
 
 (advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)

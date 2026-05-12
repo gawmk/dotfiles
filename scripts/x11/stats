@@ -1,5 +1,4 @@
 #!/bin/bash
-
 mem=$(free -h | grep Mem: | awk '{print $3}')
 temp=$(cat /sys/class/thermal/thermal_zone0/temp)
 

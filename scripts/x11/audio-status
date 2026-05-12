@@ -1,5 +1,9 @@
 #!/bin/bash
-
+case $BLOCK_BUTTON in
+    1) pavucontrol ;;          # left click
+esac
+# temporarily add this to audio-status, then click it
+echo "$BLOCK_BUTTON" > /tmp/block_test
 out=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
 
 if echo "$out" | grep -q '\[MUTED\]'; then

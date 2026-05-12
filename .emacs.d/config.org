@@ -98,11 +98,6 @@ Where to store backups and some helpful packages.
 
   (add-to-list 'exec-path "~/.local/bin/")
 
-  (use-package exec-path-from-shell)
-  (setq exec-path-from-shell-arguments nil)
-  (setq exec-path-from-shell-debug t)
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
   (setq global-auto-revert-non-file-buffers 1)
   (global-auto-revert-mode 1)
 
@@ -122,15 +117,6 @@ Where to store backups and some helpful packages.
     ([remap describe-variable] . helpful-variable)
     ([remap describe-key]      . helpful-key))
 
-#+end_src
-** Auth
-#+begin_src emacs-lisp
-  ;; daemon
-  (require 'server)
-  (unless (server-running-p)
-    (server-start))
-  ;; ask for pass without a window
-  (setq epg-pinentry-mode 'loopback)
 #+end_src
 * Basic UI config
 -----
@@ -260,11 +246,6 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
     ;; allow for shorter bindings -- e.g., just using things like nmap alone without general-* prefix
     (general-evil-setup t)
 
-    ;; To automatically prevent Key sequence starts with a non-prefix key errors without the need to
-    ;; explicitly unbind non-prefix keys, you can add (general-auto-unbind-keys) to your configuration
-    ;; file. This will advise define-key to unbind any bound subsequence of the KEY. Currently, this
-    ;; will only have an effect for general.el key definers. The advice can later be removed with
-    ;; (general-auto-unbind-keys t).
     (general-auto-unbind-keys)
     (general-create-definer gawmk/leader-key
       :states '(normal visual insert emacs)
@@ -277,7 +258,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
 
     (gawmk/leader-key
       "mc" '(compile :which-key "compile")
-      "tt" '(vterm :which-key "launch and rename vterm")
+      "tt" '(launch-vterm :which-key "launch and rename vterm")
       "ff" '(find-file :which-key "find file")
       "rf" '(consult-recent-file :which-key "open recent file")
       "hf" '(describe-function :which-key "describe function")
@@ -625,6 +606,7 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
                                   ("opus" . "mpv")
     				("docx" . "libreoffice")
     				("xls" . "libreoffice")
+    				("ods" . "libreoffice")
     				("xlsx" . "libreoffice"))))
   (use-package dired-hide-dotfiles
     :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -740,8 +722,8 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
   (use-package org-download
     :config
     (setq org-download-heading-lvl nil)
-    (setq org-download-screenshot-method "grim -g \"$(slurp)\" %s")
     (setq org-download-method 'directory)
+    (setq org-download-screenshot-method "flameshot gui -r > %s")
     (setq-default org-download-image-dir "./img"))
 
   (require 'org-download)
@@ -1169,6 +1151,7 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     :config
     (setq ledger-reports
         '(("net" "ledger -f ledger.ledger bal ^assets ^liabilities")
+         ("fast" "ledger -f ledger.ledger bal ^assets:checking ^liabilities --collapse")
          ("bal" "%(binary) -f %(ledger-file) bal")
          ("reg" "%(binary) -f %(ledger-file) reg")
          ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
@@ -1177,6 +1160,10 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
   (gawmk/leader-key
     "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+    "ll" '((lambda ()
+  	   (interactive)
+  	   (find-file (expand-file-name "~/sync/docs/finance/ledger.ledger")))
+  	 :which-key "open ledger")
     "lr" '(ledger-report :which-key "generate a ledger report"))
 #+end_src
 * LaTeX
@@ -1320,6 +1307,8 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
   (defun my-python-noindent-docstring (&optional _previous)
     (if (eq (car (python-indent-context)) :inside-docstring)
         'noindent))
+
+  (use-package ein)
 
   (advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)
 #+end_src
