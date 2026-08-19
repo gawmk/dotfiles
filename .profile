@@ -17,8 +17,9 @@ export EDITOR="vim"
 export LEDGER_FILE="ledger.ledger"
 export R_HOME="/usr/lib/R"
 export XDG_CURRENT_DESKTOP="sway"
-export BROWSER="/home/gawmk/.local/bin/qutebrowser"
+export BROWSER="/usr/bin/firefox"
 export MOZ_ENABLE_WAYLAND=1
+export GTK_THEME="Gruvbox-Material-Dark"
 
 # ssh-agent
 eval $(ssh-agent -s)

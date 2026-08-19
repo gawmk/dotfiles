@@ -813,7 +813,7 @@ or go back to just one window (by deleting all but the selected window)."
         org-caldav-calendar-id "6cdce643-20cd-4e68-3093-c8f5dd2306a4"
         org-caldav-days-in-past 90
         org-icalendar-timezone "Europe/Warsaw"
-
+	org-caldav-sync-direction 'cal->org
 	org-caldav-files nil 
         org-caldav-inbox "~/sync/org/calendar.org"))
 
@@ -905,6 +905,9 @@ absolute path. Finally load eglot."
 
 (gawmk/leader-key
   "ep" '(pandoc-main-hydra/body :which-key "pandoc export dispatcher")
+  "pa" '(pdf-annot-add-markup-annotation :which-key "add pdf annotation")
+  "pac" '(pdf-annot-edit-contents-commit :which-key "")
+  "paa" '(pdf-annot-edit-contents-abort :which-key "")
   "eo" '(org-export-dispatch :which-key "org export dispatcher"))
 
 (use-package pdf-tools
@@ -988,29 +991,32 @@ absolute path. Finally load eglot."
   (setq text-mode-ispell-word-completion nil)
 
 (use-package ledger-mode
-  :defer t
-  :mode ("\\.ledger.gpg\\'"
-         "\\.ledger\\'")
   :custom
-  (ledger-clear-whole-transactions t)
-  (ledger-report-use-native-highlighting t)
-  (ledger-report-use-header-line t)
-  :config
+  ((ledger-binary-path "hledger")
+   (ledger-mode-should-check-version nil)
+   (ledger-report-auto-width nil)
+   (ledger-report-links-in-register nil)
+   (ledger-report-native-highlighting-arguments '("--color=always")))
+  :mode ("\\.hledger\\'" "\\.ledger\\'"))
+
+
+(setq ledger-binary-path "hledger.sh")
+(setq ledger-default-date-string "%Y-%m-%d")
+
+
   (setq ledger-reports
-      '(("net" "ledger -f ledger.ledger bal ^assets ^liabilities")
-       ("fast" "ledger -f ledger.ledger bal ^assets:checking ^liabilities --collapse")
-       ("bal" "%(binary) -f %(ledger-file) bal")
-       ("reg" "%(binary) -f %(ledger-file) reg")
-       ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-       ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+       '(("net" "%(binary) bs not:equity not:investments")
+       ("budget" "%(binary) bal --budget -p thismonth cur:CHF --tree expenses")
+       ("bal" "%(binary) bal")))
 
 
 (gawmk/leader-key
   "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+  "le" '(ledger-report-edit-report :which-key "edit a running report")
   "ll" '((lambda ()
-	   (interactive)
-	   (find-file (expand-file-name "~/sync/docs/finance/ledger.ledger")))
-	 :which-key "open ledger")
+    	   (interactive)
+    	   (find-file (expand-file-name "~/sync/docs/finance/ledger.ledger")))
+    	 :which-key "open ledger")
   "lr" '(ledger-report :which-key "generate a ledger report"))
 
 (use-package auctex
@@ -1142,3 +1148,15 @@ absolute path. Finally load eglot."
 (use-package ein)
 
 (advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(copilot org-mode twen-twen-tw)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

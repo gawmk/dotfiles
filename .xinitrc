@@ -3,20 +3,25 @@
 setxkbmap -option ctrl:nocaps
 
 ### MOUSE ###
-xinput set-prop "HP HP 430 Mouse" "libinput Accel Profile Enabled" 0, 1
-xinput set-prop "HP HP 430 Mouse" "libinput Accel Speed" -0.1
+xinput set-prop "pointer:HP HP 430 Mouse" "libinput Accel Profile Enabled" 0 1
+xinput set-prop "pointer:HP HP 430 Mouse" "libinput Accel Speed" -0.1
 
-xinput set-prop "Razer Razer DeathAdder V2" "libinput Accel Profile Enabled" 0, 1
-xinput set-prop "Razer Razer DeathAdder V2" "libinput Accel Speed" -0.3
+xinput set-prop "pointer:HP 430 Wireless Mouse" "libinput Accel Profile Enabled" 0 1
+xinput set-prop "pointer:HP 430 Wireless Mouse" "libinput Accel Speed" -0.1
 
-xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Accel Profile Enabled" 0, 1
-xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Accel Speed" 1
+
+xinput set-prop "pointer:Razer Razer DeathAdder V2" "libinput Accel Profile Enabled" 0 1
+xinput set-prop "pointer:Razer Razer DeathAdder V2" "libinput Accel Speed" 0.4
+
+xinput set-prop "pointer:SynPS/2 Synaptics TouchPad" "libinput Accel Profile Enabled" 0 1
+xinput set-prop "pointer:SynPS/2 Synaptics TouchPad" "libinput Accel Speed" 1
 
 ### MISC ###
 xset -b #sysbell
 xrdb -merge ~/.Xresources &
 lxpolkit &
 xss-lock -- slock &
+flameshot &
 
 ### VISUAL ###
 redshift -l 47.36:8.55 -t 6500K:3500K &

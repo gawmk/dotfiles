@@ -927,11 +927,15 @@ First and foremost - modify kb esc so that it does not kill the current buffer.
           org-caldav-calendar-id "6cdce643-20cd-4e68-3093-c8f5dd2306a4"
           org-caldav-days-in-past 90
           org-icalendar-timezone "Europe/Warsaw"
-
+  	org-caldav-sync-direction 'cal->org
   	org-caldav-files nil 
           org-caldav-inbox "~/sync/org/calendar.org"))
 
 #+end_src
+
+#+RESULTS:
+: t
+
 **  Babel
 #+begin_src emacs-lisp
   (setq org-babel-python-command "python3")
@@ -1040,6 +1044,9 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
   (gawmk/leader-key
     "ep" '(pandoc-main-hydra/body :which-key "pandoc export dispatcher")
+    "pa" '(pdf-annot-add-markup-annotation :which-key "add pdf annotation")
+    "pac" '(pdf-annot-edit-contents-commit :which-key "")
+    "paa" '(pdf-annot-edit-contents-abort :which-key "")
     "eo" '(org-export-dispatch :which-key "org export dispatcher"))
 
   (use-package pdf-tools
@@ -1141,29 +1148,32 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 * Ledger-mode
 #+begin_src emacs-lisp
   (use-package ledger-mode
-    :defer t
-    :mode ("\\.ledger.gpg\\'"
-           "\\.ledger\\'")
     :custom
-    (ledger-clear-whole-transactions t)
-    (ledger-report-use-native-highlighting t)
-    (ledger-report-use-header-line t)
-    :config
+    ((ledger-binary-path "hledger")
+     (ledger-mode-should-check-version nil)
+     (ledger-report-auto-width nil)
+     (ledger-report-links-in-register nil)
+     (ledger-report-native-highlighting-arguments '("--color=always")))
+    :mode ("\\.hledger\\'" "\\.ledger\\'"))
+
+
+  (setq ledger-binary-path "hledger.sh")
+  (setq ledger-default-date-string "%Y-%m-%d")
+
+
     (setq ledger-reports
-        '(("net" "ledger -f ledger.ledger bal ^assets ^liabilities")
-         ("fast" "ledger -f ledger.ledger bal ^assets:checking ^liabilities --collapse")
-         ("bal" "%(binary) -f %(ledger-file) bal")
-         ("reg" "%(binary) -f %(ledger-file) reg")
-         ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-         ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+         '(("net" "%(binary) bs not:equity not:investments")
+         ("budget" "%(binary) bal --budget -p thismonth cur:CHF --tree expenses")
+         ("bal" "%(binary) bal")))
 
 
   (gawmk/leader-key
     "la" '(ledger-add-transaction :which-key "add a ledger transaction")
+    "le" '(ledger-report-edit-report :which-key "edit a running report")
     "ll" '((lambda ()
-  	   (interactive)
-  	   (find-file (expand-file-name "~/sync/docs/finance/ledger.ledger")))
-  	 :which-key "open ledger")
+      	   (interactive)
+      	   (find-file (expand-file-name "~/sync/docs/finance/ledger.ledger")))
+      	 :which-key "open ledger")
     "lr" '(ledger-report :which-key "generate a ledger report"))
 #+end_src
 * LaTeX

@@ -124,6 +124,8 @@ alias imv='imv-wayland'
 alias cpustat='auto-cpufreq --stats'
 alias sysuspend='systemctl suspend && lock'
 alias vpn='openvpn3'
+alias fd='fdfind'
+alias e='emacsclient'
 alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 
 
@@ -161,3 +163,7 @@ esac
 
 # Created by `pipx` on 2025-05-21 09:14:18
 export PATH="$PATH:/home/gawmk/.local/bin"
+. "$HOME/.cargo/env"
+
+# opencode
+export PATH=/home/gawmk/.opencode/bin:$PATH
