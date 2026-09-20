@@ -131,39 +131,11 @@ alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 
 # vars
 # gurobi
-export GRB_LICENSE_FILE=/opt/gurobi1202/linux64/gurobi.lic
-export GUROBI_HOME="/opt/gurobi1201/linux64"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
-
 
 # starship
 if ! [ $TERM = 'dumb' ]; then
     eval "$(starship init bash)"
 fi
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# >>> juliaup initialize >>>
-
-# !! Contents within this block are managed by juliaup !!
-
-case ":$PATH:" in
-    *:/home/gawmk/.juliaup/bin:*)
-        ;;
-
-    *)
-        export PATH=/home/gawmk/.juliaup/bin${PATH:+:${PATH}}
-        ;;
-esac
-
-# <<< juliaup initialize <<<
-
-# Created by `pipx` on 2025-05-21 09:14:18
-export PATH="$PATH:/home/gawmk/.local/bin"
-. "$HOME/.cargo/env"
-
-# opencode
-export PATH=/home/gawmk/.opencode/bin:$PATH
