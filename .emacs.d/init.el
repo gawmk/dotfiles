@@ -901,6 +901,37 @@ absolute path. Finally load eglot."
   "mg" '(magit-status :which-key "magit status pane")
   "cmg" '(magit-clone :which-key "clone a repository"))
 
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)      ; GitHub flavor for READMEs
+         ("\\.md\\'"       . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :custom
+  ;; links
+  (markdown-hide-urls t)                    ; [text](…) collapses the URL
+  (markdown-url-compose-char "∞")
+  ;; rendering
+  (markdown-fontify-code-blocks-natively t) ; syntax-highlight fenced blocks
+  (markdown-header-scaling t)
+  (markdown-enable-math t)
+  (markdown-asymmetric-header t)            ; ## Foo, not ## Foo ##
+  (markdown-nested-imenu-heading-index t)
+  ;; images
+  (markdown-max-image-size '(800 . nil))    ; scale down wide images
+  (markdown-display-remote-images nil)      ; t = fetches over network on open
+  :hook (
+         (markdown-mode . gawmk/markdown-setup)))
+
+(defun gawmk/markdown-refresh-images ()
+  "Redisplay inline images, avoiding duplicate overlays."
+  (when (display-graphic-p)
+    (markdown-remove-inline-images)
+    (markdown-display-inline-images)))
+
+(defun gawmk/markdown-setup ()
+  (gawmk/markdown-refresh-images)
+  (add-hook 'after-save-hook #'gawmk/markdown-refresh-images nil t))
+
 (use-package pandoc-mode)
 
 (gawmk/leader-key
@@ -1148,15 +1179,3 @@ absolute path. Finally load eglot."
 (use-package ein)
 
 (advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(copilot org-mode twen-twen-tw)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
