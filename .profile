@@ -26,9 +26,6 @@ if [[ -f "usr/bin/imwheel" ]]; then
     imwheel
 fi
 
-# remove bell sound
-sudo rmmod pcspkr
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
