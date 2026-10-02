@@ -10,15 +10,11 @@
 
 # ENV
 
-export PATH="/home/gawmk/.juliaup/bin:/home/gawmk/.sdkman/candidates/maven/current/bin:/home/gawmk/.sdkman/candidates/gradle/current/bin:/home/gawmk/.cargo/bin:/home/gawmk/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/gawmk/.local/bin:/home/gawmk/.local/bin" 
-export _JAVA_AWT_WM_NONREPARENTING=1
+export PATH="/home/gawmk/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/gawmk/.local/bin:/home/gawmk/.local/bin" 
 export SHELL="/bin/bash"
 export EDITOR="vim"
 export LEDGER_FILE="ledger.ledger"
-export R_HOME="/usr/lib/R"
-export XDG_CURRENT_DESKTOP="sway"
 export BROWSER="/usr/bin/firefox"
-export MOZ_ENABLE_WAYLAND=1
 export GTK_THEME="Gruvbox-Material-Dark"
 
 # ssh-agent
@@ -50,25 +46,3 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-# cargo
-. "$HOME/.cargo/env"
-
-
-
-# >>> juliaup initialize >>>
-
-# !! Contents within this block are managed by juliaup !!
-
-case ":$PATH:" in
-    *:/home/gawmk/.juliaup/bin:*)
-        ;;
-
-    *)
-        export PATH=/home/gawmk/.juliaup/bin${PATH:+:${PATH}}
-        ;;
-esac
-
-# <<< juliaup initialize <<<
-
-# Created by `pipx` on 2025-05-21 09:14:18
-export PATH="$PATH:/home/gawmk/.local/bin"

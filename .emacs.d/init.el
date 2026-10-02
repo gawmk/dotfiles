@@ -1006,7 +1006,7 @@ absolute path. Finally load eglot."
 
   (setq ledger-reports
        '(("net" "%(binary) bs not:equity not:investments")
-       ("budget" "%(binary) bal --budget -p thismonth cur:CHF --tree expenses")
+       ("budget" "%(binary) bal --budget -p thismonth -X CHF --tree expenses --infer-market-prices")
        ("bal" "%(binary) bal")))
 
 
@@ -1153,7 +1153,7 @@ absolute path. Finally load eglot."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(copilot org-mode twen-twen-tw)))
+ '(safe-local-variable-directories '("/home/gawmk/projects/ANALizy/")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

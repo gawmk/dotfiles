@@ -1163,7 +1163,7 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
 
     (setq ledger-reports
          '(("net" "%(binary) bs not:equity not:investments")
-         ("budget" "%(binary) bal --budget -p thismonth cur:CHF --tree expenses")
+         ("budget" "%(binary) bal --budget -p thismonth -X CHF --tree expenses --infer-market-prices")
          ("bal" "%(binary) bal")))
 
 

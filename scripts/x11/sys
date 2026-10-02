@@ -1,11 +1,36 @@
 #!/bin/bash
 
-case "$(printf "lock\nkill\nzzz\nreboot\nshutdown\nwallpaper" | dmenu -i -c -l 6)" in
-        lock) slock ;;
-	kill) ps -u "$USER" -o pid,comm,%cpu,%mem | dmenu -i -c -l 10 -p Kill: | awk '{print $1}' | xargs -r kill ;;
+int="eDP"
+
+disp() {
+	# first connected output that isn't the laptop panel
+	ext=$(xrandr -q | awk -v i="$int" '$2 == "connected" && $1 != i {print $1; exit}')
+
+	# nothing plugged in: reset to laptop only
+	[ -z "$ext" ] && { xrandr --auto; exit 0; }
+
+	case "$(printf "laptop\nexternal\nmirror\nright\nleft" | dmenu -i -c -l 5 -p "Display ($ext):")" in
+		laptop)   xrandr --output "$int" --auto --primary --output "$ext" --off ;;
+		external) xrandr --output "$ext" --auto --primary --output "$int" --off ;;
+		mirror)   xrandr --output "$int" --auto --primary --output "$ext" --auto --same-as "$int" ;;
+		right)    xrandr --output "$int" --auto --primary --output "$ext" --auto --right-of "$int" ;;
+		left)     xrandr --output "$int" --auto --primary --output "$ext" --auto --left-of "$int" ;;
+		*) exit 1 ;;
+	esac
+
+	# re-apply wallpaper after geometry changes (if you use feh)
+	[ -x "$HOME/.fehbg" ] && "$HOME/.fehbg"
+}
+
+case "$(printf "lock\nkill\nnet\nzzz\nreboot\nshutdown\nwallpaper\nbat\ndisp" | dmenu -i -c -l 9)" in
+	lock) slock ;;
+	kill) ps -u "$USER" --no-headers -o pid,comm,%cpu,%mem | dmenu -i -c -l 10 -p Kill: | awk '{print $1}' | xargs -r kill ;;
+	net) networkmanager_dmenu ;;
 	zzz) slock systemctl suspend -i ;;
 	reboot) systemctl reboot -i ;;
-	shutdown) sudo systemctl poweroff ;;
-	wallpaper) bg-switch ;;
+	shutdown) systemctl poweroff -i ;;
+	wallpaper) "$HOME/scripts/x11/bg-switch" ;;
+	bat) upower -i /org/freedesktop/UPower/devices/battery_BAT0 | dmenu -i -c -l 50 ;;
+	disp) disp ;;
 	*) exit 1 ;;
 esac
