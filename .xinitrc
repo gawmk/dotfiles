@@ -3,24 +3,13 @@
 setxkbmap -option ctrl:nocaps
 
 ### MOUSE ###
-xinput set-prop "pointer:HP HP 430 Mouse" "libinput Accel Profile Enabled" 0 1
-xinput set-prop "pointer:HP HP 430 Mouse" "libinput Accel Speed" -0.1
-
-xinput set-prop "pointer:HP 430 Wireless Mouse" "libinput Accel Profile Enabled" 0 1
-xinput set-prop "pointer:HP 430 Wireless Mouse" "libinput Accel Speed" -0.1
-
-
-xinput set-prop "pointer:Razer Razer DeathAdder V2" "libinput Accel Profile Enabled" 0 1
-xinput set-prop "pointer:Razer Razer DeathAdder V2" "libinput Accel Speed" 0.4
-
-xinput set-prop "pointer:SynPS/2 Synaptics TouchPad" "libinput Accel Profile Enabled" 0 1
-xinput set-prop "pointer:SynPS/2 Synaptics TouchPad" "libinput Accel Speed" 1
+xinput set-prop "ELAN0678:00 04F3:3195 Touchpad" "libinput Tapping Enabled" 1
+xinput set-prop "HP 430 Wireless Mouse" "libinput Accel Profile Enabled" 0, 1
+xinput set-prop "HP 430 Wireless Mouse" "libinput Accel Speed" -0.1
 
 ### MISC ###
 xset -b #sysbell
 xrdb -merge ~/.Xresources &
-lxpolkit &
-xss-lock -- slock &
 flameshot &
 
 ### VISUAL ###
@@ -35,6 +24,8 @@ xrandr --output HDMI-A-0  \
 xset -dpms
 xset s off
 xset s noblank
+
+xss-lock -- slock &
 
 ### WM ETC ###
 dunst &

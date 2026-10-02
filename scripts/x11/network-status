@@ -1,10 +1,8 @@
 #!/bin/bash
 case $BLOCK_BUTTON in
-    1) iwgtk ;;          # left click
+    1) st -e nmtui ;;   # left click
 esac
-state=$(iwctl station wlan0 show | grep State | awk '{print $2}')
-
-if [[ "$state" == "connected" ]]; then
+if nmcli -t -f STATE | grep -q "wlp2s0: connected"; then
     echo "net: up"
 else
     echo "net: down"

@@ -13,8 +13,8 @@ if [ -d $BUILDDIR ]; then
 fi
 
 mkdir $BUILDDIR && cd $BUILDDIR
-wget -c https://ftpmirror.gnu.org/emacs/$WGET_FILE
-wget -c https://ftpmirror.gnu.org/emacs/$WGET_FILE_SIG
+wget -c https://mirror.netcologne.de/gnu/emacs/$WGET_FILE
+wget -c https://mirror.netcologne.de/gnu/emacs/$WGET_FILE_SIG
 
 
 gpg --keyserver keyserver.ubuntu.com --recv-keys \
@@ -31,19 +31,14 @@ fi
 
 tar xvfz $WGET_FILE && cd emacs-$VERSION
 
-sudo apt install build-dep emacs
-sudo apt install build-essential
-./configure --with-native-compilation\
-            --with-tree-sitter\
-			--with-gif\
-			--with-png\
-			--with-jpeg\
-			--with-rsvg\
-			--with-tiff\
-			--with-imagemagick\
-			--with-mailutils\
-			--with-modules\
-
+sudo apt install build-dep emacs -y
+sudo apt install build-essential -y
+./configure \
+    --with-native-compilation=aot \
+    --with-tree-sitter \
+    --with-rsvg \
+    --with-modules \
+    --with-x-toolkit=gtk3
 make clean
 make -j8
 ./src/emacs --version
