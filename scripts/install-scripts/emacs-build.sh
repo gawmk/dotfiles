@@ -13,8 +13,8 @@ if [ -d $BUILDDIR ]; then
 fi
 
 mkdir $BUILDDIR && cd $BUILDDIR
-wget -c https://mirror.netcologne.de/gnu/emacs/$WGET_FILE
-wget -c https://mirror.netcologne.de/gnu/emacs/$WGET_FILE_SIG
+wget -c https://ftp.gnu.org/gnu/emacs/$WGET_FILE
+wget -c https://ftp.gnu.org/gnu/emacs/$WGET_FILE_SIG
 
 
 gpg --keyserver keyserver.ubuntu.com --recv-keys \
