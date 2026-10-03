@@ -882,6 +882,7 @@ absolute path. Finally load eglot."
   (with-eval-after-load 'evil
     (evil-set-initial-state 'vterm-mode 'insert))
   (setq vterm-timer-delay 0.01)
+  (setq vterm-max-scrollback 100000)
   (keymap-set vterm-mode-map "<insert-state> C-c" 'vterm--self-insert))
   (keymap-set vterm-mode-map "<insert-state> C-p" 'nil)
   (keymap-set vterm-mode-map "C-p" 'nil)
@@ -959,38 +960,39 @@ absolute path. Finally load eglot."
 (add-hook 'js-json-mode-hook #'json-pretty-print-buffer)
 
 (use-package eglot
-  :config
-  (fset #'jsonrpc--log-event #'ignore)
-  (setq eldoc-echo-area-use-multiline-p nil)
-  (add-hook 'c-mode-hook #'eglot-ensure)
-  (setq eglot-connect-timeout 1000)
-  (add-hook 'python-mode-hook #'eglot-ensure))
+    :config
+    (fset #'jsonrpc--log-event #'ignore)
+    (setq eldoc-echo-area-use-multiline-p nil)
+    (add-hook 'c-mode-hook #'eglot-ensure)
+    (setq eglot-connect-timeout 1000)
+    (add-hook 'python-mode-hook #'eglot-ensure))
 
-(with-eval-after-load 'eglot
-  (setq completion-category-defaults nil)
-  (add-to-list 'eglot-server-programs
-	       '(python-mode . ("pyright-langserver"))
-               '(c-mode . ("ccls"))))
+  (with-eval-after-load 'eglot
+    (setq completion-category-defaults nil)
+    (add-to-list 'eglot-server-programs
+  	       '(python-mode . ("pyright-langserver"))
+                 '(c-mode . ("ccls"))))
 
-;; (use-package eglot-booster
-;;   :after eglot
-;;   :config (eglot-booster-mode))
+  ;; (use-package eglot-booster
+  ;;   :after eglot
+  ;;   :config (eglot-booster-mode))
 
-(use-package eldoc
-  :defer
-  :custom
-  (eldoc-idle-delay 0.1)
-  :config
-  (evil-define-key 'normal eglot-mode-map (kbd "K") 'eldoc)
-  (advice-add 'eldoc-doc-buffer :after
-          (lambda (&rest _)
-            (let ((buf (get-buffer "*eldoc*")))
-              (when (buffer-live-p buf)
-                (select-window (get-buffer-window buf))))))
+  (use-package eldoc
+    :defer
+    :custom
+    (eldoc-idle-delay 0.1)
+    :config
+(with-eval-after-load 'evil-collection-eglot
+  (evil-define-key 'normal eglot-mode-map (kbd "K") #'eldoc))
+    (advice-add 'eldoc-doc-buffer :after
+            (lambda (&rest _)
+              (let ((buf (get-buffer "*eldoc*")))
+                (when (buffer-live-p buf)
+                  (select-window (get-buffer-window buf))))))
 
-  (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
+    (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
 
-(use-package markdown-mode)
+  (use-package markdown-mode)
 
 (use-package devdocs)
 
