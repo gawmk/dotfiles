@@ -1012,6 +1012,7 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     (with-eval-after-load 'evil
       (evil-set-initial-state 'vterm-mode 'insert))
     (setq vterm-timer-delay 0.01)
+    (setq vterm-max-scrollback 100000)
     (keymap-set vterm-mode-map "<insert-state> C-c" 'vterm--self-insert))
     (keymap-set vterm-mode-map "<insert-state> C-p" 'nil)
     (keymap-set vterm-mode-map "C-p" 'nil)
@@ -1132,7 +1133,8 @@ The following function, taken from https://github.com/joaotavora/eglot/issues/21
     :custom
     (eldoc-idle-delay 0.1)
     :config
-    (evil-define-key 'normal eglot-mode-map (kbd "K") 'eldoc)
+(with-eval-after-load 'evil-collection-eglot
+  (evil-define-key 'normal eglot-mode-map (kbd "K") #'eldoc))
     (advice-add 'eldoc-doc-buffer :after
             (lambda (&rest _)
               (let ((buf (get-buffer "*eldoc*")))
