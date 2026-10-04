@@ -548,7 +548,8 @@ such alists."
 ;; refile
 (setq org-refile-targets
       '(("~/sync/org/archive.org" :maxlevel . 2)
-        ("~/sync/org/todo.org" :maxlevel . 2)))
+        ("~/sync/org/todo.org" :maxlevel . 2)
+	    ("~/sync/docs/uni/uni.org" :level . 2)))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -699,6 +700,13 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
          ((org-agenda-compact-blocks nil)))))
 
 ;; agenda keybinds
+
+(gawmk/leader-key
+  "ou" '((lambda ()
+           (interactive)
+           (find-file (expand-file-name "~/sync/org/uni.org")))
+         :which-key "open uni org file"))
+
 (with-eval-after-load 'org-agenda
   (evil-set-initial-state 'org-agenda-mode 'normal)
   (general-def :states 'normal :keymaps 'org-agenda-mode-map
