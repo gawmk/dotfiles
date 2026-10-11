@@ -650,6 +650,11 @@ such alists."
 
 ;; agenda settings
 (setq org-agenda-files '("~/sync/org"))
+(gawmk/leader-key
+  "ou" '((lambda ()
+           (interactive)
+           (find-file (expand-file-name "~/sync/org/uni.org")))
+         :which-key "open ledger"))
 (setq org-agenda-restore-windows-after-quit t)
 (setq org-agenda-window-setup 'only-window)
 
@@ -1108,3 +1113,26 @@ Tangle the block, then set the `org-edit-special' buffer's
   (if (eq (car (python-indent-context)) :inside-docstring)
       'noindent))
 (advice-add 'python-indent-line :before-until #'gawmk/python-noindent-docstring)
+
+;; Lisp IDE: connects Emacs to a live SBCL image
+(use-package sly
+  :ensure t
+  :custom (inferior-lisp-program "sbcl"))
+
+;; Structural editing + readable parens (source buffers only;
+;; paredit in the SLY REPL can interfere with RET)
+(use-package paredit
+  :ensure t
+  :hook (lisp-mode . paredit-mode))
+(use-package rainbow-delimiters
+  :ensure t
+  :hook ((lisp-mode sly-mrepl-mode) . rainbow-delimiters-mode))
+
+;; Shows the keys you press, so the room can follow C-c C-c etc.
+(use-package keycast :ensure t)
+
+;; Keep eglot out of Lisp buffers if you auto-start it elsewhere
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (unless (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
+              (eglot-ensure))))
