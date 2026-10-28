@@ -178,7 +178,7 @@ the region, call `buffer-quit-function', or bury a special buffer."
 
 (gawmk/leader-key
   "mc" '(compile :which-key "compile")
-  "tt" '(gawmk/launch-vterm :which-key "launch and rename vterm")
+  "tt" '(gawmk/launch-ghostel :which-key "launch and rename ghostel")
   "ff" '(find-file :which-key "find file")
   "rf" '(consult-recent-file :which-key "open recent file")
   "hf" '(describe-function :which-key "describe function")
@@ -323,24 +323,10 @@ the region, call `buffer-quit-function', or bury a special buffer."
   (setq consult-narrow-key "<"))
 
 (use-package project)
-(defun gawmk/project-shell ()
-  "Override `project-shell' to launch vterm in the project root."
-  (interactive)
-  (require 'comint)
-  (let* ((default-directory (project-root (project-current t)))
-         (default-project-shell-name (project-prefixed-buffer-name "vterm"))
-         (shell-buffer (get-buffer default-project-shell-name)))
-    (if (and shell-buffer (not current-prefix-arg))
-        (if (comint-check-proc shell-buffer)
-            (pop-to-buffer shell-buffer (bound-and-true-p display-comint-buffer-action))
-          (vterm shell-buffer))
-      (vterm (generate-new-buffer-name default-project-shell-name)))))
-
-(advice-add 'project-shell :override #'gawmk/project-shell)
 
 (gawmk/leader-key
   "pf" '(project-find-file :which-key "find a file in project")
-  "pt" '(project-shell :which-key "launch a term in project root")
+  "pt" '(ghostel-project :which-key "launch a term in project root")
   "pc" '(project-compile :which-key "compile at project root")
   "ps" '(project-search :which-key "search regex in project")
   "pb" '(project-switch-to-buffer :which-key "switch to buffer in project")
@@ -412,11 +398,11 @@ the region, call `buffer-quit-function', or bury a special buffer."
           helpful-mode
           help-mode
           compilation-mode
-          ;; eshell, shell, term and vterm buffers
+          ;; eshell, shell, term and project ghostel buffers
           "^\\*eshell.*\\*$" eshell-mode
           "^\\*shell.*\\*$"  shell-mode
           "^\\*term.*\\*$"   term-mode
-          "^\\*.+-vterm\\*$")))
+          "^\\*.+-ghostel\\*$")))
 
 (popper-mode 1)
 (popper-echo-mode 1)
@@ -815,29 +801,34 @@ Tangle the block, then set the `org-edit-special' buffer's
   "ZZ" #'org-edit-src-exit
   "ZQ" #'org-edit-src-abort)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (use-package vterm                                      ;;
-;;   :config                                               ;;
-;;   (with-eval-after-load 'evil                           ;;
-;;     (evil-set-initial-state 'vterm-mode 'insert))       ;;
-;;   (setq vterm-timer-delay 0.01)                         ;;
-;;   (setq vterm-max-scrollback 100000)                    ;;
-;;   (general-def :states 'insert :keymaps 'vterm-mode-map ;;
-;;     "C-c" #'vterm--self-insert                          ;;
-;;     "C-p" nil                                           ;;
-;;     "C-w" 'gawmk/window-map)                            ;;
-;;   (general-def :keymaps 'vterm-mode-map                 ;;
-;;     "C-p" nil))                                         ;;
-;;                                                         ;;
-;; (defun gawmk/launch-vterm (buffer-name)                 ;;
-;;   "Start a terminal and rename buffer."                 ;;
-;;   (interactive "sbuffer name: ")                        ;;
-;;   (vterm)                                               ;;
-;;   (rename-buffer buffer-name t))                        ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package ghostel
-  :ensure t)
+  :init
+  ;; Keep C-w (`gawmk/window-map') and C-p (popper) out of the terminal.
+  ;; Set before ghostel loads: the semi-char keymap is built from this list.
+  (setq ghostel-keymap-exceptions
+        '("C-c" "C-x" "C-u" "C-h" "M-x" "M-:" "C-\\" "C-w" "C-p"))
+  :config
+  (setq ghostel-timer-delay 0.01)
+  (setq ghostel-max-scrollback (* 64 1024 1024)) ; bytes, not lines
+  (general-def :states 'insert :keymaps 'ghostel-mode-map
+    "C-c" #'ghostel-send-C-c))
+
+(defun gawmk/launch-ghostel (buffer-name)
+  "Start a terminal and rename buffer."
+  (interactive "sbuffer name: ")
+  (ghostel)
+  (rename-buffer buffer-name t))
+
+;; Also makes `ghostel-mode' start in insert state (`evil-ghostel-initial-state').
+(use-package evil-ghostel
+  :after (evil ghostel)
+  :hook (ghostel-mode . evil-ghostel-mode)
+  :config
+  ;; evil-ghostel passes C-p/C-w to the shell in insert state, and evil's
+  ;; keymaps take precedence over the `override' map, so unbind them here.
+  (general-def :states 'insert :keymaps 'evil-ghostel-mode-map
+    "C-p" nil
+    "C-w" nil))
 
 (use-package magit)
 (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
@@ -1149,3 +1140,6 @@ Tangle the block, then set the `org-edit-special' buffer's
           (lambda ()
             (unless (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
               (eglot-ensure))))
+
+(dolist (hook '(lisp-mode-hook emacs-lisp-mode-hook))
+(add-hook hook (lambda () (setq indent-tabs-mode nil))))

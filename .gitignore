@@ -17,3 +17,4 @@
 /.config/nwg-look/
 .emacs.d/auto-save-list/
 
+lazy-lock.json
