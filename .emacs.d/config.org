@@ -1317,26 +1317,29 @@ allows for editing an org code block with eglot support.
 
 * Lisp
 #+begin_src emacs-lisp
-;; Lisp IDE: connects Emacs to a live SBCL image
-(use-package sly
-  :ensure t
-  :custom (inferior-lisp-program "sbcl"))
+  ;; Lisp IDE: connects Emacs to a live SBCL image
+  (use-package sly
+    :ensure t
+    :custom (inferior-lisp-program "sbcl"))
 
-;; Structural editing + readable parens (source buffers only;
-;; paredit in the SLY REPL can interfere with RET)
-(use-package paredit
-  :ensure t
-  :hook (lisp-mode . paredit-mode))
-(use-package rainbow-delimiters
-  :ensure t
-  :hook ((lisp-mode sly-mrepl-mode) . rainbow-delimiters-mode))
+  ;; Structural editing + readable parens (source buffers only;
+  ;; paredit in the SLY REPL can interfere with RET)
+  (use-package paredit
+    :ensure t
+    :hook (lisp-mode . paredit-mode))
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook ((lisp-mode sly-mrepl-mode) . rainbow-delimiters-mode))
 
-;; Shows the keys you press, so the room can follow C-c C-c etc.
-(use-package keycast :ensure t)
+  ;; Shows the keys you press, so the room can follow C-c C-c etc.
+  (use-package keycast :ensure t)
 
-;; Keep eglot out of Lisp buffers if you auto-start it elsewhere
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (unless (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
-              (eglot-ensure))))
+  ;; Keep eglot out of Lisp buffers if you auto-start it elsewhere
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (unless (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
+                (eglot-ensure))))
+
+  (dolist (hook '(lisp-mode-hook emacs-lisp-mode-hook))
+  (add-hook hook (lambda () (setq indent-tabs-mode nil))))
 #+end_src

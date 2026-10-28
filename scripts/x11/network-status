@@ -1,8 +1,12 @@
 #!/bin/bash
+<<<<<<< Updated upstream
 case $BLOCK_BUTTON in
     1) st -e nmtui ;;   # left click
 esac
 if nmcli -t -f STATE | grep -q "wlp2s0: connected"; then
+=======
+if nmcli | grep -q "wlan0: connected"; then
+>>>>>>> Stashed changes
     echo "net: up"
 else
     echo "net: down"

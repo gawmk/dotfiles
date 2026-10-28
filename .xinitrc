@@ -1,7 +1,7 @@
 
 ### KEYBOARD ###
 setxkbmap -option ctrl:nocaps
-
+setxkbmap pl
 ### MOUSE ###
 xinput set-prop "ELAN0678:00 04F3:3195 Touchpad" "libinput Tapping Enabled" 1
 xinput set-prop "HP 430 Wireless Mouse" "libinput Accel Profile Enabled" 0, 1
@@ -17,7 +17,7 @@ redshift -l 47.36:8.55 -t 6500K:3500K &
 feh --bg-scale ~/sync/multimedia/pics/wallpapers/forest.jpg &
 
 ### MONITORS ###
-xrandr --output HDMI-A-0  \
+xrandr --output HDMI-A-1  \
     --mode 2560x1440 \
     --rate 120 &
 

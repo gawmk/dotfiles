@@ -1144,3 +1144,6 @@ Tangle the block, then set the `org-edit-special' buffer's
           (lambda ()
             (unless (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
               (eglot-ensure))))
+
+(dolist (hook '(lisp-mode-hook emacs-lisp-mode-hook))
+(add-hook hook (lambda () (setq indent-tabs-mode nil))))

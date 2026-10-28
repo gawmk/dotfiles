@@ -7,8 +7,10 @@
 
 SCRIPTS=""
 
-if [ -f "/etc/debian_version" ]; then
+#!/bin/bash
+set -euo pipefail
 
+<<<<<<< Updated upstream
   apt update
   apt install stow sway xdg-desktop-portal-wlr adduser alsa-utils cmake git systemd-resolved hledger ledger \
       cmatrix cowsay fd-find fonts-font-awesome fzf wl-clipboard \
@@ -18,6 +20,68 @@ if [ -f "/etc/debian_version" ]; then
       unzip usbutils wlsunset zathura zip libreoffice pipewire wireplumber pavucontrol flatpak \
       -y
 curl -sS https://starship.rs/install.sh | sh
+=======
+# --- Package list (distro-agnostic names) ---
+PACKAGES=(
+  # wm / desktop
+  sway waybar tofi mako swaylock swayidle swaybg wlsunset
+  xdg-desktop-portal-wlr
+
+  # utilities
+  stow git curl tar unzip zip sudo grep sed
+  fzf ripgrep fd grim slurp wl-clipboard imagemagick
+
+  # terminal / apps
+  kitty imv zathura gimp libreoffice thunderbird
+
+  # audio / bluetooth
+  pipewire wireplumber pavucontrol alsa-utils
+  bluez libspa-bluetooth
+
+  # networking
+  iwd iwgtk rfkill
+
+  # services
+  syncthing cron
+
+  # dev
+  gcc python3
+
+  # fonts
+  font-awesome
+
+  # misc
+  gpg-agent libnotify usbutils flatpak
+  cmatrix cowsay ledger rubber
+)
+
+# --- Install ---
+if [ -f /etc/debian_version ]; then
+  echo "Detected Debian/Ubuntu"
+  sudo apt update
+  sudo apt install -y $PACKAGES
+
+elif [ -f /usr/bin/pacman ]; then
+  echo "Detected Arch"
+  sudo pacman -Syu --needed --noconfirm $PACKAGES
+
+else
+  echo "Unsupported distro"
+  exit 1
+fi
+
+# --- Fonts ---
+echo "Installing Iosevka Comfy..."
+cd ~
+git clone --depth 1 https://github.com/gawmk/iosevka-comfy-patched
+sudo mv iosevka-comfy-patched/iosevka* /usr/share/fonts/
+fc-cache -f
+rm -rf iosevka-comfy-patched
+
+echo "Done."
+
+#curl -sS https://starship.rs/install.sh | sh
+>>>>>>> Stashed changes
   # TO INSTALL:
   # auto-cpufreq, build emacs, ledger, configure syncthing, iwgtk
   read -p "Should I install emacs? [y/n]: "

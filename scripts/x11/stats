@@ -3,6 +3,8 @@ mem=$(free -h | grep Mem: | awk '{print $3}')
 temp=$(cat /sys/class/thermal/thermal_zone0/temp)
 
 temp=$(echo "$temp / 1000" | bc)
-
-echo "$temp°C $mem"
+cpu=$(sensors k10temp-pci-* 2>/dev/null | awk '/Tctl/ {print $2}')
+igpu=$(sensors amdgpu-pci-0c00 2>/dev/null | awk '/edge/ {print $2}')
+dgpu=$(sensors amdgpu-pci-0300 2>/dev/null | awk '/edge/ {print $2}')
+echo "cpu: $cpu gpu: $dgpu mem: $mem"
 
