@@ -815,24 +815,29 @@ Tangle the block, then set the `org-edit-special' buffer's
   "ZZ" #'org-edit-src-exit
   "ZQ" #'org-edit-src-abort)
 
-(use-package vterm
-  :config
-  (with-eval-after-load 'evil
-    (evil-set-initial-state 'vterm-mode 'insert))
-  (setq vterm-timer-delay 0.01)
-  (setq vterm-max-scrollback 100000)
-  (general-def :states 'insert :keymaps 'vterm-mode-map
-    "C-c" #'vterm--self-insert
-    "C-p" nil
-    "C-w" 'gawmk/window-map)
-  (general-def :keymaps 'vterm-mode-map
-    "C-p" nil))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (use-package vterm                                      ;;
+;;   :config                                               ;;
+;;   (with-eval-after-load 'evil                           ;;
+;;     (evil-set-initial-state 'vterm-mode 'insert))       ;;
+;;   (setq vterm-timer-delay 0.01)                         ;;
+;;   (setq vterm-max-scrollback 100000)                    ;;
+;;   (general-def :states 'insert :keymaps 'vterm-mode-map ;;
+;;     "C-c" #'vterm--self-insert                          ;;
+;;     "C-p" nil                                           ;;
+;;     "C-w" 'gawmk/window-map)                            ;;
+;;   (general-def :keymaps 'vterm-mode-map                 ;;
+;;     "C-p" nil))                                         ;;
+;;                                                         ;;
+;; (defun gawmk/launch-vterm (buffer-name)                 ;;
+;;   "Start a terminal and rename buffer."                 ;;
+;;   (interactive "sbuffer name: ")                        ;;
+;;   (vterm)                                               ;;
+;;   (rename-buffer buffer-name t))                        ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun gawmk/launch-vterm (buffer-name)
-  "Start a terminal and rename buffer."
-  (interactive "sbuffer name: ")
-  (vterm)
-  (rename-buffer buffer-name t))
+(use-package ghostel
+  :ensure t)
 
 (use-package magit)
 (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
