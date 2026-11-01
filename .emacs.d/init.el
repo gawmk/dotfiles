@@ -178,7 +178,7 @@ the region, call `buffer-quit-function', or bury a special buffer."
 
 (gawmk/leader-key
   "mc" '(compile :which-key "compile")
-  "tt" '(gawmk/launch-ghostel :which-key "launch and rename ghostel")
+  "tt" '(ghostel-new :which-key "launch and rename ghostel")
   "ff" '(find-file :which-key "find file")
   "rf" '(consult-recent-file :which-key "open recent file")
   "hf" '(describe-function :which-key "describe function")
@@ -220,6 +220,11 @@ the region, call `buffer-quit-function', or bury a special buffer."
 
 (use-package evil-collection
   :after evil
+  :init
+  ;; Its terminal ESC toggle defaults to C-c C-z in insert state too, which
+  ;; turns C-c into a prefix in ghostel and shadows `ghostel-send-C-c'.
+  (setq evil-collection-binding-overrides
+        '((term-toggle-escape :state normal)))
   :config
   (evil-collection-init))
 
@@ -637,11 +642,6 @@ such alists."
 
 ;; agenda settings
 (setq org-agenda-files '("~/sync/org"))
-(gawmk/leader-key
-  "ou" '((lambda ()
-           (interactive)
-           (find-file (expand-file-name "~/sync/org/uni.org")))
-         :which-key "open ledger"))
 (setq org-agenda-restore-windows-after-quit t)
 (setq org-agenda-window-setup 'only-window)
 
@@ -846,7 +846,6 @@ Tangle the block, then set the `org-edit-special' buffer's
   (markdown-url-compose-char "∞")
   ;; rendering
   (markdown-fontify-code-blocks-natively t) ; syntax-highlight fenced blocks
-  (markdown-header-scaling t)
   (markdown-enable-math t)
   (markdown-asymmetric-header t)            ; ## Foo, not ## Foo ##
   (markdown-nested-imenu-heading-index t)
@@ -910,30 +909,31 @@ Tangle the block, then set the `org-edit-special' buffer's
   (setq completion-category-defaults nil)
   ;; C uses eglot's default (clangd, then ccls) -- neither is installed yet.
   (add-to-list 'eglot-server-programs
-               '(python-mode . ("pyright-langserver" "--stdio"))))
+               '((python-mode python-ts-mode)
+               . ("basedpyright-langserver" "--stdio"))))
 
-;; (use-package eglot-booster
-;;   :after eglot
-;;   :config (eglot-booster-mode))
+  ;; (use-package eglot-booster
+  ;;   :after eglot
+  ;;   :config (eglot-booster-mode))
 
-(use-package eldoc
-  :defer
-  :custom
-  (eldoc-idle-delay 0.1)
-  :config
-  (with-eval-after-load 'evil-collection-eglot
-    (general-def :states 'normal :keymaps 'eglot-mode-map
-      "K" #'eldoc))
-  ;; Jump into the *eldoc* window after opening it
-  (advice-add 'eldoc-doc-buffer :after
-              (lambda (&rest _)
-                (let ((buf (get-buffer "*eldoc*")))
-                  (when (buffer-live-p buf)
-                    (select-window (get-buffer-window buf))))))
+  (use-package eldoc
+    :defer
+    :custom
+    (eldoc-idle-delay 0.1)
+    :config
+    (with-eval-after-load 'evil-collection-eglot
+      (general-def :states 'normal :keymaps 'eglot-mode-map
+  	"K" #'eldoc))
+    ;; Jump into the *eldoc* window after opening it
+    (advice-add 'eldoc-doc-buffer :after
+  		(lambda (&rest _)
+                  (let ((buf (get-buffer "*eldoc*")))
+                    (when (buffer-live-p buf)
+                      (select-window (get-buffer-window buf))))))
 
-  (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
+    (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1))))
 
-(use-package markdown-mode)
+  (use-package markdown-mode)
 
 (use-package devdocs)
 
