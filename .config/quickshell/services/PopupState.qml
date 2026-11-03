@@ -17,6 +17,13 @@ Singleton {
     function closed(p) { if (current === p) current = null; }
     function register(name, p) { if (name && !registry[name]) registry[name] = p; }
 
+    // X11 can't tell us about clicks outside the popup, so close it when
+    // dwm reports that focus moved instead
+    Connections {
+        target: Dwm
+        function onFocusMoved() { if (root.current) root.current.visible = false; }
+    }
+
     IpcHandler {
         target: "bar"
         function toggle(name: string): void { root.registry[name]?.toggle(); }

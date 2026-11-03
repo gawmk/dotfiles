@@ -15,6 +15,9 @@ Singleton {
     property var tagNames: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
     property bool connected: false
 
+    // focus, tag or monitor changed in dwm; title/layout changes don't count
+    signal focusMoved()
+
     function monitorFor(screen) {
         for (const m of monitors) {
             const g = m.monitor_geometry;
@@ -130,7 +133,13 @@ Singleton {
             "tag_change_event", "client_focus_change_event", "layout_change_event",
             "monitor_focus_change_event", "focused_title_change_event"]
         stdout: SplitParser {
-            onRead: data => { if (data.includes("_event")) debounce.restart(); }
+            onRead: data => {
+                if (!data.includes("_event")) return;
+                debounce.restart();
+                // the user did something in dwm (focused/switched elsewhere)
+                if (/client_focus_change_event|tag_change_event|monitor_focus_change_event/.test(data))
+                    root.focusMoved();
+            }
         }
         onStarted: {
             tagsProc.running = true;
