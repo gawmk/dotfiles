@@ -2,12 +2,16 @@ import QtQuick
 import qs.theme
 import qs.services
 
+// drawn like dwm's drawbar(): text cells, small box for occupied tags,
+// filled when the focused client is on it, inverted colours when urgent.
 Row {
     id: root
     required property var screen
     readonly property var mon: Dwm.monitorFor(screen)
     readonly property var state: mon ? mon.tag_state : ({ selected: 1, occupied: 0, urgent: 0 })
-    spacing: 4
+    readonly property int selTags: Dwm.selTagsFor(mon)
+    readonly property int boxs: Math.floor(Theme.fontHeight / 9)
+    readonly property int boxw: Math.floor(Theme.fontHeight / 6) + 2
 
     Repeater {
         model: Dwm.tagNames
@@ -20,60 +24,55 @@ Row {
             readonly property bool selected: root.state.selected & mask
             readonly property bool occupied: root.state.occupied & mask
             readonly property bool urgent: root.state.urgent & mask
+            readonly property color fgc: selected ? Theme.selFg : Theme.fg
 
-            width: selected ? 30 : 22
-            height: Theme.barHeight - 10
-            anchors.verticalCenter: parent.verticalCenter
-            radius: height / 2
-            color: urgent ? Theme.red
-                 : selected ? Theme.accent
-                 : hover.containsMouse ? Theme.bgHover
-                 : "transparent"
-
-            Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-            Behavior on color { ColorAnimation { duration: 150 } }
+            width: label.implicitWidth + Theme.lrpad
+            height: root.height
+            color: urgent ? fgc : Theme.bg
 
             BarText {
+                id: label
                 anchors.centerIn: parent
                 text: tag.modelData
-                color: tag.selected || tag.urgent ? Theme.bg
-                     : tag.occupied ? Theme.fg
-                     : Theme.fgMuted
+                color: tag.urgent ? Theme.bg : tag.fgc
             }
 
-            // small dot under occupied, unselected tags
             Rectangle {
-                visible: tag.occupied && !tag.selected
-                width: 4; height: 4; radius: 2
-                color: Theme.fgDim
-                anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 1 }
+                visible: tag.occupied
+                x: root.boxs; y: root.boxs
+                width: root.boxw; height: root.boxw
+                color: root.selTags & tag.mask ? (tag.urgent ? Theme.bg : tag.fgc) : "transparent"
+                border.width: 1
+                border.color: tag.urgent ? Theme.bg : tag.fgc
             }
 
             MouseArea {
-                id: hover
                 anchors.fill: parent
-                hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onClicked: e => e.button === Qt.RightButton ? Dwm.toggleView(tag.mask) : Dwm.view(tag.mask)
+                onWheel: e => {
+                    const n = Dwm.tagNames.length;
+                    const cur = Math.log2(root.state.selected & -root.state.selected);
+                    Dwm.view(1 << ((cur + (e.angleDelta.y < 0 ? 1 : -1) + n) % n));
+                }
             }
         }
     }
 
+    // layout symbol: left click = previous layout, right click = monocle (like dwm's buttons)
     BarText {
-        anchors.verticalCenter: parent.verticalCenter
-        leftPadding: 6
+        height: parent.height
+        leftPadding: Theme.lrpad / 2
+        rightPadding: Theme.lrpad / 2
         text: root.mon ? root.mon.layout.symbol.current : ""
-        color: Theme.fgDim
-    }
-
-    // scroll over tags to move between them
-    WheelHandler {
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        onWheel: e => {
-            const n = Dwm.tagNames.length;
-            const cur = Math.log2(root.state.selected & -root.state.selected);
-            const next = (cur + (e.angleDelta.y < 0 ? 1 : -1) + n) % n;
-            Dwm.view(1 << next);
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: e => {
+                if (!root.mon) return;
+                if (e.button === Qt.RightButton) Dwm.setLayout(Dwm.layoutAddress("[M]"));
+                else Dwm.setLayout(root.mon.layout.address.old);
+            }
         }
     }
 }

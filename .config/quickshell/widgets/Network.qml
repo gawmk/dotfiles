@@ -1,63 +1,129 @@
 import Quickshell
+import Quickshell.Io
 import Quickshell.Networking
 import QtQuick
-import QtQuick.Layouts
 import qs.theme
 
-BarButton {
+// "net: up" / "wifi: <ssid>" / "net: down"; popup lists devices and wifi networks
+Segment {
     id: root
     required property var barWindow
 
     readonly property var devices: Networking.devices.values
+    readonly property var wifiDev: devices.find(d => d.type === DeviceType.Wifi) ?? null
+    readonly property var wired: devices.filter(d => d.type === DeviceType.Wired)
     readonly property var active: devices.find(d => d.connected && d.type === DeviceType.Wired)
                                ?? devices.find(d => d.connected) ?? null
-    readonly property var wifiNet: active && active.type === DeviceType.Wifi
-        ? active.networks.values.find(n => n.connected) ?? null : null
-    readonly property real signal: wifiNet ? (wifiNet.signalStrength > 1 ? wifiNet.signalStrength / 100 : wifiNet.signalStrength) : 0
+    readonly property var wifiNet: wifiDev ? wifiDev.networks.values.find(n => n.connected) ?? null : null
 
-    icon: !active ? "󰤮"
-        : active.type === DeviceType.Wired ? "󰈀"
-        : ["󰤟", "󰤢", "󰤥", "󰤨"][Math.min(3, Math.floor(signal * 4))]
-    iconColor: active ? Theme.fg : Theme.red
+    function strength(n) { const s = n.signalStrength; return s > 1 ? s / 100 : s; }
+    function bars(n) {
+        const lvl = Math.ceil(strength(n) * 4);
+        return "▂▄▆█".slice(0, lvl) + "_".repeat(4 - Math.max(0, lvl));
+    }
 
-    onClicked: b => b === Qt.RightButton
-        ? Quickshell.execDetached(["st", "-e", "nmtui"])
-        : popup.visible = !popup.visible
+    text: !active ? "net: down"
+        : active.type === DeviceType.Wifi ? "wifi: " + (wifiNet ? wifiNet.name : "up")
+        : "net: up"
+    color: active ? Theme.fg : Theme.red
+
+    onClicked: b => b === Qt.RightButton ? Quickshell.execDetached(["st", "-e", "nmtui"]) : popup.toggle()
+
+    // wifi password: dmenu grabs the keyboard, which popups can't do on X11
+    property var pskTarget: null
+    property string lastError: ""
+    Process {
+        id: pskPrompt
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const psk = text.replace(/\n$/, "");
+                if (root.pskTarget && psk) root.pskTarget.connectWithPsk(psk);
+            }
+        }
+    }
+    function connect(n) {
+        lastError = "";
+        if (n.known || n.security === WifiSecurityType.Open) { n.connect(); return; }
+        pskTarget = n;
+        pskPrompt.command = ["dmenu", "-P", "-c", "-p", "password for " + n.name + ":"];
+        pskPrompt.running = true;
+    }
 
     BarPopup {
         id: popup
         barWindow: root.barWindow
         anchorItem: root
+        title: "network"
 
-        GridLayout {
-            columns: 2
-            columnSpacing: 24
-            rowSpacing: 6
+        // scan only while the popup is open
+        onVisibleChanged: if (root.wifiDev) root.wifiDev.scannerEnabled = visible
 
-            Repeater {
-                model: root.devices.filter(d => d.type !== DeviceType.None)
-                delegate: BarText {
-                    required property var modelData
-                    Layout.row: index
-                    required property int index
-                    text: (modelData.type === DeviceType.Wifi ? "󰖩  " : "󰈀  ") + modelData.name
-                    color: Theme.fgDim
-                }
+        Repeater {
+            model: root.wired
+            ListRow {
+                required property var modelData
+                text: modelData.name
+                detail: modelData.connected ? "connected" : "disconnected"
+                active: modelData.connected
+                enabled: false
             }
-            Repeater {
-                model: root.devices.filter(d => d.type !== DeviceType.None)
-                delegate: BarText {
-                    required property var modelData
-                    required property int index
-                    Layout.row: index
-                    Layout.column: 1
-                    Layout.alignment: Qt.AlignRight
-                    readonly property var net: modelData.networks.values.find(n => n.connected)
-                    text: modelData.connected ? (net ? net.name : "connected") : "disconnected"
-                    color: modelData.connected ? Theme.green : Theme.fgMuted
+        }
+
+        Item {
+            visible: root.wifiDev !== null
+            width: parent.width; height: wifiLabel.height
+            SectionLabel { id: wifiLabel; text: "wifi" ; width: parent.width - wifiToggle.width - 8 }
+            TextButton {
+                id: wifiToggle
+                anchors { right: parent.right; bottom: parent.bottom }
+                label: Networking.wifiEnabled ? "on" : "off"
+                on: Networking.wifiEnabled
+                onClicked: Networking.wifiEnabled = !Networking.wifiEnabled
+            }
+        }
+
+        Repeater {
+            model: !root.wifiDev || !Networking.wifiEnabled ? [] :
+                root.wifiDev.networks.values.slice()
+                    .sort((a, b) => (b.connected - a.connected) || (b.known - a.known) || (root.strength(b) - root.strength(a)))
+                    .slice(0, 12)
+
+            ListRow {
+                required property var modelData
+                readonly property var net: modelData
+                active: net.connected
+                text: net.name + (net.known && !net.connected ? " *" : "")
+                detail: (net.stateChanging ? "... " : "")
+                    + (net.security !== WifiSecurityType.Open ? "\uf023 " : "  ") + root.bars(net)
+                onClicked: b => {
+                    if (b === Qt.RightButton) { if (net.known) net.forget(); }
+                    else if (net.connected) net.disconnect();
+                    else root.connect(net);
+                }
+                Connections {
+                    target: net
+                    function onConnectionFailed(reason) { root.lastError = net.name + ": " + ConnectionFailReason.toString(reason); }
                 }
             }
         }
-        BarText { text: "right-click: nmtui"; color: Theme.fgMuted; font.pixelSize: Theme.fontSize - 3 }
+
+        BarText {
+            visible: root.lastError !== ""
+            width: parent.width
+            text: root.lastError
+            color: Theme.red
+            wrapMode: Text.Wrap
+        }
+        BarText {
+            visible: root.wifiDev !== null && Networking.wifiEnabled
+            text: "click: (dis)connect · right-click: forget"
+            width: parent.width
+            wrapMode: Text.Wrap
+            color: Theme.dim
+        }
+        Row {
+            topPadding: 6
+            TextButton { label: "nmtui"; onClicked: Quickshell.execDetached(["st", "-e", "nmtui"]) }
+        }
     }
 }

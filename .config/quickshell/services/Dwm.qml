@@ -10,7 +10,8 @@ Singleton {
     id: root
 
     property var monitors: []        // raw get_monitors output
-    property var titles: ({})        // window id -> title
+    property var clients: ({})       // window id -> { name, tags }
+    property var layouts: []         // [{ symbol, address }]
     property var tagNames: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
     property bool connected: false
 
@@ -25,7 +26,13 @@ Singleton {
 
     function titleFor(mon) {
         if (!mon || !mon.clients.selected) return "";
-        return titles[mon.clients.selected] ?? "";
+        return clients[mon.clients.selected]?.name ?? "";
+    }
+
+    // tags of the focused client on this monitor (dwm fills the occupied box for these)
+    function selTagsFor(mon) {
+        if (!mon || !mon.is_selected || !mon.clients.selected) return 0;
+        return clients[mon.clients.selected]?.tags ?? 0;
     }
 
     function run(cmd, arg) {
@@ -33,6 +40,10 @@ Singleton {
     }
     function view(mask)       { run("view", mask); }
     function toggleView(mask) { run("toggleview", mask); }
+    function setLayout(address) { run("setlayoutsafe", address); }
+    function layoutAddress(symbol) {
+        return layouts.find(l => l.symbol === symbol)?.address ?? 0;
+    }
 
     // --- state queries -------------------------------------------------
 
@@ -82,10 +93,10 @@ Singleton {
                 for (const chunk of text.split("\x1e")) {
                     try {
                         const c = JSON.parse(chunk);
-                        t[c.window_id] = c.name;
+                        t[c.window_id] = { name: c.name, tags: c.tags };
                     } catch (e) {}
                 }
-                root.titles = t;
+                root.clients = t;
             }
         }
     }
@@ -96,6 +107,16 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 try { root.tagNames = JSON.parse(text).map(t => t.name); } catch (e) {}
+            }
+        }
+    }
+
+    Process {
+        id: layoutsProc
+        command: ["dwm-msg", "get_layouts"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try { root.layouts = JSON.parse(text); } catch (e) {}
             }
         }
     }
@@ -113,6 +134,7 @@ Singleton {
         }
         onStarted: {
             tagsProc.running = true;
+            layoutsProc.running = true;
             root.refresh();
         }
         onExited: {

@@ -1,80 +1,67 @@
 import Quickshell
 import Quickshell.Services.Pipewire
 import QtQuick
-import QtQuick.Controls
 import qs.theme
 
-BarButton {
+// "vol: 50%" / "vol: mut". scroll = volume, middle = mute, right = pavucontrol
+Segment {
     id: root
     required property var barWindow
 
     readonly property var sink: Pipewire.defaultAudioSink
-    readonly property real volume: sink?.audio?.volume ?? 0
-    readonly property bool muted: sink?.audio?.muted ?? false
+    readonly property var source: Pipewire.defaultAudioSource
+    readonly property var nodes: Pipewire.nodes.values.filter(n => n.audio && !n.isStream)
+    readonly property var sinks: nodes.filter(n => n.isSink)
+    readonly property var sources: nodes.filter(n => !n.isSink)
 
-    PwObjectTracker { objects: [root.sink] }
+    PwObjectTracker { objects: [root.sink, root.source] }
 
-    function setVolume(v) {
-        if (sink?.audio) sink.audio.volume = Math.max(0, Math.min(1.5, v));
-    }
+    function setVol(node, v) { if (node?.audio) node.audio.volume = Math.max(0, Math.min(1.5, v)); }
+    function toggleMute(node) { if (node?.audio) node.audio.muted = !node.audio.muted; }
+    function pct(node) { return Math.round((node?.audio?.volume ?? 0) * 100) + "%"; }
+    function label(n) { return n.nickname || n.description || n.name; }
 
-    icon: muted ? "󰝟" : volume < 0.34 ? "󰕿" : volume < 0.67 ? "󰖀" : "󰕾"
-    iconColor: muted ? Theme.fgMuted : Theme.fg
-    label: Math.round(volume * 100) + "%"
-
+    text: "vol: " + (sink?.audio?.muted ? "mut" : pct(sink))
     onClicked: b => {
         if (b === Qt.RightButton) Quickshell.execDetached(["pavucontrol"]);
-        else if (b === Qt.MiddleButton) { if (sink?.audio) sink.audio.muted = !muted; }
-        else popup.visible = !popup.visible;
+        else if (b === Qt.MiddleButton) toggleMute(sink);
+        else popup.toggle();
     }
-    onWheel: d => setVolume(volume + (d > 0 ? 0.05 : -0.05))
+    onWheel: d => setVol(sink, (sink?.audio?.volume ?? 0) + (d > 0 ? 0.05 : -0.05))
 
     BarPopup {
         id: popup
         barWindow: root.barWindow
         anchorItem: root
+        title: "audio"
 
-        BarText {
-            text: root.sink?.description || root.sink?.name || "No output"
-            color: Theme.fgDim
-            width: 240
-            elide: Text.ElideRight
+        SectionLabel { text: "output" }
+        VolumeLine { node: root.sink }
+        Repeater {
+            model: root.sinks
+            ListRow {
+                required property var modelData
+                text: root.label(modelData)
+                active: modelData === root.sink
+                onClicked: Pipewire.preferredDefaultAudioSink = modelData
+            }
+        }
+
+        SectionLabel { text: "input"; visible: root.sources.length > 0 }
+        VolumeLine { node: root.source; visible: root.source !== null }
+        Repeater {
+            model: root.sources
+            ListRow {
+                required property var modelData
+                text: root.label(modelData)
+                active: modelData === root.source
+                onClicked: Pipewire.preferredDefaultAudioSource = modelData
+            }
         }
 
         Row {
-            spacing: 10
-            BarButton {
-                icon: root.icon
-                iconColor: root.iconColor
-                onClicked: if (root.sink?.audio) root.sink.audio.muted = !root.muted
-            }
-            Slider {
-                id: slider
-                width: 190
-                anchors.verticalCenter: parent.verticalCenter
-                from: 0; to: 1
-                value: root.volume
-                onMoved: root.setVolume(value)
-
-                background: Rectangle {
-                    x: slider.leftPadding
-                    y: slider.topPadding + slider.availableHeight / 2 - height / 2
-                    width: slider.availableWidth; height: 6; radius: 3
-                    color: Theme.bgAlt
-                    Rectangle {
-                        width: slider.visualPosition * parent.width
-                        height: parent.height; radius: 3
-                        color: root.muted ? Theme.fgMuted : Theme.accent
-                    }
-                }
-                handle: Rectangle {
-                    x: slider.leftPadding + slider.visualPosition * (slider.availableWidth - width)
-                    y: slider.topPadding + slider.availableHeight / 2 - height / 2
-                    width: 14; height: 14; radius: 7
-                    color: Theme.fg
-                }
-            }
+            topPadding: 6
+            TextButton { label: "pavucontrol"; onClicked: Quickshell.execDetached(["pavucontrol"]) }
         }
-        BarText { text: "scroll: volume · middle: mute · right: mixer"; color: Theme.fgMuted; font.pixelSize: Theme.fontSize - 3 }
     }
 }

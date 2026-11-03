@@ -7,7 +7,8 @@ import qs.theme
 Row {
     id: root
     required property var barWindow
-    spacing: 6
+    spacing: 4
+    rightPadding: SystemTray.items.values.length ? Theme.lrpad / 2 : 0
 
     Repeater {
         model: SystemTray.items
@@ -15,12 +16,12 @@ Row {
         Item {
             id: item
             required property var modelData
-            width: Theme.iconSize + 4
-            height: Theme.barHeight
+            width: Theme.fontHeight - 2
+            height: root.height
 
             IconImage {
                 anchors.centerIn: parent
-                implicitSize: Theme.iconSize
+                implicitSize: Theme.fontHeight - 4
                 source: item.modelData.icon
             }
 

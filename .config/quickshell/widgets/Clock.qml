@@ -1,64 +1,68 @@
 import Quickshell
 import QtQuick
-import QtQuick.Controls
 import qs.theme
 
-BarButton {
+BarText {
     id: root
     required property var barWindow
 
     SystemClock { id: clock; precision: SystemClock.Minutes }
-    label: Qt.formatDateTime(clock.date, "ddd dd MMM  HH:mm")
-    onClicked: popup.visible = !popup.visible
+    text: Qt.formatDateTime(clock.date, "ddd dd MMM HH:mm")
+
+    MouseArea { anchors.fill: parent; onClicked: popup.toggle() }
 
     BarPopup {
         id: popup
         barWindow: root.barWindow
         anchorItem: root
+        title: Qt.formatDate(month, "MMMM yyyy")
+        name: "clock"
+        implicitWidth: grid.width + pad * 2 + 2
 
         property var month: new Date()
         onVisibleChanged: if (visible) month = new Date(clock.date.getFullYear(), clock.date.getMonth(), 1)
+        function shift(n) { month = new Date(month.getFullYear(), month.getMonth() + n, 1); }
 
-        Item {
-            width: grid.width
-            height: 26
-            BarButton { icon: "󰅁"; anchors.left: parent.left; onClicked: popup.month = new Date(popup.month.getFullYear(), popup.month.getMonth() - 1, 1) }
-            BarText {
-                anchors.centerIn: parent
-                text: Qt.formatDate(popup.month, "MMMM yyyy")
-                color: Theme.accent
-            }
-            BarButton { icon: "󰅂"; anchors.right: parent.right; onClicked: popup.month = new Date(popup.month.getFullYear(), popup.month.getMonth() + 1, 1) }
+        Row {
+            spacing: Theme.lrpad / 2
+            TextButton { label: "<"; onClicked: popup.shift(-1) }
+            TextButton { label: "today"; onClicked: popup.month = new Date(clock.date.getFullYear(), clock.date.getMonth(), 1) }
+            TextButton { label: ">"; onClicked: popup.shift(1) }
         }
 
-        DayOfWeekRow {
-            width: grid.width
-            locale: grid.locale
-            delegate: BarText {
-                required property string shortName
-                text: shortName
-                horizontalAlignment: Text.AlignHCenter
-                color: Theme.fgDim
-            }
-        }
-
-        MonthGrid {
+        Grid {
             id: grid
-            width: 260
-            month: popup.month.getMonth()
-            year: popup.month.getFullYear()
-            locale: Qt.locale("en_GB")   // weeks start on Monday
-            delegate: Rectangle {
-                required property var model
-                readonly property bool today: model.today
-                implicitWidth: 32
-                implicitHeight: 26
-                radius: Theme.radius - 2
-                color: today ? Theme.accent : "transparent"
+            columns: 7
+            readonly property real cell: Theme.fontHeight * 1.6
+            // monday-first grid starting on the week containing the 1st
+            readonly property var start: {
+                const d = new Date(popup.month);
+                d.setDate(1 - ((d.getDay() + 6) % 7));
+                return d;
+            }
+
+            Repeater {
+                model: ["mo", "tu", "we", "th", "fr", "sa", "su"]
                 BarText {
-                    anchors.centerIn: parent
-                    text: model.day
-                    color: today ? Theme.bg : model.month === grid.month ? Theme.fg : Theme.fgMuted
+                    required property string modelData
+                    width: grid.cell; horizontalAlignment: Text.AlignHCenter
+                    text: modelData; color: Theme.dim
+                }
+            }
+            Repeater {
+                model: 42
+                Rectangle {
+                    required property int index
+                    readonly property date day: new Date(grid.start.getFullYear(), grid.start.getMonth(), grid.start.getDate() + index)
+                    readonly property bool today: day.toDateString() === clock.date.toDateString()
+                    readonly property bool inMonth: day.getMonth() === popup.month.getMonth()
+                    width: grid.cell; height: Theme.fontHeight + 2
+                    color: today ? Theme.fg : "transparent"
+                    BarText {
+                        anchors.centerIn: parent
+                        text: parent.day.getDate()
+                        color: parent.today ? Theme.bg : parent.inMonth ? Theme.fg : Theme.border
+                    }
                 }
             }
         }

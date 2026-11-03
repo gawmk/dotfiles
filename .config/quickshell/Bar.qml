@@ -1,6 +1,5 @@
 import Quickshell
 import QtQuick
-import QtQuick.Layouts
 import qs.theme
 import qs.widgets
 
@@ -13,31 +12,34 @@ PanelWindow {
     implicitHeight: Theme.barHeight
     color: Theme.bg
 
-    // left: tags, layout, title
-    RowLayout {
-        anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 8 }
-        spacing: Theme.spacing
-        Tags { screen: bar.screen }
+    // left: tags, layout symbol, title (title stops before the clock)
+    Row {
+        id: left
+        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+        Tags { screen: bar.screen; height: parent.height }
         WindowTitle {
             screen: bar.screen
-            Layout.maximumWidth: bar.width / 2 - 260
+            height: parent.height
+            width: Math.max(0, clock.x - left.x - x - Theme.lrpad)
         }
     }
 
-    // center: clock
+    // centre: date/time
     Clock {
-        anchors.centerIn: parent
+        id: clock
         barWindow: bar
+        anchors.centerIn: parent
+        height: parent.height
     }
 
-    // right: status widgets
-    RowLayout {
-        anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12 }
-        spacing: Theme.spacing
-        Tray { barWindow: bar }
-        Stats { barWindow: bar }
-        Network { barWindow: bar }
-        Audio { barWindow: bar }
-        Battery {}
+    // right: tray + status text
+    Row {
+        anchors { right: parent.right; top: parent.top; bottom: parent.bottom; rightMargin: Theme.lrpad / 2 }
+        Tray { barWindow: bar; height: parent.height }
+        Stats { barWindow: bar; height: parent.height }
+        BluetoothStatus { barWindow: bar; height: parent.height }
+        Network { barWindow: bar; height: parent.height }
+        Audio { barWindow: bar; height: parent.height }
+        Battery { barWindow: bar; height: parent.height }
     }
 }
