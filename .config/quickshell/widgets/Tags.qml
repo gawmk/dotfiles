@@ -26,6 +26,8 @@ Row {
             readonly property bool urgent: root.state.urgent & mask
             readonly property color fgc: selected ? Theme.selFg : Theme.fg
 
+            // like dwm's hide-vacant-tags: only occupied or viewed tags are shown
+            visible: occupied || selected
             width: label.implicitWidth + Theme.lrpad
             height: root.height
             color: urgent ? fgc : Theme.bg
@@ -51,9 +53,12 @@ Row {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onClicked: e => e.button === Qt.RightButton ? Dwm.toggleView(tag.mask) : Dwm.view(tag.mask)
                 onWheel: e => {
-                    const n = Dwm.tagNames.length;
-                    const cur = Math.log2(root.state.selected & -root.state.selected);
-                    Dwm.view(1 << ((cur + (e.angleDelta.y < 0 ? 1 : -1) + n) % n));
+                    // cycle through the visible (occupied or viewed) tags only
+                    const shown = root.state.occupied | root.state.selected;
+                    const idx = [...Array(Dwm.tagNames.length).keys()].filter(i => shown & (1 << i));
+                    const cur = idx.indexOf(Math.log2(root.state.selected & -root.state.selected));
+                    const next = idx[(cur + (e.angleDelta.y < 0 ? 1 : -1) + idx.length) % idx.length];
+                    Dwm.view(1 << next);
                 }
             }
         }
