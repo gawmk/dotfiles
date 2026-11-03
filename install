@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# One-shot setup for a fresh machine (Arch/CachyOS or Debian), safe to re-run.
+#
+#   git clone https://github.com/gawmk/dotfiles ~/dotfiles && ~/dotfiles/install
+#
+# Options:
+#   --no-pkgs     skip package installation
+#   --only STEP   run a single step, e.g. --only link (see install.d/NN-STEP.sh)
+#   --with X      also run install.d/optional/X.sh (emacs-build, ollama); repeatable
+set -euo pipefail
+
+DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export DOTFILES
+. "$DOTFILES/install.d/lib.sh"
+
+NO_PKGS=0 ONLY="" WITH=()
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --no-pkgs) NO_PKGS=1 ;;
+        --only)    ONLY="$2"; shift ;;
+        --with)    WITH+=("$2"); shift ;;
+        -h|--help) sed -n '2,/^[^#]/{/^#/s/^# \{0,1\}//p}' "$0"; exit 0 ;;
+        *) die "unknown option: $1 (try --help)" ;;
+    esac
+    shift
+done
+export NO_PKGS
+
+[ "$(id -u)" -ne 0 ] || die "run as your normal user; sudo is used where needed"
+detect_distro
+log "distro: $DISTRO, host: $(hostname)"
+sudo -v
+
+for step in "$DOTFILES"/install.d/[0-9][0-9]-*.sh; do
+    name="$(basename "$step" .sh)"; name="${name#[0-9][0-9]-}"
+    [ -n "$ONLY" ] && [ "$ONLY" != "$name" ] && continue
+    section "$name"
+    . "$step"
+done
+
+for extra in "${WITH[@]}"; do
+    section "optional: $extra"
+    bash "$DOTFILES/install.d/optional/$extra.sh"
+done
+
+section "done"
+log "start X with: startx"

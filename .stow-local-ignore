@@ -1,0 +1,14 @@
+# replaces stow's default ignore list, so the defaults we need are repeated here
+\.git
+\.gitignore
+\.gitmodules
+\.stow-local-ignore
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+
+# repo tooling, not dotfiles
+^/install$
+^/install\.d
+^/hosts

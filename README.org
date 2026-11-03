@@ -1,2 +1,39 @@
 * dotfiles
-Config files management using Org Mode and GNU Stow.
+dwm/X11 setup shared by an Arch/CachyOS desktop and a Debian laptop, linked into =~= with GNU Stow.
+
+** New machine
+#+begin_src sh
+git clone https://github.com/gawmk/dotfiles ~/dotfiles && ~/dotfiles/install
+#+end_src
+
+Then =startx=. Re-running =./install= is safe; it only does what is missing.
+
+| step         | what it does                                                       |
+|--------------+--------------------------------------------------------------------|
+| =packages=   | pacman / apt from =install.d/packages/{arch,debian}.txt=           |
+| =suckless=   | clones and builds =gawmk/{dwm,st,dmenu}= in =~/source=             |
+| =quickshell= | status bar: pacman on Arch, built from source (X11 only) on Debian |
+| =fonts=      | Iosevka Comfy from =gawmk/iosevka-comfy-patched=                   |
+| =link=       | =stow= the repo into =~= (files in the way go to =~/.dotfiles-backup/=) |
+| =host=       | creates =hosts/$(hostname).sh= from the template if missing        |
+| =services=   | NetworkManager, syncthing (user)                                   |
+
+Options: =--no-pkgs=, =--only <step>= (e.g. =./install --only link=), =--with emacs-build=, =--with ollama=.
+
+** Per-machine settings
+Shared files stay identical everywhere. Anything machine-specific goes in
+=hosts/<hostname>.sh=, which =.profile=, =.xinitrc= and =scripts/x11/bg-switch= source:
+
+#+begin_src sh
+KB_LAYOUT=pl
+WALLPAPER_DIR="$HOME/sync/media/pics/wallpapers"
+host_input()    { xinput set-prop "Some Touchpad" "libinput Tapping Enabled" 1; }
+host_monitors() { xrandr --output HDMI-A-1 --mode 2560x1440 --rate 120; }
+#+end_src
+
+See =hosts/template.sh= for every option.
+
+** Layout
+- everything at the repo root is stowed into =~= except =install=, =install.d/=, =hosts/= (see =.stow-local-ignore=)
+- =.config/quickshell/= — status bar; needs dwm's ipc + anybar patches (in =gawmk/dwm=)
+- dwm/st/dmenu config lives in their own repos; rebuild with =~/source/dwm/recompile=

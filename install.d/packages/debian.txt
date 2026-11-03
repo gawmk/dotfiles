@@ -1,0 +1,18 @@
+# base / build (suckless forks need X headers + yajl for dwm's ipc patch)
+build-essential git stow curl wget unzip zip pkg-config
+libx11-dev libxft-dev libxinerama-dev libfreetype-dev libfontconfig-dev libyajl-dev
+
+# X session
+xorg xinit x11-xserver-utils x11-xkb-utils xinput
+picom dunst libnotify-bin feh redshift flameshot xss-lock suckless-tools xdotool
+
+# bar
+lm-sensors upower
+
+# audio / network
+pipewire pipewire-pulse wireplumber pavucontrol
+network-manager
+
+# apps & cli (emacs: built from source, see --with emacs-build)
+neovim tmux kitty firefox-esr imv zathura
+fzf ripgrep fd-find btop bc starship syncthing
