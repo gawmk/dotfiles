@@ -4,16 +4,16 @@ libx11 libxft libxinerama freetype2 fontconfig yajl
 
 # X session
 xorg-server xorg-xinit xorg-xrandr xorg-xinput xorg-xset xorg-xrdb xorg-xprop xorg-setxkbmap
-picom dunst libnotify feh redshift flameshot xss-lock slock xdotool
+picom dunst libnotify feh redshift flameshot xss-lock slock
 
 # bar
-quickshell lm_sensors upower qt6-svg
+quickshell lm_sensors upower
 
 # audio / network
 pipewire pipewire-pulse wireplumber pavucontrol
 networkmanager
 
 # apps & cli
-emacs neovim tmux kitty firefox imv zathura zathura-pdf-mupdf
+emacs tmux firefox imv zathura zathura-pdf-mupdf
 fzf ripgrep fd btop bc starship syncthing
 ttf-nerd-fonts-symbols
