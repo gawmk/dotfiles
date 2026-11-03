@@ -31,8 +31,7 @@ fi
 
 tar xvfz $WGET_FILE && cd emacs-$VERSION
 
-sudo apt install build-dep emacs -y
-sudo apt install build-essential -y
+sudo pacman -S --needed --noconfirm base-devel gtk3 libgccjit tree-sitter librsvg gnutls libxml2
 ./configure \
     --with-native-compilation=aot \
     --with-tree-sitter \

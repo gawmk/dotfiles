@@ -1,5 +1,5 @@
 * dotfiles
-dwm/X11 setup shared by an Arch/CachyOS desktop and a Debian laptop, linked into =~= with GNU Stow.
+dwm/X11 setup shared by an Arch/CachyOS desktop and an Arch laptop, linked into =~= with GNU Stow.
 
 ** New machine
 #+begin_src sh
@@ -10,9 +10,8 @@ Then =startx=. Re-running =./install= is safe; it only does what is missing.
 
 | step         | what it does                                                       |
 |--------------+--------------------------------------------------------------------|
-| =packages=   | pacman / apt from =install.d/packages/{arch,debian}.txt=           |
+| =packages=   | pacman from =install.d/packages.txt= (+ =HOST_PKGS=)               |
 | =suckless=   | clones and builds =gawmk/{dwm,st,dmenu}= in =~/source=             |
-| =quickshell= | status bar: pacman on Arch, built from source (X11 only) on Debian |
 | =fonts=      | Iosevka Comfy from =gawmk/iosevka-comfy-patched=                   |
 | =link=       | =stow= the repo into =~= (files in the way go to =~/.dotfiles-backup/=) |
 | =host=       | creates =hosts/$(hostname).sh= from the template if missing        |

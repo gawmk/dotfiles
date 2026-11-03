@@ -1,4 +1,4 @@
-# laptop — Debian
+# laptop
 HOST_PKGS="tlp"
 HOST_SERVICES="tlp"
 

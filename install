@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-shot setup for a fresh machine (Arch/CachyOS or Debian), safe to re-run.
+# One-shot setup for a fresh machine (Arch/CachyOS), safe to re-run.
 #
 #   git clone https://github.com/gawmk/dotfiles ~/dotfiles && ~/dotfiles/install
 #
@@ -27,8 +27,8 @@ done
 export NO_PKGS
 
 [ "$(id -u)" -ne 0 ] || die "run as your normal user; sudo is used where needed"
-detect_distro
-log "distro: $DISTRO, host: $(hostname)"
+require_arch
+log "host: $(hostname)"
 sudo -v
 
 for step in "$DOTFILES"/install.d/[0-9][0-9]-*.sh; do
