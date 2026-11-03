@@ -18,3 +18,14 @@
 .emacs.d/auto-save-list/
 
 lazy-lock.json
+
+# emacs runtime state
+.emacs.d/elpa/
+.emacs.d/eln-cache/
+.emacs.d/transient/
+.emacs.d/tramp
+.emacs.d/history
+.emacs.d/recentf
+.emacs.d/bookmarks.eld
+.emacs.d/projects
+.emacs.d/a.out
