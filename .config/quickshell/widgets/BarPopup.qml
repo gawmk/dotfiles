@@ -27,12 +27,28 @@ PopupWindow {
     implicitHeight: header.height + column.implicitHeight + pad * 3
     color: Theme.border   // shows through as the 1px border
 
-    onVisibleChanged: visible ? PopupState.opened(popup) : PopupState.closed(popup)
+    onVisibleChanged: {
+        armed = false;
+        visible ? PopupState.opened(popup) : PopupState.closed(popup);
+    }
+
+    // close shortly after the pointer leaves both the popup and the bar segment
+    // that opened it. Only armed once the pointer has been over either, so a
+    // popup opened from a keybinding doesn't vanish straight away.
+    property bool armed: false
+    readonly property bool hovered: popupHover.hovered || anchorHover.hovered
+    onHoveredChanged: {
+        if (hovered) { armed = true; leaveTimer.stop(); }
+        else if (armed && visible) leaveTimer.restart();
+    }
+    Timer { id: leaveTimer; interval: 400; onTriggered: if (!popup.hovered) popup.visible = false }
+    HoverHandler { id: anchorHover; parent: popup.anchorItem }
     Component.onCompleted: PopupState.register(name, popup)
 
     Rectangle {
         anchors { fill: parent; margins: 1 }
         color: Theme.bg
+        HoverHandler { id: popupHover }
 
         // title + [x]
         Item {
