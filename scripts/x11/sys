@@ -1,6 +1,7 @@
 #!/bin/bash
 
-int="eDP"
+# laptop panel, whatever the driver calls it (eDP, eDP-1, ...)
+int=$(xrandr -q | awk '$1 ~ /^eDP/ {print $1; exit}')
 
 disp() {
 	# first connected output that isn't the laptop panel

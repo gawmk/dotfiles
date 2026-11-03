@@ -1,5 +1,5 @@
 # laptop
-HOST_PKGS="tlp brightnessctl xf86-video-amdgpu"  # amdgpu ddx keeps output names eDP/HDMI-A-0
+HOST_PKGS="tlp brightnessctl"
 HOST_SERVICES="tlp"
 
 WALLPAPER_DIR="$HOME/sync/multimedia/pics/wallpapers"
@@ -12,7 +12,7 @@ host_input() {
 
 host_monitors() {
     # external monitor if plugged in
-    if xrandr -q | grep -q '^HDMI-A-0 connected'; then
-        xrandr --output HDMI-A-0 --mode 2560x1440 --rate 120
-    fi
+    local hdmi
+    hdmi=$(xrandr -q | awk '$2 == "connected" && $1 ~ /^HDMI/ {print $1; exit}')
+    [ -n "$hdmi" ] && xrandr --output "$hdmi" --mode 2560x1440 --rate 120
 }
