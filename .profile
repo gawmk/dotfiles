@@ -10,6 +10,10 @@
 
 # ENV
 
+# per-machine overrides (see ~/dotfiles/hosts/)
+export DOTFILES="$HOME/dotfiles"
+[ -f "$DOTFILES/hosts/$(hostname).sh" ] && . "$DOTFILES/hosts/$(hostname).sh"
+
 export PATH="/home/gawmk/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/gawmk/.local/bin:/home/gawmk/.local/bin" 
 export SHELL="/bin/bash"
 export EDITOR="vim"
@@ -43,3 +47,4 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

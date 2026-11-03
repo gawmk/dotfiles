@@ -1,11 +1,15 @@
+# shared defaults; per-machine overrides live in ~/dotfiles/hosts/$(hostname).sh
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+[ -f "$DOTFILES/hosts/$(hostname).sh" ] && . "$DOTFILES/hosts/$(hostname).sh"
+WALLPAPER_DIR="${WALLPAPER_DIR:-$HOME/sync/media/pics/wallpapers}"
+WALLPAPER="${WALLPAPER:-$WALLPAPER_DIR/forest.jpg}"
 
 ### KEYBOARD ###
 setxkbmap -option ctrl:nocaps
+setxkbmap "${KB_LAYOUT:-us}"
 
-### MOUSE ###
-xinput set-prop "ELAN0678:00 04F3:3195 Touchpad" "libinput Tapping Enabled" 1
-xinput set-prop "HP 430 Wireless Mouse" "libinput Accel Profile Enabled" 0, 1
-xinput set-prop "HP 430 Wireless Mouse" "libinput Accel Speed" -0.1
+### INPUT ###
+type host_input >/dev/null 2>&1 && host_input
 
 ### MISC ###
 xset -b #sysbell
@@ -14,12 +18,10 @@ flameshot &
 
 ### VISUAL ###
 redshift -l 47.36:8.55 -t 6500K:3500K &
-feh --bg-scale ~/sync/multimedia/pics/wallpapers/forest.jpg &
+feh --bg-scale "$WALLPAPER" &
 
 ### MONITORS ###
-xrandr --output HDMI-A-0  \
-    --mode 2560x1440 \
-    --rate 120 &
+type host_monitors >/dev/null 2>&1 && host_monitors &
 
 xset -dpms
 xset s off
@@ -30,5 +32,5 @@ xss-lock -- slock &
 ### WM ETC ###
 dunst &
 picom --backend glx &
-exec dwmblocks &
-while type dwm >/dev/null ; do dwm && continue || break ;done 
+qs &  # status bar (~/.config/quickshell); dwm picks it up as its bar via anybar
+while type dwm >/dev/null ; do dwm && continue || break ;done

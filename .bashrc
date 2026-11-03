@@ -124,7 +124,7 @@ alias imv='imv-wayland'
 alias cpustat='auto-cpufreq --stats'
 alias sysuspend='systemctl suspend && lock'
 alias vpn='openvpn3'
-alias fd='fdfind'
+command -v fdfind >/dev/null && alias fd='fdfind'  # debian names it fdfind
 alias e='emacsclient'
 alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 
@@ -134,3 +134,4 @@ alias project-room-mode='swaymsg output HDMI-A-1 mode 1920x1080@60.000Hz'
 if ! [ $TERM = 'dumb' ]; then
     eval "$(starship init bash)"
 fi
+[ -d "$HOME/flutter/bin" ] && export PATH="$HOME/flutter/bin:$PATH"

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-WPDIR="/home/gawmk/sync/multimedia/pics/wallpapers/"
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+[ -f "$DOTFILES/hosts/$(hostname).sh" ] && . "$DOTFILES/hosts/$(hostname).sh"
+WPDIR="${WALLPAPER_DIR:-$HOME/sync/media/pics/wallpapers}/"
 
 
 font="IosevkaComfy Nerd Font:size=14:weight=semibold"
