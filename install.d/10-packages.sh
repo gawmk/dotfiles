@@ -8,6 +8,10 @@ esac
 mapfile -t pkgs < <(pkglist "$DOTFILES/install.d/packages/$DISTRO.txt")
 pkg_install "${pkgs[@]}"
 
+# extra packages for this machine only (HOST_PKGS in hosts/$(hostname).sh)
+read -ra host_pkgs <<<"$(host_var HOST_PKGS)"
+[ ${#host_pkgs[@]} -gt 0 ] && pkg_install "${host_pkgs[@]}"
+
 # starship isn't packaged everywhere
 if ! command -v starship >/dev/null; then
     log "installing starship to ~/.local/bin"

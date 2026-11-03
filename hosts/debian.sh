@@ -1,4 +1,7 @@
 # laptop — Debian
+HOST_PKGS="tlp"
+HOST_SERVICES="tlp"
+
 WALLPAPER_DIR="$HOME/sync/multimedia/pics/wallpapers"
 
 host_input() {

@@ -26,6 +26,8 @@ Shared files stay identical everywhere. Anything machine-specific goes in
 
 #+begin_src sh
 KB_LAYOUT=pl
+HOST_PKGS="tlp"          # extra packages, installed by ./install
+HOST_SERVICES="tlp"      # extra system services, enabled by ./install
 WALLPAPER_DIR="$HOME/sync/media/pics/wallpapers"
 host_input()    { xinput set-prop "Some Touchpad" "libinput Tapping Enabled" 1; }
 host_monitors() { xrandr --output HDMI-A-1 --mode 2560x1440 --rate 120; }

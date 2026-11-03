@@ -13,6 +13,13 @@ detect_distro() {
     export DISTRO
 }
 
+# print a variable from this machine's host file (empty if unset or no file)
+host_var() {
+    local f="$DOTFILES/hosts/$(hostname).sh"
+    [ -f "$f" ] || return 0
+    ( . "$f" >/dev/null 2>&1; eval "printf '%s' \"\${$1:-}\"" )
+}
+
 # read a package list, dropping comments and blank lines
 pkglist() { sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$@" | tr -s ' \t' '\n' | sed '/^$/d'; }
 

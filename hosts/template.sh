@@ -1,6 +1,10 @@
 # Per-host overrides, sourced by ~/.profile and ~/.xinitrc.
 # Copy to hosts/$(hostname).sh and edit. Everything here is optional.
 
+# extra packages and system services for this machine only (used by ./install)
+#HOST_PKGS="tlp"
+#HOST_SERVICES="tlp"
+
 # keyboard layout passed to setxkbmap (default: us)
 #KB_LAYOUT=us
 
