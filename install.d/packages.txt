@@ -11,9 +11,9 @@ quickshell lm_sensors upower
 
 # audio / network
 pipewire pipewire-pulse wireplumber pavucontrol
-networkmanager
+networkmanager networkmanager-dmenu bluez bluez-utils
 
 # apps & cli
-emacs tmux firefox imv zathura zathura-pdf-mupdf
+emacs vim tmux firefox imv zathura zathura-pdf-mupdf
 fzf ripgrep fd btop bc starship syncthing
 ttf-nerd-fonts-symbols

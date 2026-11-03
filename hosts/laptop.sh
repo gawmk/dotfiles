@@ -1,5 +1,5 @@
 # laptop
-HOST_PKGS="tlp"
+HOST_PKGS="tlp brightnessctl xf86-video-amdgpu"  # amdgpu ddx keeps output names eDP/HDMI-A-0
 HOST_SERVICES="tlp"
 
 WALLPAPER_DIR="$HOME/sync/multimedia/pics/wallpapers"

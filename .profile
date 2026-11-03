@@ -21,8 +21,8 @@ export LEDGER_FILE="ledger.ledger"
 export BROWSER="/usr/bin/firefox"
 export GTK_THEME="Gruvbox-Material-Dark"
 
-# ssh-agent
-eval $(ssh-agent -s)
+# ssh-agent (only if none is running yet)
+[ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s)" >/dev/null
 
 # imwheel
 
