@@ -4,7 +4,7 @@ import Quickshell.Networking
 import QtQuick
 import qs.theme
 
-// "net: up" / "wifi: <ssid>" / "net: down"; popup lists devices and wifi networks
+// "net: up" / "net: down"; popup lists devices and wifi networks
 Segment {
     id: root
     required property var barWindow
@@ -14,7 +14,6 @@ Segment {
     readonly property var wired: devices.filter(d => d.type === DeviceType.Wired)
     readonly property var active: devices.find(d => d.connected && d.type === DeviceType.Wired)
                                ?? devices.find(d => d.connected) ?? null
-    readonly property var wifiNet: wifiDev ? wifiDev.networks.values.find(n => n.connected) ?? null : null
 
     function strength(n) { const s = n.signalStrength; return s > 1 ? s / 100 : s; }
     function bars(n) {
@@ -22,9 +21,7 @@ Segment {
         return "▂▄▆█".slice(0, lvl) + "_".repeat(4 - Math.max(0, lvl));
     }
 
-    text: !active ? "net: down"
-        : active.type === DeviceType.Wifi ? "wifi: " + (wifiNet ? wifiNet.name : "up")
-        : "net: up"
+    text: active ? "net: up" : "net: down"
     color: active ? Theme.fg : Theme.red
 
     onClicked: b => b === Qt.RightButton ? Quickshell.execDetached(["st", "-e", "nmtui"]) : popup.toggle()
