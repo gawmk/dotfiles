@@ -8,7 +8,7 @@ esac
 mapfile -t pkgs < <(pkglist "$DOTFILES/install.d/packages/$DISTRO.txt")
 pkg_install "${pkgs[@]}"
 
-# extra packages for this machine only (HOST_PKGS in hosts/$(hostname).sh)
+# extra packages for this machine only (HOST_PKGS in hosts/$(uname -n).sh)
 read -ra host_pkgs <<<"$(host_var HOST_PKGS)"
 [ ${#host_pkgs[@]} -gt 0 ] && pkg_install "${host_pkgs[@]}"
 

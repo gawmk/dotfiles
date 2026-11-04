@@ -1,6 +1,6 @@
-# shared defaults; per-machine overrides live in ~/dotfiles/hosts/$(hostname).sh
+# shared defaults; per-machine overrides live in ~/dotfiles/hosts/$(uname -n).sh
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
-[ -f "$DOTFILES/hosts/$(hostname).sh" ] && . "$DOTFILES/hosts/$(hostname).sh"
+[ -f "$DOTFILES/hosts/$(uname -n).sh" ] && . "$DOTFILES/hosts/$(uname -n).sh"
 WALLPAPER_DIR="${WALLPAPER_DIR:-$HOME/sync/media/pics/wallpapers}"
 WALLPAPER="${WALLPAPER:-$WALLPAPER_DIR/forest.jpg}"
 

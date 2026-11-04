@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
-[ -f "$DOTFILES/hosts/$(hostname).sh" ] && . "$DOTFILES/hosts/$(hostname).sh"
+[ -f "$DOTFILES/hosts/$(uname -n).sh" ] && . "$DOTFILES/hosts/$(uname -n).sh"
 WPDIR="${WALLPAPER_DIR:-$HOME/sync/media/pics/wallpapers}/"
 
 

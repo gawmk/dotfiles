@@ -12,7 +12,7 @@
 
 # per-machine overrides (see ~/dotfiles/hosts/)
 export DOTFILES="$HOME/dotfiles"
-[ -f "$DOTFILES/hosts/$(hostname).sh" ] && . "$DOTFILES/hosts/$(hostname).sh"
+[ -f "$DOTFILES/hosts/$(uname -n).sh" ] && . "$DOTFILES/hosts/$(uname -n).sh"
 
 export PATH="/home/gawmk/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/gawmk/.local/bin:/home/gawmk/.local/bin" 
 export SHELL="/bin/bash"

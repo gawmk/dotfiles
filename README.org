@@ -15,7 +15,7 @@ Then =startx=. Re-running =./install= is safe; it only does what is missing.
 | =quickshell= | status bar: pacman on Arch, built from source (X11 only) on Debian |
 | =fonts=      | Iosevka Comfy from =gawmk/iosevka-comfy-patched=                   |
 | =link=       | =stow= the repo into =~= (files in the way go to =~/.dotfiles-backup/=) |
-| =host=       | creates =hosts/$(hostname).sh= from the template if missing        |
+| =host=       | creates =hosts/$(uname -n).sh= from the template if missing        |
 | =services=   | NetworkManager, syncthing (user)                                   |
 
 Options: =--no-pkgs=, =--only <step>= (e.g. =./install --only link=), =--with emacs-build=, =--with ollama=.
