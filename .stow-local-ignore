@@ -12,3 +12,4 @@
 ^/install$
 ^/install\.d
 ^/hosts
+^/firefox

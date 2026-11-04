@@ -16,6 +16,7 @@ Then =startx=. Re-running =./install= is safe; it only does what is missing.
 | =link=       | =stow= the repo into =~= (files in the way go to =~/.dotfiles-backup/=) |
 | =host=       | creates =hosts/<host>.sh= if missing; copies =hosts/<host>/etc/= into =/etc= |
 | =services=   | NetworkManager, syncthing (user)                                   |
+| =firefox=    | extensions via =/etc/firefox/policies=, links =user.js= + =chrome/= into the profile |
 
 Options: =--no-pkgs=, =--only <step>= (e.g. =./install --only link=), =--with emacs-build=, =--with ollama=.
 

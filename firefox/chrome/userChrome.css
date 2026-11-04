@@ -1,0 +1,9 @@
+/* Hide tab bar */
+#TabsToolbar {
+visibility: collapse !important;
+}
+
+/* Optional: hide the title bar too for full clean look */
+#titlebar {
+visibility: collapse !important;
+}
