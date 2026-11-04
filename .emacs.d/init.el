@@ -118,7 +118,7 @@
   (with-current-buffer (get-buffer-create "*Welcome*")
     (setq truncate-lines t)
     (let* ((buffer-read-only)
-           (image-path "~/sync/multimedia/pics/wallpapers/shepherd.png")
+           (image-path "~/sync/media/pics/wallpapers/shepherd.png")
            (image (create-image image-path))
            (size (image-size image))
            (height (cdr size))

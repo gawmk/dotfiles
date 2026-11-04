@@ -1,6 +1,6 @@
 # base / build (suckless forks need X headers + yajl for dwm's ipc patch)
 base-devel git stow curl wget unzip zip pkgconf
-libx11 libxft libxinerama freetype2 fontconfig yajl
+libx11 libxft libxinerama freetype2 fontconfig yajl openssh
 
 # X session
 ly xorg-server xorg-xinit xorg-xrandr xorg-xinput xorg-xset xorg-xrdb xorg-xprop xorg-setxkbmap
@@ -16,4 +16,4 @@ networkmanager networkmanager-dmenu bluez bluez-utils
 # apps & cli
 emacs neovim tmux firefox qutebrowser python-adblock bitwarden-cli python-tldextract keyutils imv zathura zathura-pdf-mupdf
 fzf ripgrep fd btop bc starship syncthing
-ttf-nerd-fonts-symbols
+ttf-nerd-fonts-symbols yay
