@@ -127,7 +127,7 @@ c.url.searchengines = {
 # UI
 
 # font
-c.fonts.default_family = 'Iosevka Comfy Fixed'
+c.fonts.default_family = 'IosevkaComfy Nerd Font'  # interface only; page fonts are c.fonts.web.*
 c.fonts.default_size = '12pt'
 
 c.completion.height = '30%'
