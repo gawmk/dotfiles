@@ -12,7 +12,7 @@ require_arch() {
 
 # print a variable from this machine's host file (empty if unset or no file)
 host_var() {
-    local f="$DOTFILES/hosts/$(hostname).sh"
+    local f="$DOTFILES/hosts/$(uname -n).sh"
     [ -f "$f" ] || return 0
     ( . "$f" >/dev/null 2>&1; eval "printf '%s' \"\${$1:-}\"" )
 }

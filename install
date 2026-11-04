@@ -28,7 +28,7 @@ export NO_PKGS
 
 [ "$(id -u)" -ne 0 ] || die "run as your normal user; sudo is used where needed"
 require_arch
-log "host: $(hostname)"
+log "host: $(uname -n)"
 sudo -v
 
 for step in "$DOTFILES"/install.d/[0-9][0-9]-*.sh; do

@@ -1,5 +1,5 @@
 # Per-host overrides, sourced by ~/.profile and ~/.xinitrc.
-# Copy to hosts/$(hostname).sh and edit. Everything here is optional.
+# Copy to hosts/$(uname -n).sh and edit. Everything here is optional.
 
 # extra packages and system services for this machine only (used by ./install)
 #HOST_PKGS="tlp"
