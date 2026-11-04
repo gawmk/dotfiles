@@ -3,7 +3,7 @@ base-devel git stow curl wget unzip zip pkgconf
 libx11 libxft libxinerama freetype2 fontconfig yajl
 
 # X session
-xorg-server xorg-xinit xorg-xrandr xorg-xinput xorg-xset xorg-xrdb xorg-xprop xorg-setxkbmap
+ly xorg-server xorg-xinit xorg-xrandr xorg-xinput xorg-xset xorg-xrdb xorg-xprop xorg-setxkbmap
 picom dunst libnotify feh redshift flameshot xss-lock slock
 
 # bar
