@@ -4,6 +4,8 @@
 # Autoconfig
 # ----------------------------
 # If you want changes made in qute://settings / :set to persist, set True.
+import os
+
 config.load_autoconfig(False)
 
 # ----------------------------
@@ -36,12 +38,12 @@ config.set('content.javascript.enabled', True, 'qute://*/*')
 config.set(
     'content.local_content_can_access_remote_urls',
     True,
-    'file:///home/mikimasta/.local/share/qutebrowser/userscripts/*'
+    f'file://{os.path.expanduser("~")}/.local/share/qutebrowser/userscripts/*'
 )
 config.set(
     'content.local_content_can_access_file_urls',
     False,
-    'file:///home/mikimasta/.local/share/qutebrowser/userscripts/*'
+    f'file://{os.path.expanduser("~")}/.local/share/qutebrowser/userscripts/*'
 )
 
 # Clipboard permissions (from your autoconfig)
@@ -74,6 +76,13 @@ config.bind('zm', 'config-cycle colors.webpage.darkmode.enabled')
 # Keybindings / aliases
 # ----------------------------
 config.bind('<Escape>', 'mode-leave ;; jseval -q document.activeElement.blur()', mode='insert')
+
+# Bitwarden (qute-bitwarden userscript + bitwarden-cli; run `bw login` once).
+# ,p fills username + password for the current site, ,P only the password.
+_dmenu = "dmenu -i -fn 'IosevkaComfy Nerd Font:size=14:weight=semibold' -nb '#282828' -nf '#bdae93' -sb '#665c54' -sf '#fbf1c7'"
+_bw = f"spawn --userscript qute-bitwarden --dmenu-invocation \"{_dmenu} -p bitwarden\" --password-prompt-invocation \"{_dmenu} -P -p 'master password'\""
+config.bind(',p', _bw)
+config.bind(',P', _bw + ' --password-only')
 
 config.bind('<Ctrl+j>', 'completion-item-focus --history next', mode='command')
 config.bind('<Ctrl+k>', 'completion-item-focus --history prev', mode='command')

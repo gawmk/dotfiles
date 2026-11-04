@@ -14,6 +14,6 @@ pipewire pipewire-pulse wireplumber pavucontrol
 networkmanager networkmanager-dmenu bluez bluez-utils
 
 # apps & cli
-emacs vim tmux firefox imv zathura zathura-pdf-mupdf
+emacs neovim tmux firefox qutebrowser python-adblock bitwarden-cli python-tldextract keyutils imv zathura zathura-pdf-mupdf
 fzf ripgrep fd btop bc starship syncthing
 ttf-nerd-fonts-symbols
