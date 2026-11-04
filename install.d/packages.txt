@@ -16,4 +16,4 @@ networkmanager networkmanager-dmenu bluez bluez-utils
 # apps & cli
 emacs neovim tmux firefox qutebrowser python-adblock bitwarden-cli python-tldextract keyutils imv zathura zathura-pdf-mupdf
 fzf ripgrep fd btop bc starship syncthing
-ttf-nerd-fonts-symbols yay
+ttf-nerd-fonts-symbols libreoffice-fresh

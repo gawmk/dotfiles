@@ -3,7 +3,7 @@ import QtQuick
 import qs.theme
 import qs.services
 
-// "cpu: 2% 36°C | mem: 4.8G" — both open the same popup; right click = btop
+// "cpu: 2% 36°C  mem: 4.8G" — both open the same popup; right click = btop
 Row {
     id: root
     required property var barWindow
@@ -19,7 +19,8 @@ Row {
         onClicked: b => root.act(b)
     }
     Segment {
-        text: "mem: " + SysStats.memUsed.toFixed(1) + "G"
+        separator: false
+        text: " mem: " + SysStats.memUsed.toFixed(1) + "G"
         onClicked: b => root.act(b)
     }
 

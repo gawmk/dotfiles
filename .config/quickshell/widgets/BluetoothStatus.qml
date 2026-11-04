@@ -3,7 +3,7 @@ import Quickshell.Bluetooth
 import QtQuick
 import qs.theme
 
-// "bt: off" / "bt: on" / "bt: <device>"; hidden when there's no adapter
+// "bt: off" / "bt: on" / "bt: con"; hidden when there's no adapter
 Segment {
     id: root
     required property var barWindow
@@ -16,7 +16,7 @@ Segment {
 
     visible: adapter !== null
     text: !adapter?.enabled ? "bt: off"
-        : connected.length ? "bt: " + connected.map(d => d.name).join(", ")
+        : connected.length ? "bt: con"
         : "bt: on"
     color: adapter?.enabled ? Theme.fg : Theme.dim
     onClicked: b => b === Qt.RightButton ? Quickshell.execDetached(["st", "-e", "bluetoothctl"]) : popup.toggle()
