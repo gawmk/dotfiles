@@ -1,3 +1,3 @@
 Extras, run with ./install --with <name>:
-  emacs-build   build a specific Emacs version from source (the emacs package is installed already)
+  emacs-build   build Emacs from source (Debian; on Arch the emacs package is installed already)
   ollama        install ollama via its upstream script
