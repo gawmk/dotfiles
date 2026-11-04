@@ -2,6 +2,7 @@
 sudo systemctl enable --now NetworkManager.service 2>/dev/null || warn "could not enable NetworkManager"
 sudo systemctl enable --now bluetooth.service 2>/dev/null || warn "could not enable bluetooth"
 systemctl --user enable --now syncthing.service 2>/dev/null || warn "could not enable syncthing (user service)"
+systemctl --user enable ssh-agent.socket || warn "could not enable ssh-agent"
 
 # extra system services for this machine only (HOST_SERVICES in hosts/$(uname -n).sh)
 for svc in $(host_var HOST_SERVICES); do

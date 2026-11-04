@@ -22,7 +22,7 @@ export BROWSER="/usr/bin/firefox"
 export GTK_THEME="Gruvbox-Material-Dark"
 
 # ssh-agent (only if none is running yet)
-[ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s)" >/dev/null
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 # imwheel
 
