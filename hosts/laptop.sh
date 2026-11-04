@@ -1,6 +1,7 @@
 # laptop
-HOST_PKGS="tlp brightnessctl"
-HOST_SERVICES="tlp"
+# snap-pac: snapshot before/after every pacman run; grub-btrfs(d): snapshots in the boot menu
+HOST_PKGS="tlp brightnessctl snap-pac grub-btrfs inotify-tools"
+HOST_SERVICES="tlp grub-btrfsd snapper-cleanup.timer"
 
 WALLPAPER_DIR="$HOME/sync/multimedia/pics/wallpapers"
 
