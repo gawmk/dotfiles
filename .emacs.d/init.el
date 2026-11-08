@@ -47,7 +47,12 @@
 
 (add-to-list 'exec-path "~/.local/bin/")
 
-(setq global-auto-revert-non-file-buffers t)
+;; Also revert dired (and other non-file) buffers, e.g. after
+;; `async-shell-command' touch/mkdir.  Check every 0.5s instead of 5s;
+;; must be set before the mode starts its timer.
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-interval 0.5
+      auto-revert-verbose t)        ; no "Reverting buffer" messages
 (global-auto-revert-mode 1)
 
 (recentf-mode 1)
