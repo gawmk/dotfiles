@@ -30,6 +30,7 @@
   - [[Org Agenda]]
   - [[Org caldav]]
   - [[Babel]]
+  - [[org-present]]
 - [[Terminal]]
 - [[Magit]]
 - [[Markdown]]
@@ -158,8 +159,10 @@ Disabling startup clutter, line numbers etc.
     (doom-themes-org-config))
 
   (set-face-attribute 'default nil :font "IosevkaComfy Nerd Font" :height 140 :weight 'semibold)
-  (set-face-attribute 'variable-pitch nil :font "IosevkaComfyDuo NerdFont" :height 140 :weight 'semibold)
-  (set-face-attribute 'fixed-pitch nil :font "IosevkaComfy Nerd Font" :height 140 :weight 'semibold)
+  ;; Relative heights (1.0 = same as `default'), so text-scale (C-x C-+,
+  ;; org-present) also scales code blocks and tables.
+  (set-face-attribute 'variable-pitch nil :font "IosevkaComfyDuo NerdFont" :height 1.0 :weight 'semibold)
+  (set-face-attribute 'fixed-pitch nil :font "IosevkaComfy Nerd Font" :height 1.0 :weight 'semibold)
 
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha-background 85)
@@ -950,6 +953,64 @@ allows for editing an org code block with eglot support.
     "ZQ" #'org-edit-src-abort)
 #+end_src
 
+** org-present
+#+begin_src emacs-lisp
+  (use-package org-present
+    :hook ((org-present-mode . gawmk/org-present-start)
+           (org-present-mode-quit . gawmk/org-present-end))
+    :config
+    (defvar gawmk/org-present-blink-was-on nil
+      "Whether `blink-cursor-mode' was on before the presentation started.")
+
+    (defun gawmk/org-present-update-header ()
+      "Set the top padding: X lines at org-present's zoom, smaller when
+  zoomed in further (and bigger when zoomed out)."
+      (let ((zoom (expt text-scale-mode-step
+                        (- text-scale-mode-amount org-present-text-scale))))
+        (setq-local header-line-format
+                    (propertize " " 'face `(:height ,(max 0.3 (/ 1.5 zoom))
+                                            :inherit default)))
+        (force-mode-line-update)))
+
+    (defun gawmk/org-present-start ()
+      (setq-local face-remapping-alist
+                  '((default (:height 0.8) variable-pitch)
+                    (org-block (:height 1.0) fixed-pitch org-block)
+                    (org-code fixed-pitch)
+                    ;; Draw the spacer header line with the normal
+                    ;; (transparent) background, not the theme's own color
+                    (header-line default)))
+      (setq-local org-hide-emphasis-markers t)
+      (org-display-inline-images)
+      (org-present-big)
+      (olivetti-mode 1)
+      (olivetti-set-width 0.6)
+      ;; Empty header line as top padding, shrinking as the text grows
+      (gawmk/org-present-update-header)
+      (add-hook 'text-scale-mode-hook #'gawmk/org-present-update-header nil t)
+      ;; No blinking cursor while presenting (global mode, restored on quit)
+      (setq gawmk/org-present-blink-was-on blink-cursor-mode)
+      (blink-cursor-mode -1)
+      ;; org-present turns its keymap on by setting a variable, which
+      ;; evil doesn't notice; refresh so evil-collection's J/K/q work
+      ;; right away instead of only after ESC.
+      (evil-normal-state)
+      (evil-normalize-keymaps))
+    (defun gawmk/org-present-end ()
+      (setq-local face-remapping-alist nil)
+      (remove-hook 'text-scale-mode-hook #'gawmk/org-present-update-header t)
+      (kill-local-variable 'header-line-format)
+      (when gawmk/org-present-blink-was-on
+        (blink-cursor-mode 1))
+      (org-present-small)
+      (org-remove-inline-images)
+      (kill-local-variable 'olivetti-body-width)
+      (olivetti-mode -1)
+      (olivetti-mode 1))
+    (add-hook 'org-present-after-navigate-functions
+              (lambda (_buf _heading) (org-show-subtree))))
+#+end_src
+
 * Terminal
 #+begin_src emacs-lisp
   (use-package ghostel
@@ -1340,3 +1401,4 @@ allows for editing an org code block with eglot support.
   (dolist (hook '(lisp-mode-hook emacs-lisp-mode-hook))
   (add-hook hook (lambda () (setq indent-tabs-mode nil))))
 #+end_src
+
