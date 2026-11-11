@@ -908,10 +908,16 @@ used for =ESC ESC ESC= and =C-c=.
    'org-babel-load-languages
    '((emacs-lisp . t)
      (python . t)
-     (C . t)))
+     (C . t)
+     (lisp . t)))
+
+  ;; Common Lisp blocks run in the live SBCL image through SLY (see Lisp),
+  ;; not SLIME.  Needs a connection: start one with M-x sly first.
+  (setq org-babel-lisp-eval-fn #'sly-eval)
 
   (require 'org-tempo)
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("li" . "src lisp"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
   ;; tangle on save

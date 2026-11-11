@@ -763,10 +763,16 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
  'org-babel-load-languages
  '((emacs-lisp . t)
    (python . t)
-   (C . t)))
+   (C . t)
+   (lisp . t)))
+
+;; Common Lisp blocks run in the live SBCL image through SLY (see Lisp),
+;; not SLIME.  Needs a connection: start one with M-x sly first.
+(setq org-babel-lisp-eval-fn #'sly-eval)
 
 (require 'org-tempo)
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("li" . "src lisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
 ;; tangle on save
@@ -827,9 +833,18 @@ zoomed in further (and bigger when zoomed out)."
 
   (defun gawmk/org-present-start ()
     (setq-local face-remapping-alist
-                '((default (:height 0.8) variable-pitch)
+                `((default (:height 0.8) variable-pitch)
                   (org-block (:height 1.0) fixed-pitch org-block)
                   (org-code fixed-pitch)
+                  ;; #+TITLE / #+AUTHOR values: bigger, in theme colors
+                  (org-document-title (:height 2.0 :weight bold
+                                       :foreground ,(doom-color 'yellow))
+                                      org-document-title)
+                  (org-document-info (:height 1.3
+                                      :foreground ,(doom-color 'blue))
+                                     org-document-info)
+                  ;; The "#+TITLE:" / "#+AUTHOR:" labels themselves: dim
+                  (org-document-info-keyword (:height 0.8) shadow)
                   ;; Draw the spacer header line with the normal
                   ;; (transparent) background, not the theme's own color
                   (header-line default)))
